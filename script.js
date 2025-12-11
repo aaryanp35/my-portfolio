@@ -1,4 +1,45 @@
 // ===============================================
+// PREVENT SCROLL RESTORATION ON PAGE LOAD
+// ===============================================
+
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+}
+
+window.addEventListener('load', () => {
+    window.scrollTo(0, 0);
+});
+
+// ===============================================
+// ANIMATED GREETING (Apple-style)
+// ===============================================
+
+const greetings = ['Hi', 'Hello', 'Bonjour', 'Hola', '你好', 'Ciao', 'Hallo', 'Olá', 'Привет', 'こんにちは'];
+let currentGreetingIndex = 0;
+const greetingElement = document.querySelector('.greeting-flip');
+
+function rotateGreeting() {
+    if (!greetingElement) return;
+    
+    // Flip out
+    greetingElement.style.animation = 'flipOut 0.4s ease-in forwards';
+    
+    setTimeout(() => {
+        // Change text
+        currentGreetingIndex = (currentGreetingIndex + 1) % greetings.length;
+        greetingElement.textContent = greetings[currentGreetingIndex];
+        
+        // Flip in
+        greetingElement.style.animation = 'flipIn 0.4s ease-out forwards';
+    }, 400);
+}
+
+// Start rotation after page load
+setTimeout(() => {
+    setInterval(rotateGreeting, 3000);
+}, 2000);
+
+// ===============================================
 // NAVIGATION & MOBILE MENU
 // ===============================================
 
