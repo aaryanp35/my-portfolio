@@ -14,7 +14,7 @@ window.addEventListener('load', () => {
 // ANIMATED GREETING (Apple-style)
 // ===============================================
 
-const greetings = ['Hi', 'Hello', 'Bonjour', 'Hola', '你好', 'Ciao', 'Hallo', 'Olá', 'Привет', 'こんにちは'];
+const greetings = ['Hi', 'Hola', 'こんにちは', 'Bonjour', 'Ciao', '你好', 'Olá', 'Hello', 'Привет', 'Hallo'];
 let currentGreetingIndex = 0;
 const greetingElement = document.querySelector('.greeting-flip');
 
@@ -36,7 +36,7 @@ function rotateGreeting() {
 
 // Start rotation after page load
 setTimeout(() => {
-    setInterval(rotateGreeting, 3000);
+    setInterval(rotateGreeting, 1750);
 }, 2000);
 
 // ===============================================
