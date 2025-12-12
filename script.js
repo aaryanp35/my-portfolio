@@ -40,6 +40,125 @@ setTimeout(() => {
 }, 2000);
 
 // ===============================================
+// MAGNETIC CURSOR EFFECT
+// ===============================================
+
+const magneticElements = document.querySelectorAll('.magnetic, .btn, .nav-link, .project-card');
+
+magneticElements.forEach(element => {
+    element.addEventListener('mousemove', (e) => {
+        const rect = element.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        
+        const distance = Math.sqrt(x * x + y * y);
+        const maxDistance = 60;
+        
+        if (distance < maxDistance) {
+            const strength = (maxDistance - distance) / maxDistance;
+            const moveX = x * strength * 0.3;
+            const moveY = y * strength * 0.3;
+            
+            element.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        }
+    });
+    
+    element.addEventListener('mouseleave', () => {
+        element.style.transform = 'translate(0, 0)';
+    });
+});
+
+// ===============================================
+// ANIMATED STATS COUNTER
+// ===============================================
+
+const statNumbers = document.querySelectorAll('.stat-number');
+let hasAnimated = false;
+
+// Calculate rowing hours based on days since start date (Sept 1, 2019)
+function getRowingHours() {
+    const startDate = new Date('2019-09-01');
+    const today = new Date();
+    const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+    
+    // Base hours: 3300 (from original calculation)
+    // Add 1.5 hours per day since calculation date (Dec 11, 2025)
+    const calculationDate = new Date('2025-12-11');
+    const daysSinceCalc = Math.max(0, Math.floor((today - calculationDate) / (1000 * 60 * 60 * 24)));
+    
+    return 3300 + (daysSinceCalc * 1.5);
+}
+
+// Fetch GitHub repos count
+async function fetchGitHubRepos() {
+    try {
+        const response = await fetch('https://api.github.com/users/aaryanp35/repos?per_page=100');
+        const repos = await response.json();
+        // Filter out forks if you want only your original repos
+        const originalRepos = repos.filter(repo => !repo.fork);
+        return originalRepos.length;
+    } catch (error) {
+        console.error('Error fetching GitHub repos:', error);
+        return 15; // Fallback to default
+    }
+}
+
+function animateCounter(element, target) {
+    const duration = 2000;
+    const increment = target / (duration / 16);
+    let current = 0;
+    
+    const updateCounter = () => {
+        current += increment;
+        if (current < target) {
+            element.textContent = Math.floor(current).toLocaleString();
+            requestAnimationFrame(updateCounter);
+        } else {
+            element.textContent = Math.floor(target).toLocaleString();
+        }
+    };
+    
+    updateCounter();
+}
+
+async function initializeStats() {
+    const projectsStat = document.querySelector('[data-stat="projects"] .stat-number');
+    const rowingStat = document.querySelector('[data-stat="rowing"] .stat-number');
+    
+    if (projectsStat && rowingStat) {
+        const repoCount = await fetchGitHubRepos();
+        const rowingHours = Math.floor(getRowingHours());
+        
+        projectsStat.setAttribute('data-target', repoCount);
+        rowingStat.setAttribute('data-target', rowingHours);
+    }
+}
+
+const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting && !hasAnimated) {
+            hasAnimated = true;
+            statNumbers.forEach(stat => {
+                const target = parseInt(stat.getAttribute('data-target'));
+                animateCounter(stat, target);
+            });
+        }
+    });
+}, { threshold: 0.5 });
+
+const statsSection = document.querySelector('.stats-section');
+if (statsSection) {
+    initializeStats();
+    statsObserver.observe(statsSection);
+}
+
+// ===============================================
+// SPOTIFY EMBED
+// ===============================================
+// Spotify playlist is embedded directly in HTML
+// To customize: Create a playlist, click Share > Embed playlist, copy the iframe code
+
+// ===============================================
 // NAVIGATION & MOBILE MENU
 // ===============================================
 
