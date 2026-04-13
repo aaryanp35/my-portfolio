@@ -289,133 +289,71 @@ const observer = new IntersectionObserver((entries) => {
 const animateElements = document.querySelectorAll('.project-card, .skill-category, .about-content, .contact-content');
 animateElements.forEach(el => observer.observe(el));
 
-// ===============================================
-// CONTACT FORM VALIDATION & SUBMISSION
-// ===============================================
-
-const contactForm = document.getElementById('contactForm');
-const formMessage = document.querySelector('.form-message');
-
-// Email validation regex
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// Validate individual field
-function validateField(input) {
-    const formGroup = input.parentElement;
-    const errorMessage = formGroup.querySelector('.error-message');
-    
-    // Remove previous error
-    formGroup.classList.remove('error');
-    errorMessage.textContent = '';
-
-    // Check if field is empty
-    if (!input.value.trim()) {
-        formGroup.classList.add('error');
-        errorMessage.textContent = 'This field is required';
-        return false;
-    }
-
-    // Email-specific validation
-    if (input.type === 'email' && !emailRegex.test(input.value)) {
-        formGroup.classList.add('error');
-        errorMessage.textContent = 'Please enter a valid email address';
-        return false;
-    }
-
-    // Message length validation
-    if (input.id === 'message' && input.value.trim().length < 10) {
-        formGroup.classList.add('error');
-        errorMessage.textContent = 'Message should be at least 10 characters';
-        return false;
-    }
-
-    return true;
-}
-
-// Real-time validation
-const formInputs = contactForm.querySelectorAll('input, textarea');
-formInputs.forEach(input => {
-    input.addEventListener('blur', () => validateField(input));
-    input.addEventListener('input', () => {
-        if (input.parentElement.classList.contains('error')) {
-            validateField(input);
-        }
-    });
-});
-
-// Form submission
-contactForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    // Validate all fields
-    let isValid = true;
-    formInputs.forEach(input => {
-        if (!validateField(input)) {
-            isValid = false;
-        }
-    });
-
-    if (!isValid) {
-        return;
-    }
-
-    // Get form data
-    const formData = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        subject: document.getElementById('subject').value,
-        message: document.getElementById('message').value
-    };
-
-    // Show loading state
-    const submitBtn = contactForm.querySelector('.btn-submit');
-    submitBtn.classList.add('loading');
-    submitBtn.disabled = true;
-    formMessage.style.display = 'none';
-
-    try {
-        // Simulate API call (replace with your actual API endpoint)
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        // Success
-        formMessage.className = 'form-message success';
-        formMessage.textContent = 'Thank you! Your message has been sent successfully. I\'ll get back to you soon.';
-        formMessage.style.display = 'block';
-        
-        // Reset form
-        contactForm.reset();
-        
-        // Log form data (in production, send to your backend)
-        console.log('Form submitted:', formData);
-
-    } catch (error) {
-        // Error
-        formMessage.className = 'form-message error';
-        formMessage.textContent = 'Oops! Something went wrong. Please try again later.';
-        formMessage.style.display = 'block';
-        console.error('Form submission error:', error);
-    } finally {
-        // Remove loading state
-        submitBtn.classList.remove('loading');
-        submitBtn.disabled = false;
-    }
-});
 
 // ===============================================
-// PROJECT CARDS INTERACTION
+// PROJECT CARDS — 3D TILT + MODAL
 // ===============================================
 
 const projectCards = document.querySelectorAll('.project-card');
+const modal        = document.getElementById('projectModal');
+const modalIcon    = document.getElementById('modalIcon');
+const modalTitle   = document.getElementById('modalTitle');
+const modalDesc    = document.getElementById('modalDescription');
+const modalTags    = document.getElementById('modalTags');
+const modalLink    = document.getElementById('modalLink');
+const modalClose   = document.getElementById('modalClose');
 
+// --- 3D tilt ---
 projectCards.forEach(card => {
-    card.addEventListener('mouseenter', () => {
-        card.style.transform = 'translateY(-8px) scale(1.02)';
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const cx = rect.width  / 2;
+        const cy = rect.height / 2;
+        const rotateX = ((y - cy) / cy) * -10;
+        const rotateY = ((x - cx) / cx) *  10;
+        card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
     });
 
     card.addEventListener('mouseleave', () => {
-        card.style.transform = 'translateY(0) scale(1)';
+        card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0)';
+        card.style.transition = 'transform 0.5s cubic-bezier(0.4,0,0.2,1)';
+    });
+
+    card.addEventListener('mouseenter', () => {
+        card.style.transition = 'transform 0.1s ease';
+    });
+
+    // --- modal open ---
+    card.addEventListener('click', () => {
+        const iconClass  = card.querySelector('.project-image > i').className;
+        const title      = card.querySelector('h3').textContent;
+        const desc       = card.querySelector('.project-content > p').textContent;
+        const tags       = [...card.querySelectorAll('.tag')].map(t => t.textContent);
+        const linkEl     = card.querySelector('.project-link');
+        const href       = linkEl ? linkEl.getAttribute('href') : '#';
+
+        modalIcon.className        = iconClass;
+        modalTitle.textContent     = title;
+        modalDesc.textContent      = desc;
+        modalTags.innerHTML        = tags.map(t => `<span class="tag">${t}</span>`).join('');
+        modalLink.href             = href;
+
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
     });
 });
+
+// --- modal close ---
+function closeModal() {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+modalClose.addEventListener('click', closeModal);
+modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
 // ===============================================
 // TYPING EFFECT FOR HERO SUBTITLE (OPTIONAL)
@@ -599,35 +537,3 @@ socialLinks.forEach(link => {
     });
 });
 
-// ===============================================
-// FORM FIELD COUNTER (OPTIONAL)
-// ===============================================
-
-const messageField = document.getElementById('message');
-if (messageField) {
-    const maxLength = 500;
-    const counter = document.createElement('div');
-    counter.className = 'char-counter';
-    counter.style.cssText = `
-        text-align: right;
-        font-size: 0.875rem;
-        color: var(--text-light);
-        margin-top: 0.25rem;
-    `;
-    
-    messageField.parentElement.appendChild(counter);
-    
-    messageField.addEventListener('input', () => {
-        const length = messageField.value.length;
-        counter.textContent = `${length}/${maxLength}`;
-        
-        if (length > maxLength * 0.9) {
-            counter.style.color = '#ef4444';
-        } else {
-            counter.style.color = 'var(--text-light)';
-        }
-    });
-    
-    // Initialize counter
-    counter.textContent = `0/${maxLength}`;
-}
