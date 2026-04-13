@@ -47,6 +47,7 @@ const magneticElements = document.querySelectorAll('.magnetic, .btn, .nav-link, 
 
 magneticElements.forEach(element => {
     element.addEventListener('mousemove', (e) => {
+        if (window.matchMedia('(hover: none)').matches) return;
         const rect = element.getBoundingClientRect();
         const x = e.clientX - rect.left - rect.width / 2;
         const y = e.clientY - rect.top - rect.height / 2;
@@ -303,9 +304,12 @@ const modalTags    = document.getElementById('modalTags');
 const modalLink    = document.getElementById('modalLink');
 const modalClose   = document.getElementById('modalClose');
 
-// --- 3D tilt ---
+// --- 3D tilt (desktop only) ---
+const isTouchDevice = () => window.matchMedia('(hover: none)').matches;
+
 projectCards.forEach(card => {
     card.addEventListener('mousemove', (e) => {
+        if (isTouchDevice()) return;
         const rect = card.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
