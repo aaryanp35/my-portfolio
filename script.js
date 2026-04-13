@@ -78,9 +78,7 @@ let hasAnimated = false;
 
 // Calculate rowing hours based on days since start date (Sept 1, 2019)
 function getRowingHours() {
-    const startDate = new Date('2019-09-01');
     const today = new Date();
-    const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
     
     // Base hours: 3300 (from original calculation)
     // Add 1.5 hours per day since calculation date (Dec 11, 2025)
@@ -286,9 +284,34 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-// Observe elements for animation
-const animateElements = document.querySelectorAll('.project-card, .skill-category, .about-content, .contact-content');
+// Observe non-grid elements for simple fade-in
+const animateElements = document.querySelectorAll('.about-content, .contact-content');
 animateElements.forEach(el => observer.observe(el));
+
+// ===============================================
+// STAGGERED CARD ANIMATIONS
+// ===============================================
+
+// Mark cards as hidden — JS-gated so cards are visible if JS fails
+document.querySelectorAll('.project-card, .skill-category, .highlight-card').forEach(el => {
+    el.classList.add('stagger-init');
+});
+
+const staggerObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const cards = [...entry.target.querySelectorAll('.stagger-init:not(.stagger-visible)')];
+            cards.forEach((card, i) => {
+                setTimeout(() => card.classList.add('stagger-visible'), i * 90);
+            });
+            staggerObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.projects-grid, .skills-grid, .rowing-highlights').forEach(grid => {
+    staggerObserver.observe(grid);
+});
 
 
 // ===============================================
@@ -489,16 +512,59 @@ console.log('%cInterested in how this was built? Check out the code!', 'color: #
 console.log('%cLooking for a developer? Let\'s connect! 🚀', 'color: #6366f1; font-size: 14px;');
 
 // ===============================================
+// DARK MODE
+// ===============================================
+
+const themeToggle = document.getElementById('themeToggle');
+const root = document.documentElement;
+
+function getTheme() {
+    return root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+}
+
+function applyTheme(theme, save = true) {
+    // Smooth cross-fade
+    root.classList.add('theme-switching');
+    root.setAttribute('data-theme', theme);
+    if (save) localStorage.setItem('theme', theme);
+
+    // Update toggle icon
+    if (themeToggle) {
+        themeToggle.querySelector('i').className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+
+    setTimeout(() => root.classList.remove('theme-switching'), 350);
+}
+
+// Set correct icon on load (theme may already be set by inline head script)
+if (themeToggle) {
+    themeToggle.querySelector('i').className = getTheme() === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    themeToggle.setAttribute('aria-label', getTheme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+
+    themeToggle.addEventListener('click', () => {
+        applyTheme(getTheme() === 'dark' ? 'light' : 'dark');
+    });
+}
+
+// Follow system preference changes only when user hasn't made a manual choice
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (evt) => {
+    if (!localStorage.getItem('theme')) {
+        applyTheme(evt.matches ? 'dark' : 'light', false);
+    }
+});
+
+// ===============================================
 // INITIALIZE
 // ===============================================
 
 document.addEventListener('DOMContentLoaded', () => {
     // Set initial active nav
     setActiveNav();
-    
+
     // Add loaded class to body for any CSS transitions
     document.body.classList.add('loaded');
-    
+
     console.log('Portfolio website initialized successfully! ✨');
 });
 
