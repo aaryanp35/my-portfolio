@@ -547,59 +547,6 @@ section {
 }
 
 /* ===============================================
-   STATS SECTION
-   =============================================== */
-
-.stats-section {
-    background: linear-gradient(135deg, #1e3a5f 0%, #2c5f7f 100%);
-    padding: 4rem 0;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.stat-card {
-    text-align: center;
-    padding: 2rem 1.5rem;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.stat-card:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-8px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-}
-
-.stat-card i {
-    font-size: 2.5rem;
-    color: #2e8b57;
-    margin-bottom: 1rem;
-}
-
-.stat-number {
-    font-size: 3rem;
-    font-weight: 700;
-    color: white;
-    margin-bottom: 0.5rem;
-    letter-spacing: -1px;
-}
-
-.stat-label {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.85);
-    font-weight: 400;
-}
-
-/* ===============================================
    TIMELINE SECTION
    =============================================== */
 
@@ -722,45 +669,6 @@ section {
         width: 100%;
         text-align: left;
     }
-}
-
-/* ===============================================
-   SPOTIFY SECTION
-   =============================================== */
-
-.spotify-section {
-    background: #ffffff;
-    padding: 3rem 0;
-}
-
-.spotify-embed-container {
-    max-width: 400px;
-    margin: 1.5rem auto;
-    padding: 1rem;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 8px 16px rgba(0, 0, 0, 0.04);
-    border: 1px solid #f0f0f0;
-}
-
-.spotify-embed-container iframe {
-    border-radius: 12px;
-}
-
-.spotify-note {
-    text-align: center;
-    color: #5f6368;
-    font-size: 0.875rem;
-    margin-top: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.spotify-note i {
-    color: #1DB954;
-    font-size: 1rem;
 }
 
 /* ===============================================
@@ -1526,10 +1434,6 @@ section {
         font-size: 1.5rem;
     }
 
-    /* Stats */
-    .stats-grid {
-        gap: 1.25rem;
-    }
 }
 
 @media (max-width: 640px) {
@@ -1559,16 +1463,6 @@ section {
 
     .image-placeholder {
         font-size: 4rem;
-    }
-
-    /* Stats — stack to single column on small phones */
-    .stats-grid {
-        grid-template-columns: 1fr;
-        max-width: 280px;
-    }
-
-    .stat-number {
-        font-size: 2.5rem;
     }
 
     /* About card */
@@ -1843,17 +1737,6 @@ section {
 
 [data-theme="dark"] .rowing-skills h4 { color: #60a5fa; }
 [data-theme="dark"] .rowing-skills ul li { color: #94a3b8; }
-
-/* Spotify */
-[data-theme="dark"] .spotify-section { background: #0d1526; }
-
-[data-theme="dark"] .spotify-embed-container {
-    background: #1e293b;
-    border-color: #2d3f55;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 8px 16px rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="dark"] .spotify-note { color: #64748b; }
 
 /* Skills */
 [data-theme="dark"] .skills { background: #0f172a; }
