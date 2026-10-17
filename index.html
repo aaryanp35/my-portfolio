@@ -1,470 +1,658 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Aaryan Patel - Portfolio showcasing web development projects and skills">
-    <title>Aaryan Patel | Portfolio</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Prevent flash of wrong theme -->
-    <script>
-        (function () {
-            const saved = localStorage.getItem('theme');
-            const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (saved === 'dark' || (!saved && sysDark)) {
-                document.documentElement.setAttribute('data-theme', 'dark');
-            }
-        })();
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aaryan Patel | Product &amp; Data</title>
+  <meta name="description" content="Aaryan Patel is a product manager building ML-driven payments and AI decision systems. Associate PM at DeUNA, Implementation Engineering Intern at Strand Analytica, University of Toronto varsity rower.">
+  <meta name="author" content="Aaryan Patel">
+  <link rel="canonical" href="https://aaryanp35.vercel.app/">
+  <meta name="theme-color" content="#0B0D10" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#F6F4EF" media="(prefers-color-scheme: light)">
+  <meta name="color-scheme" content="dark light">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Aaryan Patel">
+  <meta property="og:title" content="Aaryan Patel | Product &amp; Data">
+  <meta property="og:description" content="Product manager building ML-driven payments and AI decision systems. $230M projected GMV impact at DeUNA, AI wargaming at Strand Analytica.">
+  <meta property="og:url" content="https://aaryanp35.vercel.app/">
+  <meta property="og:image" content="https://aaryanp35.vercel.app/images/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Aaryan Patel standing on the San Francisco waterfront at night">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Aaryan Patel | Product &amp; Data">
+  <meta name="twitter:description" content="Product manager building ML-driven payments and AI decision systems.">
+  <meta name="twitter:image" content="https://aaryanp35.vercel.app/images/og-image.jpg">
+
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="images/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <script>
+    /* Runs before first paint: sets the "js" class, resolves the theme, and arms a 3s safety net. */
+    (function () {
+      var d = document.documentElement;
+      d.classList.add('js');
+      var theme = 'dark';
+      try {
+        var saved = localStorage.getItem('ap-theme');
+        if (saved === 'light' || saved === 'dark') {
+          theme = saved;
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+          theme = 'light';
+        }
+      } catch (e) {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) theme = 'light';
+      }
+      d.setAttribute('data-theme', theme);
+      setTimeout(function () {
+        if (!window.__apReady) d.classList.remove('js');
+      }, 3000);
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Aaryan Patel",
+    "url": "https://aaryanp35.vercel.app/",
+    "image": "https://aaryanp35.vercel.app/images/profile.jpg",
+    "email": "mailto:aaryanp35@gmail.com",
+    "jobTitle": "Associate Product Manager",
+    "description": "Product manager building ML-driven payments and AI decision systems.",
+    "worksFor": { "@type": "Organization", "name": "DeUNA" },
+    "alumniOf": { "@type": "CollegeOrUniversity", "name": "University of Toronto" },
+    "homeLocation": { "@type": "Place", "name": "Menlo Park, CA" },
+    "knowsAbout": ["Product management", "Payments orchestration", "Machine learning", "Experimentation and A/B testing", "Agentic AI", "Econometrics"],
+    "sameAs": [
+      "https://github.com/aaryanp35",
+      "https://www.linkedin.com/in/aaryan-p-5a4223331/"
+    ]
+  }
+  </script>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="nav-wrapper">
-                <a href="#home" class="logo"><span>Aaryan Patel</span></a>
-                <ul class="nav-menu">
-                    <li><a href="#home" class="nav-link">Home</a></li>
-                    <li><a href="#about" class="nav-link">About</a></li>
-                    <li><a href="#projects" class="nav-link">Projects</a></li>
-                    <li><a href="#rowing" class="nav-link">Rowing</a></li>
-                    <li><a href="#skills" class="nav-link">Skills</a></li>
-                    <li><a href="#contact" class="nav-link">Contact</a></li>
-                </ul>
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <div class="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-        </div>
-    </nav>
+  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+    <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .5A11.5 11.5 0 0 0 .5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></symbol>
+    <symbol id="i-linkedin" viewBox="0 0 24 24"><path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M3.5 5.5h17a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1h-17a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1Zm0 1.2 8.5 6.3 8.5-6.3"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M12 3.5v11m0 0-4-4m4 4 4-4M4.5 19.5h15"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M7 17 17 7m0 0H8.5M17 7v8.5"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M9 9h9.5a1 1 0 0 1 1 1v9.5a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V10a1 1 0 0 1 1-1ZM15.5 9V5.5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1V15a1 1 0 0 0 1 1H8"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></g></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2Z"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" d="M4 8h16M4 16h16"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></symbol>
+  </svg>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title"><span class="greeting-flip">Hi</span>, I'm <span class="highlight">Aaryan Patel</span></h1>
-                <p class="hero-subtitle">Data Analytics & AI Researcher</p>
-                <p class="hero-description">University of Toronto student passionate about applying quantitative analysis and programming to complex AI challenges, developing responsible multimodal AI solutions.</p>
-                <div class="hero-buttons">
-                    <a href="#projects" class="btn btn-primary">View My Work</a>
-                    <a href="#contact" class="btn btn-secondary">Get In Touch</a>
-                    <a href="resume.pdf" download class="btn btn-outline"><i class="fas fa-download"></i> Download CV</a>
-                </div>
-                <div class="social-links">
-                    <a href="https://github.com/aaryanp35" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                    <a href="https://www.linkedin.com/in/aaryan-p-5a4223331/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                    <a href="mailto:aaryanp35@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="scroll-indicator">
-            <span></span>
-        </div>
-    </section>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
 
-    <!-- About Section -->
-    <section id="about" class="about">
-        <div class="container">
-            <h2 class="section-title">About Me</h2>
-            <div class="about-content">
-                <div class="about-image">
-                    <img src="images/profile.png" alt="Aaryan Patel">
-                </div>
-                <div class="about-text">
-                    <h3>Hello! I'm Aaryan Patel</h3>
-                    <p>I'm an analytically driven 2nd-year student at the University of Toronto, majoring in Economics with Data Analytics and minoring in Computer Science & Statistics. I'm passionate about applying quantitative analysis and programming to complex AI challenges, particularly in developing responsible, multimodal AI and enhancing operational efficiency.</p>
-                    <p>Currently, I'm engaged in AI research investigating techniques to accelerate neural tree learning to reduce computational requirements and capital infrastructure spend. This work combines my interests in machine learning, data analysis, and practical applications of AI.</p>
-                    <p>Beyond academics, I'm a collegiate athlete on the University of Toronto Rowing Team and was selected for the U.S. Rowing Junior Olympic Development Program. I'm also passionate about STEM outreach, having developed and delivered computer literacy and coding lessons to diverse communities.</p>
-                    <div class="about-info">
-                        <div class="info-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>Menlo Park, CA</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-envelope"></i>
-                            <span>aaryanp35@gmail.com</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-graduation-cap"></i>
-                            <span>University of Toronto - Economics w/ Data Analytics</span>
-                        </div>
-                    </div>
-                    <a href="#contact" class="btn btn-primary">Let's Work Together</a>
-                </div>
-            </div>
-        </div>
-    </section>
+  <header class="site-header" id="top-bar">
+    <div class="progress" aria-hidden="true"></div>
+    <div class="container nav">
+      <a class="brand" href="#top" aria-label="Aaryan Patel, back to top">
+        <span class="brand-mark" aria-hidden="true">AP</span>
+        <span class="brand-name">Aaryan Patel</span>
+      </a>
 
-    <!-- Projects Section -->
-    <section id="projects" class="projects">
-        <div class="container">
-            <h2 class="section-title">Featured Projects</h2>
-            <p class="section-subtitle">Here are some of my recent works</p>
-            <div class="projects-grid">
-                <!-- Project 1 -->
-                <div class="project-card">
-                    <div class="project-image">
-                        <i class="fas fa-chart-line"></i>
-                        <div class="project-overlay">
-                            <a href="https://docs.google.com/document/d/1k-lWnVuose1mcRxSISmZhDaskLHwGHYT1TP0HjQr5mo/edit?usp=sharing" class="project-link" target="_blank"><i class="fas fa-file-alt"></i></a>
-                        </div>
-                    </div>
-                    <div class="project-content">
-                        <h3>Police Search Outcomes & Neighborhood Economics</h3>
-                        <p>Economic research paper examining how neighborhood home values predict police search probability through development-directed proactive enforcement mechanisms using SFPD stop-level data and Zillow Home Value Index.</p>
-                        <div class="project-tags">
-                            <span class="tag">Econometrics</span>
-                            <span class="tag">Linear Regression</span>
-                            <span class="tag">Machine Learning</span>
-                            <span class="tag">Policy Analysis</span>
-                            <span class="tag">Data Analysis</span>
-                            <span class="tag">Python</span>
-                            <span class="tag">Statistical Inference</span>
-                        </div>
-                    </div>
-                </div>
+      <nav class="nav-links" id="site-nav" aria-label="Primary">
+        <ul>
+          <li><a href="#experience" data-spy="experience">Experience</a></li>
+          <li><a href="#work" data-spy="work">Work</a></li>
+          <li><a href="#focus" data-spy="focus">Focus</a></li>
+          <li><a href="#skills" data-spy="skills">Skills</a></li>
+          <li><a href="#contact" data-spy="contact">Contact</a></li>
+        </ul>
+      </nav>
 
-                <!-- Project 2 -->
-                <div class="project-card">
-                    <div class="project-image">
-                        <i class="fas fa-graduation-cap"></i>
-                        <div class="project-overlay">
-                            <a href="https://github.com/ECO225-2026/eco225-project-aaryanp35/tree/main" class="project-link" target="_blank"><i class="fab fa-github"></i></a>
-                        </div>
-                    </div>
-                    <div class="project-content">
-                        <h3>ECO225 Empirical Project</h3>
-                        <p>Comprehensive empirical analysis combining regression analysis, machine learning (decision trees, random forests), and web scraping. Analyzed 150K+ police stops and created geospatial visualizations on police enforcement patterns across San Francisco neighborhoods.</p>
-                        <div class="project-tags">
-                            <span class="tag">Data Science</span>
-                            <span class="tag">Web Scraping</span>
-                            <span class="tag">GIS Mapping</span>
-                            <span class="tag">Random Forest</span>
-                            <span class="tag">Decision Trees</span>
-                            <span class="tag">Geospatial Analysis</span>
-                            <span class="tag">Pandas</span>
-                            <span class="tag">Scikit-learn</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project 3 -->
-                <div class="project-card">
-                    <div class="project-image">
-                        <i class="fas fa-map"></i>
-                        <div class="project-overlay">
-                            <a href="https://proxii.vercel.app/" class="project-link" target="_blank"><i class="fas fa-external-link-alt"></i></a>
-                        </div>
-                    </div>
-                    <div class="project-content">
-                        <h3>Proxii — Spatial Economics & Gentrification Risk Platform</h3>
-                        <p>Spatial economics research tool that ingests real-time business data via the Google Maps Places API to model neighborhood economic transitions. Constructed a "Proxii Score" index to quantify gentrification risk from point-of-interest density and sentiment signals (e.g., specialty coffee shops, fitness studios), applying hedonic pricing and spatial econometrics. Built end-to-end ML pipelines in Python and SQL to clean, merge, and model large-scale location datasets, with MCP integration and agentic workflows for automated data collection.</p>
-                        <div class="project-tags">
-                            <span class="tag">Spatial Econometrics</span>
-                            <span class="tag">Google Maps API</span>
-                            <span class="tag">Machine Learning</span>
-                            <span class="tag">Python</span>
-                            <span class="tag">SQL</span>
-                            <span class="tag">MCP</span>
-                            <span class="tag">Agentic Workflows</span>
-                            <span class="tag">Hedonic Pricing</span>
-                            <span class="tag">Vercel</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project 4 -->
-                <div class="project-card">
-                    <div class="project-image">
-                        <i class="fas fa-music"></i>
-                        <div class="project-overlay">
-                            <a href="https://github.com/aaryanp35/csc111-auratune" class="project-link" target="_blank"><i class="fab fa-github"></i></a>
-                        </div>
-                    </div>
-                    <div class="project-content">
-                        <h3>Music Mood Classifier</h3>
-                        <p>ML-based music recommender using decision tree classification to match user moods with songs from Spotify API, analyzing six audio attributes including danceability, valence, and loudness.</p>
-                        <div class="project-tags">
-                            <span class="tag">Python</span>
-                            <span class="tag">Pandas</span>
-                            <span class="tag">Spotify API</span>
-                            <span class="tag">Scikit-learn</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project 5 -->
-                <div class="project-card">
-                    <div class="project-image">
-                        <i class="fas fa-utensils"></i>
-                        <div class="project-overlay">
-                            <a href="https://github.com/aaryanp35/CSC207-Project-Meal-Planner" class="project-link" target="_blank"><i class="fab fa-github"></i></a>
-                        </div>
-                    </div>
-                    <div class="project-content">
-                        <h3>Meal Planner Application</h3>
-                        <p>Comprehensive meal planning app with recipe management, ingredient tracking, and nutrient analysis. Built with Clean Architecture, integrating Spoonacular and Edamam APIs for recipe data and meal planning features.</p>
-                        <div class="project-tags">
-                            <span class="tag">Java</span>
-                            <span class="tag">Clean Architecture</span>
-                            <span class="tag">APIs</span>
-                            <span class="tag">Maven</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project 6 -->
-                <div class="project-card">
-                    <div class="project-image">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                        <div class="project-overlay">
-                            <a href="https://stemtosternrowing.org/#home" class="project-link" target="_blank"><i class="fas fa-external-link-alt"></i></a>
-                        </div>
-                    </div>
-                    <div class="project-content">
-                        <h3>Community STEM Education</h3>
-                        <p>Developed and delivered computer literacy and coding curriculum for diverse age groups, bridging the digital divide through hands-on programming workshops and technology education.</p>
-                        <div class="project-tags">
-                            <span class="tag">Education</span>
-                            <span class="tag">Python</span>
-                            <span class="tag">Curriculum</span>
-                            <span class="tag">Outreach</span>
-                            <span class="tag">Volunteer Management</span>
-                            <span class="tag">Lesson Planning</span>
-                            <span class="tag">Youth Mentorship</span>
-                            <span class="tag">Community Service</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Rowing Section -->
-    <section id="rowing" class="rowing">
-        <div class="container">
-            <h2 class="section-title">Athletic Excellence</h2>
-            <p class="section-subtitle">Leadership through competitive rowing</p>
-            <div class="rowing-content">
-                <div class="rowing-image">
-                    <div class="rowing-icon">
-                        <i class="fas fa-water"></i>
-                    </div>
-                </div>
-                <div class="rowing-text">
-                    <h3>Competitive Rowing Career</h3>
-                    <p>As a dedicated athlete, I've combined academic excellence with competitive sports, developing discipline, teamwork, and leadership skills that translate directly to professional environments.</p>
-                    
-                    <div class="rowing-highlights">
-                        <div class="highlight-card">
-                            <div class="highlight-icon">
-                                <i class="fas fa-medal"></i>
-                            </div>
-                            <div class="highlight-content">
-                                <h4>University of Toronto Men's Rowing Team</h4>
-                                <p>Collegiate athlete competing on the varsity rowing team while maintaining academic excellence in Economics and Data Analytics.</p>
-                            </div>
-                        </div>
-
-                        <div class="highlight-card">
-                            <div class="highlight-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="highlight-content">
-                                <h4>Team Captain - Norcal Crew</h4>
-                                <p>Led a team of over 250 athletes to national championship, fostering a positive culture of hard work and teamwork (2020-2024).</p>
-                            </div>
-                        </div>
-
-                        <div class="highlight-card">
-                            <div class="highlight-icon">
-                                <i class="fas fa-trophy"></i>
-                            </div>
-                            <div class="highlight-content">
-                                <h4>U.S. Olympic Development Program</h4>
-                                <p>Selected for U.S. Rowing Olympic Development Program, competing among the nation's elite junior rowers.</p>
-                            </div>
-                        </div>
-
-                        <div class="highlight-card">
-                            <div class="highlight-icon">
-                                <i class="fas fa-award"></i>
-                            </div>
-                            <div class="highlight-content">
-                                <h4>Awards & Recognition</h4>
-                                <p>Leadership Award (2024), Best Teammate Award (2023), Hardest Team Worker (2021) - Norcal Rowing Crew Men's Program.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="rowing-skills">
-                        <h4>Skills Developed Through Athletics</h4>
-                        <ul>
-                            <li><i class="fas fa-check"></i> Leadership & team management under pressure</li>
-                            <li><i class="fas fa-check"></i> Discipline and time management balancing academics and athletics</li>
-                            <li><i class="fas fa-check"></i> Goal-setting and systematic performance improvement</li>
-                            <li><i class="fas fa-check"></i> Resilience and mental toughness</li>
-                            <li><i class="fas fa-check"></i> Communication and collaboration in high-stakes environments</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Skills Section -->
-    <section id="skills" class="skills">
-        <div class="container">
-            <h2 class="section-title">Skills & Technologies</h2>
-            <p class="section-subtitle">Technologies I work with</p>
-            <div class="skills-grid">
-                <div class="skill-category">
-                    <div class="category-icon">
-                        <i class="fas fa-code"></i>
-                    </div>
-                    <h3>Programming Languages</h3>
-                    <ul class="skill-list">
-                        <li><i class="fab fa-python"></i> Python (NumPy, Pandas, Scikit-learn)</li>
-                        <li><i class="fas fa-database"></i> SQL</li>
-                        <li><i class="fas fa-calculator"></i> MATLAB</li>
-                        <li><i class="fab fa-java"></i> Java</li>
-                        <li><i class="fas fa-code"></i> C++</li>
-                        <li><i class="fas fa-terminal"></i> Git & Version Control</li>
-                    </ul>
-                </div>
-
-                <div class="skill-category">
-                    <div class="category-icon">
-                        <i class="fas fa-brain"></i>
-                    </div>
-                    <h3>Machine Learning & AI</h3>
-                    <ul class="skill-list">
-                        <li><i class="fas fa-robot"></i> Linear/Logistic Regression</li>
-                        <li><i class="fas fa-project-diagram"></i> Classification & Clustering</li>
-                        <li><i class="fas fa-chart-line"></i> Model Evaluation Metrics</li>
-                        <li><i class="fas fa-clock"></i> Time Series Analysis</li>
-                        <li><i class="fas fa-network-wired"></i> Neural Networks (Research)</li>
-                        <li><i class="fas fa-flask"></i> TensorFlow & PyTorch</li>
-                    </ul>
-                </div>
-
-                <div class="skill-category">
-                    <div class="category-icon">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
-                    <h3>Data Analysis & Visualization</h3>
-                    <ul class="skill-list">
-                        <li><i class="fas fa-broom"></i> Data Cleaning & Preprocessing</li>
-                        <li><i class="fas fa-search"></i> Exploratory Data Analysis (EDA)</li>
-                        <li><i class="fas fa-chart-pie"></i> Matplotlib & Seaborn</li>
-                        <li><i class="fas fa-chart-area"></i> Plotly</li>
-                        <li><i class="fab fa-google"></i> Google Cloud Platform (GCP)</li>
-                        <li><i class="fab fa-aws"></i> AWS (Certification in Progress)</li>
-                    </ul>
-                </div>
-
-                <div class="skill-category">
-                    <div class="category-icon">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <h3>Tools & Other Skills</h3>
-                    <ul class="skill-list">
-                        <li><i class="fas fa-book"></i> Jupyter Notebooks</li>
-                        <li><i class="fab fa-google"></i> Google Colab</li>
-                        <li><i class="fas fa-code"></i> VS Code</li>
-                        <li><i class="fas fa-robot"></i> Agentic Workflows</li>
-                        <li><i class="fas fa-plug"></i> MCP (Model Context Protocol)</li>
-                        <li><i class="fas fa-crow"></i> OpenClaw</li>
-                        <li><i class="fas fa-square-root-alt"></i> Mathematical Proofs</li>
-                        <li><i class="fas fa-users"></i> Leadership & Team Management</li>
-                        <li><i class="fas fa-comments"></i> Public Speaking</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="contact">
-        <div class="container">
-            <h2 class="section-title">Get In Touch</h2>
-            <p class="section-subtitle">Let's discuss your next project</p>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <h3>Let's Connect</h3>
-                    <p>I'm always interested in discussing AI research, data science projects, and collaboration opportunities. Whether you have a question about my work or want to connect, feel free to reach out!</p>
-                    <div class="contact-details">
-                        <div class="contact-item">
-                            <i class="fas fa-envelope"></i>
-                            <div>
-                                <h4>Email</h4>
-                                <a href="mailto:aaryanp35@gmail.com">aaryanp35@gmail.com</a>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-phone"></i>
-                            <div>
-                                <h4>Phone</h4>
-                                <a href="tel:+14372832790">(437) 283-2790</a>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <div>
-                                <h4>Location</h4>
-                                <p>Toronto, ON, Canada</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="social-links-contact">
-                        <a href="https://github.com/aaryanp35" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                        <a href="https://linkedin.com/in/aaryanpatel" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://twitter.com/aaryanpatel" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="mailto:aaryanp35@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
-                    </div>
-                </div>
-
-                <div class="contact-cta">
-                    <i class="fas fa-envelope contact-cta-icon"></i>
-                    <p>The best way to reach me is directly by email. I typically respond within 24 hours.</p>
-                    <a href="mailto:aaryanp35@gmail.com" class="btn btn-primary contact-email-btn">
-                        <i class="fas fa-paper-plane"></i> Email Me
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Project Modal -->
-    <div class="modal-overlay" id="projectModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-        <div class="modal-card">
-            <button class="modal-close" id="modalClose" aria-label="Close"><i class="fas fa-times"></i></button>
-            <div class="modal-icon-wrap">
-                <i class="modal-icon" id="modalIcon"></i>
-            </div>
-            <h3 class="modal-title" id="modalTitle"></h3>
-            <p class="modal-description" id="modalDescription"></p>
-            <div class="modal-tags" id="modalTags"></div>
-            <a class="btn btn-primary modal-link" id="modalLink" target="_blank" rel="noopener">View Project <i class="fas fa-arrow-right"></i></a>
-        </div>
+      <div class="nav-actions">
+        <a class="btn btn-sm btn-ghost nav-resume" href="resume.pdf" download>
+          <svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>
+          <span>Resume</span>
+        </a>
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to light theme">
+          <svg class="icon icon-sun" aria-hidden="true"><use href="#i-sun"/></svg>
+          <svg class="icon icon-moon" aria-hidden="true"><use href="#i-moon"/></svg>
+        </button>
+        <button class="icon-btn nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
+          <svg class="icon icon-open" aria-hidden="true"><use href="#i-menu"/></svg>
+          <svg class="icon icon-shut" aria-hidden="true"><use href="#i-close"/></svg>
+        </button>
+      </div>
     </div>
+  </header>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <p>&copy; 2025 Aaryan Patel. All rights reserved.</p>
-                <p class="footer-tagline">Designed & Built with <i class="fas fa-heart"></i> by Aaryan Patel</p>
-            </div>
+  <main id="main" tabindex="-1">
+
+    <!-- HERO -->
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="status-row mono">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span>Menlo Park, CA</span>
+            <span class="sep" aria-hidden="true">/</span>
+            <span>Open to 2027 roles</span>
+          </p>
+          <h1 id="hero-title" class="hero-name" data-split>Aaryan <em>Patel</em></h1>
+          <p class="hero-lead">Product manager building ML-driven payments and AI decision systems.</p>
+          <p class="hero-sub">Associate PM at DeUNA, shipping the ML optimizer for merchant-initiated transactions. Economics and Data Analytics at the University of Toronto, and a varsity rower.</p>
+
+          <ul class="chips" aria-label="Headline results">
+            <li class="chip">
+              <span class="chip-num"><span class="count" data-to="230" data-prefix="$" data-suffix="M">$230M</span></span>
+              <span class="chip-lbl mono">Projected annualized GMV, DeUNA A/B testing</span>
+            </li>
+            <li class="chip">
+              <span class="chip-num"><span class="count" data-to="300" data-prefix="$" data-suffix="K+">$300K+</span></span>
+              <span class="chip-lbl mono">Annual GMV gain from SQL analysis</span>
+            </li>
+            <li class="chip">
+              <span class="chip-num"><span class="count" data-to="250093" data-prefix="" data-suffix="">250,093</span></span>
+              <span class="chip-lbl mono">Police stops analyzed in ECO225 research</span>
+            </li>
+          </ul>
+
+          <div class="cta-row">
+            <a class="btn btn-primary" href="resume.pdf" download data-magnetic>
+              <svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>
+              <span>Download resume</span>
+            </a>
+            <a class="btn btn-ghost" href="mailto:aaryanp35@gmail.com" data-magnetic>
+              <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg>
+              <span>Email me</span>
+            </a>
+          </div>
         </div>
-    </footer>
 
-    <script src="script.js"></script>
+        <figure class="hero-portrait">
+          <picture>
+            <source srcset="images/profile.webp" type="image/webp">
+            <img src="images/profile.jpg" width="1200" height="1500" alt="Aaryan Patel standing on the San Francisco waterfront at night" loading="eager" fetchpriority="high" decoding="async">
+          </picture>
+          <figcaption class="mono">Menlo Park, CA</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section class="section" id="experience" aria-labelledby="experience-title">
+      <div class="container split-layout">
+        <div class="pin-col">
+          <p class="eyebrow mono">01 / Experience</p>
+          <h2 id="experience-title" data-split>Shipping ML where <em>money moves</em>.</h2>
+          <p class="pin-note">Two current roles, both part-time during the school year, alongside a varsity rowing schedule.</p>
+          <a class="text-link" href="resume.pdf" download>Full resume (PDF)
+            <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+          </a>
+        </div>
+
+        <div class="timeline" data-timeline>
+          <div class="rail" aria-hidden="true"><span class="rail-fill"></span></div>
+          <ol class="entries">
+            <li class="entry" data-reveal>
+              <span class="dot" aria-hidden="true"></span>
+              <article class="entry-card">
+                <header>
+                  <p class="entry-date mono"><time datetime="2026-09">Sep 2026</time> - Present</p>
+                  <h3>Associate Product Manager <span class="at">at DeUNA</span></h3>
+                </header>
+                <ul class="bullets">
+                  <li>Moved from Data Science Intern to Associate PM of the ML Optimizer for Merchant-Initiated Transactions (MIT) and its related agentic workflows.</li>
+                  <li>DeUNA is a payments orchestration platform connecting major F100 companies, tech, airlines, and QSRs across North America, LATAM, and Europe.</li>
+                  <li>Part-time during the school year.</li>
+                </ul>
+                <ul class="tags mono" aria-label="Focus areas">
+                  <li>Product strategy</li><li>ML optimizer</li><li>Agentic workflows</li><li>Payments</li>
+                </ul>
+              </article>
+            </li>
+
+            <li class="entry" data-reveal>
+              <span class="dot dot-amber" aria-hidden="true"></span>
+              <article class="entry-card">
+                <header>
+                  <p class="entry-date mono"><time datetime="2026-10">Oct 2026</time> - Present</p>
+                  <h3>Implementation Engineering Intern <span class="at">at Strand Analytica</span></h3>
+                </header>
+                <ul class="bullets">
+                  <li>AI wargaming simulations: delivering custom-built harnesses and AI layers for the British Ministry of Defence and the U.S. Department of War.</li>
+                  <li>Building tailored wargaming solutions that inform strategic decision-making in wartime environments.</li>
+                  <li>Part-time during the school year.</li>
+                </ul>
+                <ul class="tags mono" aria-label="Focus areas">
+                  <li class="tag-amber">Defense tech</li><li>AI wargaming</li><li>Simulation harnesses</li>
+                </ul>
+              </article>
+            </li>
+
+            <li class="entry" data-reveal>
+              <span class="dot" aria-hidden="true"></span>
+              <article class="entry-card">
+                <header>
+                  <p class="entry-date mono"><time datetime="2026-07">Jul 2026</time> - <time datetime="2026-09">Sep 2026</time></p>
+                  <h3>Data Science Intern <span class="at">at DeUNA</span></h3>
+                </header>
+                <ul class="bullets">
+                  <li>Led A/B testing for payment request optimization end to end: experiment structure, KPIs, success metrics, and feature opportunities from data analysis. Projected to increase annualized GMV for DeUNA merchants by <strong class="num">$230M</strong>.</li>
+                  <li>SQL-driven analysis across DeUNA's four-layer payments architecture (Snowflake, Postgres, Redis) increased GMV by over <strong class="num">$300K</strong> annually.</li>
+                  <li>Built and trained MVP reconciliation models: a gradient boosting ranker for transaction matching and a neural network schema detector for PSP settlement drift. Drove customer adoption and executive buy-in for additional staffing and funding.</li>
+                </ul>
+                <ul class="tags mono" aria-label="Focus areas">
+                  <li>A/B testing</li><li>Approval rate analysis</li><li>Fraud model evaluation</li><li>Decline code normalization</li>
+                </ul>
+              </article>
+            </li>
+
+            <li class="entry" data-reveal>
+              <span class="dot" aria-hidden="true"></span>
+              <article class="entry-card">
+                <header>
+                  <p class="entry-date mono"><time datetime="2026-05">May 2026</time> - <time datetime="2026-07">Jul 2026</time></p>
+                  <h3>AI Product Intern <span class="at">at LookAcross AI</span></h3>
+                </header>
+                <ul class="bullets">
+                  <li>AI-native GTM intelligence startup. Built agentic workflows connecting 8+ tools (Gmail, Slack, Linear, Fireflies, Calendar, Drive) into a unified founder dashboard, using the Anthropic Claude API, OpenRouter multi-model orchestration, MCP for structured tool access, and RAG for grounding.</li>
+                  <li>Moved an event intelligence feature from concept to active development: problem framing, competitive analysis, data model design, phased delivery estimates, and risk assessment.</li>
+                  <li>Built the pipeline foundation: agentic scraping, entity resolution against partner records, and white-space scoring integrated with the Partner Intelligence Engine.</li>
+                </ul>
+                <ul class="tags mono" aria-label="Focus areas">
+                  <li>Claude API</li><li>MCP</li><li>RAG</li><li>Entity resolution</li>
+                </ul>
+              </article>
+            </li>
+
+            <li class="entry" data-reveal>
+              <span class="dot" aria-hidden="true"></span>
+              <article class="entry-card">
+                <header>
+                  <p class="entry-date mono"><time datetime="2024-06">Summer 2024</time></p>
+                  <h3>Engineering Intern <span class="at">at American Precision Gear</span></h3>
+                </header>
+                <ul class="bullets">
+                  <li>DoD CNC contract shop. QC and inspection on critical aircraft and space vehicle parts, <span class="num">1,000-2,000</span> parts a week. Cleaned and analyzed <span class="num">1,000+</span> inspection records to surface process inefficiencies.</li>
+                  <li>Operated mills, routers, and cutters. Reduced manual overhead across inspection, logistics, and documentation using AI tools.</li>
+                </ul>
+                <ul class="tags mono" aria-label="Focus areas">
+                  <li>Quality control</li><li>CNC</li><li>Process analysis</li>
+                </ul>
+              </article>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- SELECTED WORK -->
+    <section class="section" id="work" aria-labelledby="work-title">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow mono">02 / Selected work</p>
+          <h2 id="work-title" data-split>Problem, role, <em>result</em>.</h2>
+        </div>
+
+        <div class="bento">
+          <article class="tile tile-lg tile-deuna" data-reveal>
+            <p class="tile-kicker mono">DeUNA / Payments ML</p>
+            <h3>ML Optimizer for Merchant-Initiated Transactions</h3>
+            <div class="metrics">
+              <p class="metric">
+                <span class="metric-num"><span class="count" data-to="230" data-prefix="$" data-suffix="M">$230M</span></span>
+                <span class="metric-lbl mono">projected annualized GMV for DeUNA merchants</span>
+              </p>
+              <p class="metric">
+                <span class="metric-num"><span class="count" data-to="300" data-prefix="$" data-suffix="K+">$300K+</span></span>
+                <span class="metric-lbl mono">annual GMV gain from SQL analysis</span>
+              </p>
+            </div>
+            <dl class="prl">
+              <div><dt class="mono">Problem</dt><dd>Payment requests and PSP settlements leave GMV on the table and drift out of reconciliation.</dd></div>
+              <div><dt class="mono">Role</dt><dd>Data Science Intern, then Associate PM. Led the A/B testing end to end, now own the optimizer and its agentic workflows.</dd></div>
+              <div><dt class="mono">Result</dt><dd>Experiment design with KPIs and success metrics, plus MVP reconciliation models (gradient boosting ranker, neural network schema detector) that won executive buy-in for more staffing and funding.</dd></div>
+            </dl>
+            <a class="tile-link" href="#experience">See the role
+              <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </a>
+          </article>
+
+          <article class="tile tile-athenaeum" data-reveal>
+            <p class="tile-kicker mono">Athenaeum / Independent, 2026</p>
+            <h3>AI storytelling for indie filmmakers</h3>
+            <dl class="prl">
+              <div><dt class="mono">Problem</dt><dd>Indie filmmakers need AI help that keeps their voice and their authorship intact.</dd></div>
+              <div><dt class="mono">Role</dt><dd>Owned product strategy and roadmap. Turned design-partner feedback into specs and PRDs. Built the backend.</dd></div>
+              <div><dt class="mono">Result</dt><dd>Shipped an MVP that generates treatments in Sundance, IDA, and ITVS formats.</dd></div>
+            </dl>
+          </article>
+
+          <article class="tile tile-proxii" data-reveal>
+            <p class="tile-kicker mono">Proxii / Spatial economics</p>
+            <h3>Gentrification-risk scoring</h3>
+            <dl class="prl">
+              <div><dt class="mono">Problem</dt><dd>Neighborhood change is hard to see before prices move.</dd></div>
+              <div><dt class="mono">Role</dt><dd>Built the Python and SQL ML pipelines and the React front end.</dd></div>
+              <div><dt class="mono">Result</dt><dd>The "Proxii Score", built from Google Places POI density and sentiment, is live on Vercel.</dd></div>
+            </dl>
+            <div class="tile-links">
+              <a class="tile-link" href="https://proxii.vercel.app/" target="_blank" rel="noopener">Live site
+                <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+              </a>
+              <a class="tile-link" href="https://github.com/aaryanp35/Proxii-1" target="_blank" rel="noopener">Repo
+                <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+              </a>
+            </div>
+          </article>
+
+          <article class="tile tile-strand" data-reveal>
+            <p class="tile-kicker mono"><span class="tag-amber-inline">Defense tech</span> Strand Analytica</p>
+            <h3>AI wargaming simulations</h3>
+            <dl class="prl">
+              <div><dt class="mono">Problem</dt><dd>Strategic decisions in wartime environments need tailored, testable simulation.</dd></div>
+              <div><dt class="mono">Role</dt><dd>Implementation Engineering Intern. Delivering custom-built harnesses and AI layers.</dd></div>
+              <div><dt class="mono">Result</dt><dd>Building wargaming solutions for the British Ministry of Defence and the U.S. Department of War.</dd></div>
+            </dl>
+            <a class="tile-link" href="#focus">Payments and defense
+              <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </a>
+          </article>
+
+          <article class="tile tile-eco" data-reveal>
+            <p class="tile-kicker mono">ECO225 research / Spring 2026</p>
+            <h3>Home values and police search outcomes</h3>
+            <dl class="prl">
+              <div><dt class="mono">Problem</dt><dd>Do neighborhood home values shape who gets searched in a stop?</dd></div>
+              <div><dt class="mono">Role</dt><dd>Merged <span class="num">250,093</span> SFPD stops with the Zillow Home Value Index. Ran 8 OLS specs with HC1 robust SEs, a regression tree, and a random forest.</dd></div>
+              <div><dt class="mono">Result</dt><dd>Home values predict search likelihood, mediated by low-level stop concentration, in line with order-maintenance policing theory.</dd></div>
+            </dl>
+            <div class="tile-links">
+              <a class="tile-link" href="https://docs.google.com/document/d/1k-lWnVuose1mcRxSISmZhDaskLHwGHYT1TP0HjQr5mo/edit?usp=sharing" target="_blank" rel="noopener">Paper
+                <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+              </a>
+              <a class="tile-link" href="https://github.com/ECO225-2026/eco225-project-aaryanp35" target="_blank" rel="noopener">Code
+                <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+              </a>
+            </div>
+          </article>
+
+          <article class="tile tile-firsthand" data-reveal>
+            <p class="tile-kicker mono">Firsthand / Gemini</p>
+            <h3>The other side of the story</h3>
+            <dl class="prl">
+              <div><dt class="mono">Problem</dt><dd>News articles show one side of an issue.</dd></div>
+              <div><dt class="mono">Role</dt><dd>Built the app on the Gemini API.</dd></div>
+              <div><dt class="mono">Result</dt><dd>It reads an article and writes a first-person story from the other side.</dd></div>
+            </dl>
+            <a class="tile-link" href="https://github.com/aaryanp35/firsthand" target="_blank" rel="noopener">Repo
+              <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </a>
+          </article>
+        </div>
+
+        <h3 class="subhead mono">Deep dives</h3>
+        <div class="stack" data-stack>
+          <article class="stack-card">
+            <div class="stack-meta">
+              <p class="mono">01 / DeUNA</p>
+              <h3>Experimentation and reconciliation</h3>
+            </div>
+            <ul class="bullets">
+              <li>Structured payment request A/B tests with clear KPIs and success metrics, then turned the data into feature opportunities.</li>
+              <li>Ran SQL analysis across the four-layer payments architecture on Snowflake, Postgres, and Redis.</li>
+              <li>Trained a gradient boosting ranker for transaction matching and a neural network schema detector for PSP settlement drift.</li>
+              <li>Approval rate analysis, fraud model evaluation, and decline code normalization across the payments pipeline.</li>
+            </ul>
+          </article>
+          <article class="stack-card">
+            <div class="stack-meta">
+              <p class="mono">02 / Athenaeum</p>
+              <h3>A product with a point of view on authorship</h3>
+            </div>
+            <ul class="bullets">
+              <li>Owned a 6-layer architecture, from design-partner feedback to specs and PRDs.</li>
+              <li>Backend on FastAPI, Postgres, and pgvector, with RAG-powered voice preservation (Verbalized Sampling).</li>
+              <li>A Dramaturg agent asks clarifying questions and surfaces narrative gaps.</li>
+              <li>An authorship ledger tracks the provenance of every output byte.</li>
+            </ul>
+          </article>
+          <article class="stack-card">
+            <div class="stack-meta">
+              <p class="mono">03 / Proxii</p>
+              <h3>Spatial economics, productized</h3>
+            </div>
+            <ul class="bullets">
+              <li>Scores gentrification risk from Google Places POI density and sentiment.</li>
+              <li>Hedonic pricing and spatial econometrics underneath the score.</li>
+              <li>Python and SQL ML pipelines feeding a React app deployed on Vercel.</li>
+            </ul>
+          </article>
+        </div>
+
+        <h3 class="subhead mono">Course projects</h3>
+        <ul class="more-list">
+          <li>
+            <a href="https://github.com/aaryanp35/csc111-auratune" target="_blank" rel="noopener">
+              <span class="more-title">Auratune</span>
+              <span class="more-desc">CSC111. A music mood classifier using decision trees over Spotify audio features.</span>
+              <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/aaryanp35/CSC207-Project-Meal-Planner" target="_blank" rel="noopener">
+              <span class="more-title">Meal Planner</span>
+              <span class="more-desc">CSC207. Java in Clean Architecture, using the Spoonacular and Edamam APIs.</span>
+              <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- PAYMENTS + DEFENSE BAND -->
+    <section class="band" id="focus" aria-labelledby="focus-title">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow mono">03 / Focus</p>
+          <h2 id="focus-title" data-split>Two domains, one habit: model the decision, <em>then test it</em>.</h2>
+        </div>
+
+        <div class="band-grid">
+          <div class="band-col" data-reveal>
+            <p class="band-tag mono">Payments orchestration</p>
+            <h3>Routing money with ML</h3>
+            <p>DeUNA connects F100 companies, tech, airlines, and QSRs across North America, LATAM, and Europe through one orchestration layer. I work on the ML optimizer for merchant-initiated transactions and the agentic workflows around it.</p>
+
+            <figure class="flow">
+              <svg viewBox="0 0 420 400" role="img" aria-labelledby="flow-title flow-desc" id="flow-svg">
+                <title id="flow-title">Payment flow diagram</title>
+                <desc id="flow-desc">A merchant sends a transaction to an orchestrator, then to an ML router, which chooses between three acquirers.</desc>
+                <path id="flow-main" class="flow-line" pathLength="1" d="M210 54 V340"/>
+                <path class="flow-line flow-branch" pathLength="1" d="M210 274 C210 305 75 300 75 340"/>
+                <path class="flow-line flow-branch" pathLength="1" d="M210 274 C210 305 345 300 345 340"/>
+
+                <g class="flow-node" data-node>
+                  <rect x="110" y="10" width="200" height="44" rx="10"/>
+                  <text x="210" y="37" text-anchor="middle">Merchant</text>
+                </g>
+                <g class="flow-node" data-node>
+                  <rect x="110" y="120" width="200" height="44" rx="10"/>
+                  <text x="210" y="147" text-anchor="middle">Orchestrator</text>
+                </g>
+                <g class="flow-node flow-node-accent" data-node>
+                  <rect x="110" y="230" width="200" height="44" rx="10"/>
+                  <text x="210" y="257" text-anchor="middle">ML router</text>
+                </g>
+                <g class="flow-node" data-node>
+                  <rect x="10" y="340" width="130" height="44" rx="10"/>
+                  <text x="75" y="367" text-anchor="middle">Acquirer A</text>
+                </g>
+                <g class="flow-node" data-node>
+                  <rect x="145" y="340" width="130" height="44" rx="10"/>
+                  <text x="210" y="367" text-anchor="middle">Acquirer B</text>
+                </g>
+                <g class="flow-node" data-node>
+                  <rect x="280" y="340" width="130" height="44" rx="10"/>
+                  <text x="345" y="367" text-anchor="middle">Acquirer C</text>
+                </g>
+                <text class="flow-label" x="222" y="92" data-node>transaction</text>
+                <text class="flow-label" x="222" y="202" data-node>decision</text>
+                <circle id="flow-dot" class="flow-dot" r="6" cx="210" cy="54"/>
+              </svg>
+              <figcaption class="mono">Simplified illustration of an orchestration flow, not DeUNA's production architecture.</figcaption>
+            </figure>
+          </div>
+
+          <div class="band-col band-col-defense" data-reveal>
+            <p class="band-tag band-tag-amber mono">Defense tech</p>
+            <h3>AI wargaming for the UK MoD and U.S. Department of War</h3>
+            <p>At Strand Analytica I deliver custom-built harnesses and AI layers that power tailored wargaming simulations, built to inform strategic decision-making in wartime environments.</p>
+
+            <div class="shop-sim">
+              <p class="mono shop-sim-title">From the shop floor to simulation</p>
+              <ol class="shop-sim-steps">
+                <li>
+                  <span class="mono">Summer 2024</span>
+                  <strong>American Precision Gear</strong>
+                  <span>DoD CNC contract shop. QC and inspection on critical aircraft and space vehicle parts, 1,000-2,000 parts a week.</span>
+                </li>
+                <li class="shop-sim-arrow" aria-hidden="true">
+                  <svg class="icon"><use href="#i-arrow"/></svg>
+                </li>
+                <li>
+                  <span class="mono">Oct 2026 - Present</span>
+                  <strong>Strand Analytica</strong>
+                  <span>Simulation harnesses and AI layers for defense planning.</span>
+                </li>
+              </ol>
+            </div>
+            <p class="band-note mono">Public-level description only.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ATHLETICS STRIP -->
+    <section class="strip" id="rowing" aria-labelledby="rowing-title">
+      <div class="container">
+        <div class="strip-head">
+          <h2 id="rowing-title" class="strip-title mono">Athletics / Discipline and teamwork</h2>
+          <a class="text-link" href="https://stemtosternrowing.org/" target="_blank" rel="noopener">STEM outreach and coding lessons
+            <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+          </a>
+        </div>
+        <ul class="strip-stats" data-reveal>
+          <li><span class="strip-k mono">Now</span><span class="strip-v">University of Toronto Varsity Men's Rowing</span></li>
+          <li><span class="strip-k mono">2020 - 2024</span><span class="strip-v">Team Captain, Norcal Crew: a <span class="num">250+</span> athlete program, national championship</span></li>
+          <li><span class="strip-k mono">Selected</span><span class="strip-v">U.S. Rowing Olympic Development Program</span></li>
+          <li><span class="strip-k mono">Awards</span><span class="strip-v">Leadership Award 2024, Best Teammate 2023, Hardest Team Worker 2021</span></li>
+        </ul>
+        <svg class="oar" viewBox="0 0 1200 60" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+          <path id="oar-path" d="M0 30 C 100 6, 200 6, 300 30 S 500 54, 600 30 S 800 6, 900 30 S 1100 54, 1200 30" fill="none" vector-effect="non-scaling-stroke"/>
+          <circle id="oar-dot" r="4" cx="0" cy="30"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- EDUCATION + SKILLS -->
+    <section class="section" id="skills" aria-labelledby="skills-title">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow mono">04 / Education and skills</p>
+          <h2 id="skills-title" data-split>Training and <em>toolkit</em>.</h2>
+        </div>
+
+        <div class="edu-skills">
+          <div class="edu">
+            <h3 class="col-title mono">Education</h3>
+            <article class="edu-card" data-reveal>
+              <p class="entry-date mono">2024 - Present</p>
+              <h4>University of Toronto</h4>
+              <p class="edu-major">Economics with Data Analytics. Minors in Computer Science and Statistics. Varsity student-athlete (rowing).</p>
+              <p class="edu-courses">Advanced Micro and Macro Theory, Probability and Statistics I, Linear Algebra, Big-Data Tools for Economists, Foundations of CS I and II, Software Design.</p>
+            </article>
+            <article class="edu-card" data-reveal>
+              <p class="entry-date mono">2020 - 2023</p>
+              <h4>Menlo-Atherton High School</h4>
+              <p class="edu-major">Founded the MA Hackers Club (2023). AP CS A and AP CS Principles.</p>
+            </article>
+          </div>
+
+          <div class="skills">
+            <h3 class="col-title mono">Skills</h3>
+            <div class="skill-group" data-reveal>
+              <h4 class="mono">Programming</h4>
+              <ul class="skill-list">
+                <li>Python (NumPy, Pandas, scikit-learn, SciPy)</li><li>SQL</li><li>MATLAB</li><li>Java</li><li>C++</li><li>R (basic)</li><li>JavaScript (basic)</li>
+              </ul>
+            </div>
+            <div class="skill-group" data-reveal>
+              <h4 class="mono">AI and LLM</h4>
+              <ul class="skill-list">
+                <li>Prompt engineering</li><li>LLM API integration (Anthropic Claude API, OpenAI, OpenRouter)</li><li>Agentic coding (Claude Code)</li><li>System prompt design</li><li>Multi-model orchestration</li><li>MCP</li><li>RAG</li>
+              </ul>
+            </div>
+            <div class="skill-group" data-reveal>
+              <h4 class="mono">Data and infrastructure</h4>
+              <ul class="skill-list">
+                <li>Snowflake</li><li>Postgres</li><li>Redis</li><li>Supabase</li><li>pgvector</li><li>FastAPI</li><li>React</li><li>Vercel</li><li>A/B testing and experimentation</li><li>Econometrics</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section contact" id="contact" aria-labelledby="contact-title">
+      <div class="container">
+        <p class="eyebrow mono">05 / Contact</p>
+        <h2 id="contact-title" class="say" data-reveal><span>Say</span> <span class="rotator"><span class="sr-only">hello</span><em class="rot-word" id="rot-word" aria-hidden="true" lang="en">hello</em></span></h2>
+        <p class="contact-lead">Open to 2027 roles in product and data. The fastest way to reach me is email.</p>
+
+        <div class="contact-main">
+          <a class="mail-giant" href="mailto:aaryanp35@gmail.com" data-magnetic>aaryanp35@gmail.com</a>
+          <div class="copy-wrap">
+            <button class="btn btn-ghost" id="copy-email" type="button" data-email="aaryanp35@gmail.com">
+              <svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg>
+              <span>Copy email</span>
+            </button>
+            <span class="copy-status mono" id="copy-status" role="status" aria-live="polite"></span>
+          </div>
+        </div>
+
+        <ul class="contact-links">
+          <li><a href="https://www.linkedin.com/in/aaryan-p-5a4223331/" target="_blank" rel="noopener">
+            <svg class="icon" aria-hidden="true"><use href="#i-linkedin"/></svg><span>LinkedIn</span><svg class="icon icon-end" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+          <li><a href="https://github.com/aaryanp35" target="_blank" rel="noopener">
+            <svg class="icon" aria-hidden="true"><use href="#i-github"/></svg><span>GitHub</span><svg class="icon icon-end" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+          <li><a href="resume.pdf" download>
+            <svg class="icon" aria-hidden="true"><use href="#i-download"/></svg><span>Resume (PDF)</span><svg class="icon icon-end" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-row mono">
+      <p>&copy; 2026 Aaryan Patel</p>
+      <p>Menlo Park, CA <span class="sep" aria-hidden="true">/</span> <span id="local-time"></span></p>
+      <p><a href="#top">Back to top</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/MotionPathPlugin.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.1/dist/lenis.min.js" defer></script>
+  <script src="script.js" defer></script>
 </body>
 </html>

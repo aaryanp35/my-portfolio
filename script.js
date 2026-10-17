@@ -1,521 +1,444 @@
-// ===============================================
-// PREVENT SCROLL RESTORATION ON PAGE LOAD
-// ===============================================
+/* Aaryan Patel portfolio.
+   Core features (theme, nav, copy, clock, scroll-spy) run without any library.
+   Motion runs only when GSAP loaded and the page still has the "js" class. */
+(function () {
+  'use strict';
 
-if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'manual';
-}
+  var html = document.documentElement;
+  var $ = function (sel, root) { return (root || document).querySelector(sel); };
+  var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
+  var reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var lenis = null;
 
-window.addEventListener('load', () => {
-    window.scrollTo(0, 0);
-});
+  /* ---------- Theme ---------- */
+  var THEME_KEY = 'ap-theme';
+  var THEME_BG = { dark: '#0B0D10', light: '#F6F4EF' };
 
-// ===============================================
-// ANIMATED GREETING (Apple-style)
-// ===============================================
+  function storedTheme() {
+    try {
+      var t = localStorage.getItem(THEME_KEY);
+      return t === 'light' || t === 'dark' ? t : null;
+    } catch (e) { return null; }
+  }
 
-const greetings = ['Hi', 'Hola', 'こんにちは', 'Bonjour', 'Ciao', '你好', 'Olá', 'Hello', 'Привет', 'Hallo'];
-let currentGreetingIndex = 0;
-const greetingElement = document.querySelector('.greeting-flip');
+  function applyTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    $$('meta[name="theme-color"]').forEach(function (m) { m.setAttribute('content', THEME_BG[theme]); });
+    var btn = $('#theme-toggle');
+    if (btn) btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+  }
 
-function rotateGreeting() {
-    if (!greetingElement) return;
-    
-    // Flip out
-    greetingElement.style.animation = 'flipOut 0.4s ease-in forwards';
-    
-    setTimeout(() => {
-        // Change text
-        currentGreetingIndex = (currentGreetingIndex + 1) % greetings.length;
-        greetingElement.textContent = greetings[currentGreetingIndex];
-        
-        // Flip in
-        greetingElement.style.animation = 'flipIn 0.4s ease-out forwards';
-    }, 400);
-}
-
-// Start rotation after page load
-setTimeout(() => {
-    setInterval(rotateGreeting, 1750);
-}, 2000);
-
-// ===============================================
-// MAGNETIC CURSOR EFFECT
-// ===============================================
-
-const magneticElements = document.querySelectorAll('.magnetic, .btn, .nav-link, .project-card');
-
-magneticElements.forEach(element => {
-    element.addEventListener('mousemove', (e) => {
-        if (window.matchMedia('(hover: none)').matches) return;
-        const rect = element.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        
-        const distance = Math.sqrt(x * x + y * y);
-        const maxDistance = 60;
-        
-        if (distance < maxDistance) {
-            const strength = (maxDistance - distance) / maxDistance;
-            const moveX = x * strength * 0.3;
-            const moveY = y * strength * 0.3;
-            
-            element.style.transform = `translate(${moveX}px, ${moveY}px)`;
-        }
-    });
-    
-    element.addEventListener('mouseleave', () => {
-        element.style.transform = 'translate(0, 0)';
-    });
-});
-
-// ===============================================
-// NAVIGATION & MOBILE MENU
-// ===============================================
-
-const hamburger = document.querySelector('.hamburger');
-const navMenu = document.querySelector('.nav-menu');
-const navLinks = document.querySelectorAll('.nav-link');
-const navbar = document.querySelector('.navbar');
-
-// Toggle mobile menu
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navMenu.classList.toggle('active');
-    document.body.style.overflow = hamburger.classList.contains('active') ? 'hidden' : 'auto';
-});
-
-// Close mobile menu when clicking on nav links
-navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
-        document.body.style.overflow = 'auto';
-    });
-});
-
-// Close mobile menu when clicking outside
-document.addEventListener('click', (e) => {
-    if (!navMenu.contains(e.target) && !hamburger.contains(e.target)) {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
-});
-
-// ===============================================
-// ACTIVE NAVIGATION ON SCROLL
-// ===============================================
-
-function setActiveNav() {
-    const sections = document.querySelectorAll('section[id]');
-    const scrollY = window.pageYOffset;
-
-    sections.forEach(section => {
-        const sectionHeight = section.offsetHeight;
-        const sectionTop = section.offsetTop - 100;
-        const sectionId = section.getAttribute('id');
-        const navLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
-
-        if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-            navLink?.classList.add('active');
+  function initTheme() {
+    applyTheme(html.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
+    var btn = $('#theme-toggle');
+    if (btn) {
+      btn.addEventListener('click', function () {
+        var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        try { localStorage.setItem(THEME_KEY, next); } catch (e) { /* storage unavailable */ }
+        if (document.startViewTransition && !reduceMQ.matches) {
+          document.startViewTransition(function () { applyTheme(next); });
         } else {
-            navLink?.classList.remove('active');
+          applyTheme(next);
         }
-    });
-}
-
-window.addEventListener('scroll', setActiveNav);
-
-// ===============================================
-// NAVBAR SCROLL EFFECT
-// ===============================================
-
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
+      });
     }
-});
+    var sysMQ = window.matchMedia('(prefers-color-scheme: light)');
+    var onSys = function (e) { if (!storedTheme()) applyTheme(e.matches ? 'light' : 'dark'); };
+    if (sysMQ.addEventListener) sysMQ.addEventListener('change', onSys);
+  }
 
-// ===============================================
-// SMOOTH SCROLLING
-// ===============================================
+  /* ---------- Header, menu, scroll-spy ---------- */
+  function initNav() {
+    var header = $('#top-bar');
+    var onScroll = function () { header.classList.toggle('is-scrolled', window.scrollY > 8); };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
 
-navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
+    var toggle = $('#nav-toggle');
+    var nav = $('#site-nav');
+    if (!toggle || !nav) return;
+
+    function setOpen(open) {
+      nav.classList.toggle('is-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    }
+    toggle.addEventListener('click', function () { setOpen(toggle.getAttribute('aria-expanded') !== 'true'); });
+    nav.addEventListener('click', function (e) { if (e.target.closest('a')) setOpen(false); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && nav.classList.contains('is-open')) { setOpen(false); toggle.focus(); }
+    });
+    document.addEventListener('click', function (e) {
+      if (nav.classList.contains('is-open') && !e.target.closest('.nav')) setOpen(false);
+    });
+    window.matchMedia('(min-width: 900px)').addEventListener('change', function (e) { if (e.matches) setOpen(false); });
+  }
+
+  function initSpy() {
+    if (!('IntersectionObserver' in window)) return;
+    var links = $$('[data-spy]');
+    var byId = {};
+    links.forEach(function (a) { byId[a.getAttribute('data-spy')] = a; });
+    function mark(id) {
+      links.forEach(function (a) {
+        if (byId[id] === a) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+      });
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) mark(en.target.id);
+      });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+    ['top'].concat(Object.keys(byId)).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) io.observe(el);
+    });
+  }
+
+  /* ---------- Copy email ---------- */
+  function initCopy() {
+    var btn = $('#copy-email');
+    var status = $('#copy-status');
+    if (!btn || !status) return;
+    var timer;
+    function done(ok) {
+      status.textContent = ok ? 'Copied' : 'Press Ctrl+C to copy';
+      clearTimeout(timer);
+      timer = setTimeout(function () { status.textContent = ''; }, 2200);
+    }
+    function fallback(text) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      return ok;
+    }
+    btn.addEventListener('click', function () {
+      var text = btn.getAttribute('data-email');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(fallback(text)); });
+      } else {
+        done(fallback(text));
+      }
+    });
+  }
+
+  /* ---------- Footer clock ---------- */
+  function initClock() {
+    var el = $('#local-time');
+    if (!el) return;
+    var fmt;
+    try {
+      fmt = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Los_Angeles', timeZoneName: 'short' });
+    } catch (e) { return; }
+    function tick() { el.textContent = 'Local time ' + fmt.format(new Date()); }
+    tick();
+    setInterval(tick, 20000);
+  }
+
+  /* ---------- Motion ---------- */
+  function countFormat(el, v) {
+    var pre = el.getAttribute('data-prefix') || '';
+    var suf = el.getAttribute('data-suffix') || '';
+    return pre + Math.round(v).toLocaleString('en-US') + suf;
+  }
+
+  function initMotion() {
+    var ready = function () { window.__apReady = true; };
+
+    if (!window.gsap || !window.ScrollTrigger || !html.classList.contains('js')) {
+      html.classList.remove('js');
+      ready();
+      return;
+    }
+
+    var plugins = [window.ScrollTrigger];
+    if (window.SplitText) plugins.push(window.SplitText);
+    if (window.MotionPathPlugin) plugins.push(window.MotionPathPlugin);
+    gsap.registerPlugin.apply(gsap, plugins);
+
+    var mm = gsap.matchMedia();
+
+    mm.add({
+      motion: '(prefers-reduced-motion: no-preference)',
+      reduce: '(prefers-reduced-motion: reduce)',
+      fine: '(hover: hover) and (pointer: fine)',
+      stack: '(min-width: 800px)'
+    }, function (ctx) {
+      var c = ctx.conditions;
+
+      /* Reduced motion: everything renders in its final state. */
+      if (c.reduce) {
+        html.classList.remove('js');
+        return;
+      }
+      html.classList.add('js');
+
+      /* 3. Lenis smooth scroll (non-touch only) */
+      var tick;
+      if (c.fine && window.Lenis) {
+        lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
+        lenis.on('scroll', ScrollTrigger.update);
+        tick = function (t) { lenis.raf(t * 1000); };
+        gsap.ticker.add(tick);
+        gsap.ticker.lagSmoothing(0);
+      }
+
+      /* 1. Masked line reveal on headings */
+      $$('[data-split]').forEach(function (el) {
+        if (!window.SplitText) { el.classList.add('is-split'); return; }
+        SplitText.create(el, {
+          type: 'lines',
+          mask: 'lines',
+          linesClass: 'line',
+          autoSplit: true,
+          onSplit: function (self) {
+            el.classList.add('is-split');
+            if (el._apDone) return undefined;
+            return gsap.from(self.lines, {
+              yPercent: 110,
+              duration: 0.9,
+              ease: 'expo.out',
+              stagger: 0.08,
+              scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+              onComplete: function () { el._apDone = true; }
+            });
+          }
+        });
+      });
+
+      /* 2. Card fade-up (transform and opacity only) */
+      ScrollTrigger.batch('[data-reveal]', {
+        start: 'top 90%',
+        once: true,
+        onEnter: function (batch) {
+          gsap.to(batch, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.06, overwrite: true });
+        }
+      });
+
+      /* 4. Timeline rail draw and dot pops */
+      var tl = $('[data-timeline]');
+      if (tl) {
+        gsap.to($('.rail-fill', tl), {
+          scaleY: 1,
+          ease: 'none',
+          scrollTrigger: { trigger: tl, start: 'top 65%', end: 'bottom 65%', scrub: 0.5 }
+        });
+        $$('.entry', tl).forEach(function (entry) {
+          var dot = $('.dot', entry);
+          ScrollTrigger.create({
+            trigger: entry,
+            start: 'top 60%',
+            once: true,
+            onEnter: function () { gsap.to(dot, { scale: 1, duration: 0.3, ease: 'back.out(2)' }); }
+          });
+        });
+      }
+
+      /* 5. Cursor spotlight on bento tiles */
+      if (c.fine) {
+        $$('.tile').forEach(function (tile) {
+          var raf = 0, px = 0, py = 0;
+          tile.addEventListener('pointermove', function (e) {
+            var r = tile.getBoundingClientRect();
+            px = e.clientX - r.left;
+            py = e.clientY - r.top;
+            if (raf) return;
+            raf = requestAnimationFrame(function () {
+              raf = 0;
+              tile.style.setProperty('--mx', px + 'px');
+              tile.style.setProperty('--my', py + 'px');
+            });
+          });
+        });
+      }
+
+      /* 6. Count-up metrics */
+      $$('.count').forEach(function (el) {
+        var target = parseFloat(el.getAttribute('data-to'));
+        if (isNaN(target)) return;
+        var proxy = { v: 0 };
+        el.textContent = countFormat(el, 0);
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 92%',
+          once: true,
+          onEnter: function () {
+            gsap.to(proxy, {
+              v: target,
+              duration: 1.4,
+              ease: 'power2.out',
+              onUpdate: function () { el.textContent = countFormat(el, proxy.v); },
+              onComplete: function () { el.textContent = countFormat(el, target); }
+            });
+          }
+        });
+      });
+
+      /* 7. Payment flow: lines draw, nodes appear, a dot follows the path */
+      var svg = $('#flow-svg');
+      if (svg) {
+        var main = $('#flow-main');
+        var branches = $$('.flow-branch', svg);
+        var dot = $('#flow-dot');
+        var nodes = $$('[data-node]', svg);
+        var T = 1.2;
+        var at = function (y) { return ((y - 54) / (340 - 54)) * T; };
+        var flow = gsap.timeline({
+          paused: true,
+          defaults: { ease: 'power1.inOut' },
+          scrollTrigger: { trigger: svg, start: 'top 72%', once: true, onEnter: function () { flow.play(); } }
+        });
+        flow.fromTo(nodes[0], { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power3.out' }, 0);
+        flow.to(main, { strokeDashoffset: 0, duration: T }, 0.1);
+        if (window.MotionPathPlugin) {
+          flow.set(dot, { opacity: 1 }, 0.1);
+          flow.to(dot, { motionPath: { path: main, align: main, alignOrigin: [0.5, 0.5] }, duration: T }, 0.1);
+        } else {
+          flow.set(dot, { opacity: 1 }, 0.1);
+          flow.fromTo(dot, { attr: { cy: 54 } }, { attr: { cy: 340 }, duration: T }, 0.1);
+        }
+        // nodes[1] orchestrator, [2] router, [3..5] acquirers, [6..7] labels
+        flow.fromTo(nodes[1], { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power3.out' }, 0.1 + at(120));
+        flow.fromTo(nodes[6], { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power3.out' }, 0.1 + at(80));
+        flow.fromTo(nodes[2], { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power3.out' }, 0.1 + at(230));
+        flow.fromTo(nodes[7], { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power3.out' }, 0.1 + at(190));
+        flow.to(branches, { strokeDashoffset: 0, duration: 0.7, stagger: 0.1 }, 0.1 + at(274));
+        flow.fromTo([nodes[4]], { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power3.out' }, 0.1 + T - 0.1);
+        flow.fromTo([nodes[3], nodes[5]], { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.35, stagger: 0.1, ease: 'power3.out' }, 0.1 + at(274) + 0.5);
+      }
+
+      /* 8. Magnetic CTAs */
+      var magnets = [];
+      if (c.fine) {
+        magnets = $$('[data-magnetic]').map(function (el) {
+          return {
+            el: el,
+            qx: gsap.quickTo(el, 'x', { duration: 0.4, ease: 'power3.out' }),
+            qy: gsap.quickTo(el, 'y', { duration: 0.4, ease: 'power3.out' })
+          };
+        });
+        var onMove = function (e) {
+          magnets.forEach(function (m) {
+            var r = m.el.getBoundingClientRect();
+            var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+            var dx = e.clientX - cx, dy = e.clientY - cy;
+            var outX = Math.max(Math.abs(dx) - r.width / 2, 0);
+            var outY = Math.max(Math.abs(dy) - r.height / 2, 0);
+            if (Math.hypot(outX, outY) <= 80) { m.qx(dx * 0.25); m.qy(dy * 0.25); }
+            else { m.qx(0); m.qy(0); }
+          });
+        };
+        var onLeave = function () { magnets.forEach(function (m) { m.qx(0); m.qy(0); }); };
+        window.addEventListener('pointermove', onMove, { passive: true });
+        document.documentElement.addEventListener('pointerleave', onLeave);
+      }
+
+      /* 9. Sticky stacked project cards */
+      if (c.stack) {
+        var cards = $$('.stack-card');
+        cards.forEach(function (card, i) {
+          if (i === cards.length - 1) return;
+          var nextTop = 80 + (i + 1) * 16;
+          gsap.to(card, {
+            scale: 0.95,
+            opacity: 0.6,
+            ease: 'none',
+            scrollTrigger: { trigger: cards[i + 1], start: 'top 85%', end: 'top ' + nextTop + 'px', scrub: true }
+          });
+        });
+      }
+
+      /* Athletics strip: looping oar-stroke dot */
+      var oar = $('#oar-path');
+      if (oar && window.MotionPathPlugin) {
+        var stroke = gsap.to('#oar-dot', {
+          motionPath: { path: oar, align: oar, alignOrigin: [0.5, 0.5] },
+          duration: 3,
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
+          paused: true
+        });
+        ScrollTrigger.create({
+          trigger: '.oar',
+          start: 'top bottom',
+          end: 'bottom top',
+          onToggle: function (self) { stroke.paused(!self.isActive); }
+        });
+      }
+
+      /* Anchor links through Lenis */
+      var onAnchor = function (e) {
+        var a = e.target.closest && e.target.closest('a[href^="#"]');
+        if (!a || !lenis) return;
+        var id = a.getAttribute('href').slice(1);
+        var target = id ? document.getElementById(id) : document.body;
+        if (!target) return;
         e.preventDefault();
-        const targetId = link.getAttribute('href');
-        const targetSection = document.querySelector(targetId);
-        
-        if (targetSection) {
-            const offsetTop = targetSection.offsetTop - 80;
-            window.scrollTo({
-                top: offsetTop,
-                behavior: 'smooth'
-            });
+        lenis.scrollTo(id === 'top' || !id ? 0 : target, { offset: id === 'top' ? 0 : -63 });
+        history.replaceState(null, '', id ? '#' + id : location.pathname);
+      };
+      document.addEventListener('click', onAnchor);
+
+      /* Refresh once fonts settle so triggers use final layout */
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { ScrollTrigger.refresh(); });
+
+      return function () {
+        document.removeEventListener('click', onAnchor);
+        if (tick) gsap.ticker.remove(tick);
+        if (lenis) { lenis.destroy(); lenis = null; }
+      };
+    });
+
+    ready();
+  }
+
+  /* ---------- Rotating greeting (contact heading) ---------- */
+  function initRotator() {
+    var word = $('#rot-word');
+    var section = $('#contact');
+    if (!word || !section || !window.gsap || reduceMQ.matches || !html.classList.contains('js')) return;
+    var words = [
+      ['hello', 'en'], ['hola', 'es'], ['\u3053\u3093\u306B\u3061\u306F', 'ja'], ['bonjour', 'fr'], ['ciao', 'it'],
+      ['\u4F60\u597D', 'zh'], ['ol\u00E1', 'pt'], ['namaste', 'hi-Latn'], ['\u043F\u0440\u0438\u0432\u0435\u0442', 'ru'], ['hallo', 'de']
+    ];
+    var i = 0, timer = 0, visible = false, started = false;
+
+    function step() {
+      timer = 0;
+      if (!visible || reduceMQ.matches) return;
+      gsap.to(word, {
+        yPercent: -110, duration: 0.4, ease: 'power2.in',
+        onComplete: function () {
+          i = (i + 1) % words.length;
+          word.textContent = words[i][0];
+          word.setAttribute('lang', words[i][1]);
+          gsap.fromTo(word, { yPercent: 110 }, { yPercent: 0, duration: 0.4, ease: 'power3.out' });
         }
-    });
-});
-
-// Smooth scroll for hero buttons
-const heroButtons = document.querySelectorAll('.hero-buttons a');
-heroButtons.forEach(button => {
-    button.addEventListener('click', (e) => {
-        const href = button.getAttribute('href');
-        if (href.startsWith('#')) {
-            e.preventDefault();
-            const targetSection = document.querySelector(href);
-            if (targetSection) {
-                const offsetTop = targetSection.offsetTop - 80;
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
-            }
-        }
-    });
-});
-
-// ===============================================
-// SCROLL ANIMATIONS
-// ===============================================
-
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('fade-in');
-            observer.unobserve(entry.target);
-        }
-    });
-}, observerOptions);
-
-// Observe non-grid elements for simple fade-in
-const animateElements = document.querySelectorAll('.about-content, .contact-content');
-animateElements.forEach(el => observer.observe(el));
-
-// ===============================================
-// STAGGERED CARD ANIMATIONS
-// ===============================================
-
-// Mark cards as hidden — JS-gated so cards are visible if JS fails
-document.querySelectorAll('.project-card, .skill-category, .highlight-card').forEach(el => {
-    el.classList.add('stagger-init');
-});
-
-const staggerObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const cards = [...entry.target.querySelectorAll('.stagger-init:not(.stagger-visible)')];
-            cards.forEach((card, i) => {
-                setTimeout(() => card.classList.add('stagger-visible'), i * 90);
-            });
-            staggerObserver.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
-
-document.querySelectorAll('.projects-grid, .skills-grid, .rowing-highlights').forEach(grid => {
-    staggerObserver.observe(grid);
-});
-
-
-// ===============================================
-// PROJECT CARDS — 3D TILT + MODAL
-// ===============================================
-
-const projectCards = document.querySelectorAll('.project-card');
-const modal        = document.getElementById('projectModal');
-const modalIcon    = document.getElementById('modalIcon');
-const modalTitle   = document.getElementById('modalTitle');
-const modalDesc    = document.getElementById('modalDescription');
-const modalTags    = document.getElementById('modalTags');
-const modalLink    = document.getElementById('modalLink');
-const modalClose   = document.getElementById('modalClose');
-
-// --- 3D tilt (desktop only) ---
-const isTouchDevice = () => window.matchMedia('(hover: none)').matches;
-
-projectCards.forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-        if (isTouchDevice()) return;
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const cx = rect.width  / 2;
-        const cy = rect.height / 2;
-        const rotateX = ((y - cy) / cy) * -10;
-        const rotateY = ((x - cx) / cx) *  10;
-        card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
-    });
-
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0)';
-        card.style.transition = 'transform 0.5s cubic-bezier(0.4,0,0.2,1)';
-    });
-
-    card.addEventListener('mouseenter', () => {
-        card.style.transition = 'transform 0.1s ease';
-    });
-
-    // --- modal open ---
-    card.addEventListener('click', () => {
-        const iconClass  = card.querySelector('.project-image > i').className;
-        const title      = card.querySelector('h3').textContent;
-        const desc       = card.querySelector('.project-content > p').textContent;
-        const tags       = [...card.querySelectorAll('.tag')].map(t => t.textContent);
-        const linkEl     = card.querySelector('.project-link');
-        const href       = linkEl ? linkEl.getAttribute('href') : '#';
-
-        modalIcon.className        = iconClass;
-        modalTitle.textContent     = title;
-        modalDesc.textContent      = desc;
-        modalTags.innerHTML        = tags.map(t => `<span class="tag">${t}</span>`).join('');
-        modalLink.href             = href;
-
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    });
-});
-
-// --- modal close ---
-function closeModal() {
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-}
-
-modalClose.addEventListener('click', closeModal);
-modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
-
-// ===============================================
-// TYPING EFFECT FOR HERO SUBTITLE (OPTIONAL)
-// ===============================================
-
-const heroSubtitle = document.querySelector('.hero-subtitle');
-const subtitleText = heroSubtitle.textContent;
-let charIndex = 0;
-
-function typeEffect() {
-    if (charIndex < subtitleText.length) {
-        heroSubtitle.textContent = subtitleText.substring(0, charIndex + 1);
-        charIndex++;
-        setTimeout(typeEffect, 100);
+      });
+      timer = setTimeout(step, 1750);
     }
-}
+    function schedule(delay) { if (!timer) timer = setTimeout(step, delay); }
 
-// Uncomment to enable typing effect
-// heroSubtitle.textContent = '';
-// setTimeout(typeEffect, 500);
+    if (!('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function (entries) {
+      visible = entries[0].isIntersecting;
+      if (visible) { schedule(started ? 1750 : 2000); started = true; }
+      else { clearTimeout(timer); timer = 0; }
+    }, { threshold: 0.2 }).observe(section);
+  }
 
-// ===============================================
-// SCROLL TO TOP BUTTON (OPTIONAL)
-// ===============================================
-
-function createScrollTopButton() {
-    const scrollBtn = document.createElement('button');
-    scrollBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
-    scrollBtn.className = 'scroll-to-top';
-    scrollBtn.setAttribute('aria-label', 'Scroll to top');
-    
-    // Add styles
-    scrollBtn.style.cssText = `
-        position: fixed;
-        bottom: 2rem;
-        right: 2rem;
-        width: 50px;
-        height: 50px;
-        background: var(--primary-color);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        font-size: 1.25rem;
-        cursor: pointer;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-        z-index: 1000;
-        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-    `;
-
-    document.body.appendChild(scrollBtn);
-
-    // Show/hide button on scroll
-    window.addEventListener('scroll', () => {
-        if (window.pageYOffset > 500) {
-            scrollBtn.style.opacity = '1';
-            scrollBtn.style.visibility = 'visible';
-        } else {
-            scrollBtn.style.opacity = '0';
-            scrollBtn.style.visibility = 'hidden';
-        }
-    });
-
-    // Scroll to top on click
-    scrollBtn.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-
-    // Hover effect
-    scrollBtn.addEventListener('mouseenter', () => {
-        scrollBtn.style.transform = 'translateY(-5px)';
-        scrollBtn.style.boxShadow = '0 6px 20px rgba(99, 102, 241, 0.4)';
-    });
-
-    scrollBtn.addEventListener('mouseleave', () => {
-        scrollBtn.style.transform = 'translateY(0)';
-        scrollBtn.style.boxShadow = '0 4px 15px rgba(99, 102, 241, 0.3)';
-    });
-}
-
-// Uncomment to enable scroll to top button
-// createScrollTopButton();
-
-// ===============================================
-// PERFORMANCE OPTIMIZATION
-// ===============================================
-
-// Lazy load images
-if ('IntersectionObserver' in window) {
-    const imageObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                if (img.dataset.src) {
-                    img.src = img.dataset.src;
-                    img.removeAttribute('data-src');
-                }
-                imageObserver.unobserve(img);
-            }
-        });
-    });
-
-    const lazyImages = document.querySelectorAll('img[data-src]');
-    lazyImages.forEach(img => imageObserver.observe(img));
-}
-
-// ===============================================
-// PREVENT DEFAULT LINK BEHAVIOR FOR PLACEHOLDER LINKS
-// ===============================================
-
-document.querySelectorAll('a[href="#"]').forEach(link => {
-    link.addEventListener('click', (e) => {
-        if (!link.closest('.nav-menu') && !link.closest('.hero-buttons')) {
-            e.preventDefault();
-        }
-    });
-});
-
-// ===============================================
-// CONSOLE MESSAGE
-// ===============================================
-
-console.log('%c👋 Hello Developer!', 'color: #6366f1; font-size: 20px; font-weight: bold;');
-console.log('%cInterested in how this was built? Check out the code!', 'color: #64748b; font-size: 14px;');
-console.log('%cLooking for a developer? Let\'s connect! 🚀', 'color: #6366f1; font-size: 14px;');
-
-// ===============================================
-// DARK MODE
-// ===============================================
-
-const themeToggle = document.getElementById('themeToggle');
-const root = document.documentElement;
-
-function getTheme() {
-    return root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-}
-
-function applyTheme(theme, save = true) {
-    // Smooth cross-fade
-    root.classList.add('theme-switching');
-    root.setAttribute('data-theme', theme);
-    if (save) localStorage.setItem('theme', theme);
-
-    // Update toggle icon
-    if (themeToggle) {
-        themeToggle.querySelector('i').className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
-    }
-
-    setTimeout(() => root.classList.remove('theme-switching'), 350);
-}
-
-// Set correct icon on load (theme may already be set by inline head script)
-if (themeToggle) {
-    themeToggle.querySelector('i').className = getTheme() === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-    themeToggle.setAttribute('aria-label', getTheme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
-
-    themeToggle.addEventListener('click', () => {
-        applyTheme(getTheme() === 'dark' ? 'light' : 'dark');
-    });
-}
-
-// Follow system preference changes only when user hasn't made a manual choice
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (evt) => {
-    if (!localStorage.getItem('theme')) {
-        applyTheme(evt.matches ? 'dark' : 'light', false);
-    }
-});
-
-// ===============================================
-// INITIALIZE
-// ===============================================
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Set initial active nav
-    setActiveNav();
-
-    // Add loaded class to body for any CSS transitions
-    document.body.classList.add('loaded');
-
-    console.log('Portfolio website initialized successfully! ✨');
-});
-
-// ===============================================
-// HANDLE PAGE VISIBILITY
-// ===============================================
-
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-        document.title = '👋 Come back soon!';
-    } else {
-        document.title = 'Aaryan Patel | Portfolio';
-    }
-});
-
-// ===============================================
-// KEYBOARD NAVIGATION
-// ===============================================
-
-// ESC key to close mobile menu
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && navMenu.classList.contains('active')) {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
-});
-
-// ===============================================
-// SOCIAL LINKS ANALYTICS (OPTIONAL)
-// ===============================================
-
-const socialLinks = document.querySelectorAll('.social-links a, .social-links-contact a');
-socialLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-        const platform = link.getAttribute('aria-label');
-        console.log(`Social link clicked: ${platform}`);
-        // Add your analytics tracking here
-        // e.g., gtag('event', 'social_click', { platform: platform });
-    });
-});
-
+  initTheme();
+  initNav();
+  initSpy();
+  initCopy();
+  initClock();
+  initMotion();
+  initRotator();
+})();
