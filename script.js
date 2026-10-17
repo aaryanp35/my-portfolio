@@ -22,6 +22,7 @@
   var isTouch = window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(hover: none)').matches;
   if (isTouch) doc.classList.add('touch');
   gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true });
   if (typeof MotionPathPlugin !== 'undefined') gsap.registerPlugin(MotionPathPlugin);
 
   /* ------------------------------------------------------------ elements */
@@ -78,7 +79,7 @@
   }
 
   /* ------------------------------------------------------------ layout state */
-  var S = { stops: [], maxScroll: 1, anchorY: 0, endHold: 0, winH: 1, samples: [], routeLen: 1, trailTop: 0, trailH: 1, trailW: 1, beacon: null };
+  var S = { routeKey: '', stops: [], maxScroll: 1, anchorY: 0, endHold: 0, winH: 1, samples: [], routeLen: 1, trailTop: 0, trailH: 1, trailW: 1, beacon: null };
   var lastZone = '', lastContour = -1, lastE = -1, lastP = 0, lastPose = 0, drawZone = null, arrived = false;
 
   function winMetrics() {
@@ -106,6 +107,9 @@
     var rr = route.getBoundingClientRect(), gr = reg.getBoundingClientRect();
     var pinY = gr.top + (parseFloat(getComputedStyle(pin).top) || 0);
     var endY = pinY + pin.offsetHeight / 2 + 4 + marker.offsetHeight;
+    // on phones the register card is taller than the window, so its marker leaves the top at the end of the page: the trail then runs on beside the card until the hiker's end spot is still on screen
+    var maxS = Math.max(1, doc.scrollHeight - window.innerHeight), wm = winMetrics();
+    endY = Math.max(endY, (maxS - window.pageYOffset) + wm.top + marker.offsetHeight + 28);
     trail.style.bottom = Math.max(0, rr.bottom - endY).toFixed(1) + 'px';
   }
 
@@ -115,24 +119,39 @@
     placeTrailEnd();
     var W = Math.max(1, trail.clientWidth), H = Math.max(1, trail.clientHeight);
     S.trailW = W; S.trailH = H;
-    var padX = Math.min(22, W * 0.27);
-    var toks = routeD0.match(/[MC]|-?\d*\.?\d+/g) || [];
-    var out = '', n = 0;
-    toks.forEach(function (t) {
-      if (t === 'M' || t === 'C') { out += t; n = 0; return; }
-      var v = parseFloat(t);
-      out += (n % 2 === 0 ? (padX + v * (W - 2 * padX) / 100) : (v * H / 1000)).toFixed(1) + ' ';
-      n++;
-    });
-    routeSvg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
-    routeSvg.setAttribute('preserveAspectRatio', 'xMinYMin meet');
-    [routePath, routeDone].forEach(function (p) { p.removeAttribute('vector-effect'); p.setAttribute('d', out); });
-    S.routeLen = routePath.getTotalLength();
-    S.samples = [];
-    var N = 700;
-    for (var i = 0; i <= N; i++) {
-      var pt = routePath.getPointAtLength(S.routeLen * i / N);
-      S.samples.push({ f: i / N, x: pt.x, y: pt.y });
+    // the sampled path is cached per trail size: a resize that leaves the trail's width and height alone costs nothing
+    var key = W + 'x' + H;
+    if (key !== S.routeKey || !S.samples.length) {
+      S.routeKey = key;
+      var padX = Math.min(22, W * 0.27);
+      var toks = routeD0.match(/[MC]|-?\d*\.?\d+/g) || [];
+      var out = '', n = 0, nums = [];
+      toks.forEach(function (t) {
+        if (t === 'M' || t === 'C') { out += t; n = 0; return; }
+        var v = parseFloat(t);
+        var sv = +(n % 2 === 0 ? (padX + v * (W - 2 * padX) / 100) : (v * H / 1000)).toFixed(1);
+        out += sv + ' ';
+        nums.push(sv);
+        n++;
+      });
+      routeSvg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+      routeSvg.setAttribute('preserveAspectRatio', 'xMinYMin meet');
+      [routePath, routeDone].forEach(function (p) { p.removeAttribute('vector-effect'); p.setAttribute('d', out); });
+      // sample the cubic segments analytically (no getPointAtLength): 12 steps per segment, arc fraction from the polyline length
+      var px = nums[0], py = nums[1], pts = [{ x: px, y: py, l: 0 }], len = 0, STEPS = 12;
+      for (var i = 2; i + 5 < nums.length + 0; i += 6) {
+        var x0 = px, y0 = py, x1 = nums[i], y1 = nums[i + 1], x2 = nums[i + 2], y2 = nums[i + 3], x3 = nums[i + 4], y3 = nums[i + 5];
+        for (var k = 1; k <= STEPS; k++) {
+          var t = k / STEPS, u = 1 - t;
+          var qx = u * u * u * x0 + 3 * u * u * t * x1 + 3 * u * t * t * x2 + t * t * t * x3;
+          var qy = u * u * u * y0 + 3 * u * u * t * y1 + 3 * u * t * t * y2 + t * t * t * y3;
+          len += Math.sqrt((qx - pts[pts.length - 1].x) * (qx - pts[pts.length - 1].x) + (qy - pts[pts.length - 1].y) * (qy - pts[pts.length - 1].y));
+          pts.push({ x: qx, y: qy, l: len });
+        }
+        px = x3; py = y3;
+      }
+      S.routeLen = len * 1.0005;
+      S.samples = pts.map(function (q) { return { f: q.l / len, x: q.x, y: q.y }; });
     }
     var tr = trail.getBoundingClientRect();
     S.trailTop = tr.top + window.pageYOffset;
@@ -355,6 +374,7 @@
     faceTrail(p);
     // arrival beat, once: the flag goes up over the summit marker (CSS transition on html.arrived)
     if (!arrived && p > 0.985) { arrived = true; doc.classList.add('arrived'); }
+    else if (arrived && p < 0.9) { arrived = false; doc.classList.remove('arrived'); }
   }
 
   function startFull() {
@@ -521,7 +541,11 @@
     staticActive = best;
     var E = best.elev, p = clamp(best.scroll / S.maxScroll, 0, 1);
     render(E, p, { poseE: POSE[zoneOf(E).key] });
-    var smp = best.el.id === 'register' ? S.samples[S.samples.length - 1] : sampleAtY(best.docY - S.trailTop);
+    // the static hiker stays in the window: it stands at the nearest stop, held inside the visible map band
+    doc.classList.toggle('arrived', best.el.id === 'register');
+    var wm = winMetrics();
+    var lo = sy + wm.top + marker.offsetHeight + 8, hi = sy + wm.top + wm.h - 8;
+    var smp = best.el.id === 'register' ? S.samples[S.samples.length - 1] : sampleAtY(clamp(best.docY, lo, hi) - S.trailTop);
     marker.style.left = smp.x.toFixed(1) + 'px';
     marker.style.top = smp.y.toFixed(1) + 'px';
   }
@@ -564,39 +588,62 @@
   window.addEventListener('resize', fitScene);
 
   /* skip to summit: appears after the first screen, steps aside at the summit */
-  var skipRaf = 0;
+  var skipRaf = 0, regVisible = false;
+  var regEl = $('#register');
+  if (regEl && window.IntersectionObserver) {
+    new IntersectionObserver(function (es) { regVisible = es[0].isIntersecting; skipUpdate(); }, { rootMargin: '-80px 0px 0px 0px' }).observe(regEl);
+  }
   function skipUpdate() {
     skipRaf = 0;
     var y = window.pageYOffset, max = Math.max(1, doc.scrollHeight - window.innerHeight);
     doc.classList.toggle('skip-on', y > window.innerHeight * 0.6);
-    doc.classList.toggle('skip-off', y > max - 40);
+    doc.classList.toggle('skip-off', y > max - 40 || regVisible);
   }
   window.addEventListener('scroll', function () { onWalk(); if (!skipRaf) skipRaf = requestAnimationFrame(skipUpdate); }, { passive: true });
   skipUpdate();
 
   /* ------------------------------------------------------------ boot */
-  var mm = gsap.matchMedia();
+  var mm = null;
   var mode = null;
-  mm.add('(prefers-reduced-motion: no-preference)', function () { mode = 'full'; doc.classList.add('anim'); startFull(); return function () { doc.classList.remove('anim'); stopFull(); }; });
-  mm.add('(prefers-reduced-motion: reduce)', function () { mode = 'static'; startStatic(); return function () { stopStatic(); }; });
+  var lastVW = window.innerWidth, lastVH = window.innerHeight;
+  // phones: the URL bar collapsing changes only the height by a small amount; that must not rebuild the climb
+  function viewportOnly() { return Math.abs(window.innerWidth - lastVW) < 1 && Math.abs(window.innerHeight - lastVH) < 150; }
+  function noteViewport() { lastVW = window.innerWidth; lastVH = window.innerHeight; }
+  function boot() {
+    mm = gsap.matchMedia();
+    mm.add('(prefers-reduced-motion: no-preference)', function () { mode = 'full'; doc.classList.add('anim'); startFull(); return function () { doc.classList.remove('anim'); stopFull(); }; });
+    mm.add('(prefers-reduced-motion: reduce)', function () { mode = 'static'; startStatic(); return function () { stopStatic(); }; });
+    noteViewport();
+  }
 
-  function rebuild() {
+  function rebuild(force) {
+    if (!mode) return;
+    if (force !== true && viewportOnly()) return;
     clearTimeout(rebuildTimer);
     rebuildTimer = setTimeout(function () {
+      noteViewport();
       placeBeacon();
       if (mode === 'full') { rebuildFull(); ScrollTrigger.refresh(); }
       else { layout(); staticActive = null; staticUpdate(); }
     }, 160);
   }
-  window.addEventListener('resize', rebuild);
-  window.addEventListener('load', rebuild);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(rebuild);
+  window.addEventListener('resize', function () { rebuild(); });
+  window.addEventListener('load', function () { rebuild(true); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { rebuild(true); });
   if (window.ResizeObserver) {
     var lastH = 0;
     ro = new ResizeObserver(function () {
       var h = $('main').offsetHeight;
-      if (Math.abs(h - lastH) > 4) { lastH = h; rebuild(); }
+      if (Math.abs(h - lastH) > 4) {
+        // a height change that only follows the viewport (hero min-height on a collapsing URL bar) is not a layout change
+        if (lastH && viewportOnly() && Math.abs(h - lastH) < 160) return;
+        lastH = h; rebuild(true);
+      }
     });
     ro.observe($('main'));
   }
+
+  // first paint first: the route sampling and timeline build wait for an idle moment so taps work at once
+  var idle = window.requestIdleCallback || function (fn) { return setTimeout(fn, 1); };
+  requestAnimationFrame(function () { idle(boot, { timeout: 700 }); });
 })();
