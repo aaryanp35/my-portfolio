@@ -74,12 +74,12 @@
     if (e < 700) return { key: 'canyon', label: 'Redwood canyon' };
     if (e < 1400) return { key: 'woodland', label: 'Oak and bay woodland' };
     if (e < 2300) return { key: 'chaparral', label: 'Chaparral and serpentine' };
-    return { key: 'summit', label: 'East Peak' };
+    return { key: 'summit', label: 'Summit' };
   }
 
   /* ------------------------------------------------------------ layout state */
-  var S = { stops: [], maxScroll: 1, anchorY: 0, samples: [], routeLen: 1, trailTop: 0, trailH: 1, trailW: 1, beacon: null };
-  var lastZone = '', lastContour = -1, lastE = -1, lastP = 0, lastPose = 0, drawZone = null;
+  var S = { stops: [], maxScroll: 1, anchorY: 0, endHold: 0, winH: 1, samples: [], routeLen: 1, trailTop: 0, trailH: 1, trailW: 1, beacon: null };
+  var lastZone = '', lastContour = -1, lastE = -1, lastP = 0, lastPose = 0, drawZone = null, arrived = false;
 
   function winMetrics() {
     var r = stage.getBoundingClientRect();
@@ -87,10 +87,10 @@
   }
 
   function fitTrail() {
-    // phones: the hero is taller than the window, so start the trail inside the first screen
+    // phones and tablets: the hero is taller than the window, so start the trail inside the first screen
     var hero = $('#trailhead');
     var w = winMetrics();
-    if (window.innerWidth < 700 && hero) {
+    if (window.innerWidth < 960 && hero) {
       var tail = clamp(hero.offsetHeight - w.h * 0.5, 120, Math.max(120, hero.offsetHeight - 60));
       doc.style.setProperty('--hero-tail', Math.round(tail) + 'px');
     } else {
@@ -98,9 +98,21 @@
     }
   }
 
+  /* the trail ends where the hiker ends: standing just under the summit marker, so no dashed trail is left ahead of the summit */
+  function placeTrailEnd() {
+    var route = $('.route'), reg = $('#register'), pin = reg && $('.pin', reg);
+    if (!route || !pin) return;
+    trail.style.bottom = '0px';
+    var rr = route.getBoundingClientRect(), gr = reg.getBoundingClientRect();
+    var pinY = gr.top + (parseFloat(getComputedStyle(pin).top) || 0);
+    var endY = pinY + pin.offsetHeight / 2 + 4 + marker.offsetHeight;
+    trail.style.bottom = Math.max(0, rr.bottom - endY).toFixed(1) + 'px';
+  }
+
   function buildRoute() {
     if (!trail || !routePath) return;
     fitTrail();
+    placeTrailEnd();
     var W = Math.max(1, trail.clientWidth), H = Math.max(1, trail.clientHeight);
     S.trailW = W; S.trailH = H;
     var padX = Math.min(22, W * 0.27);
@@ -144,6 +156,9 @@
     var sy = window.pageYOffset;
     S.anchorY = w.top + w.h * ANCHOR;
     S.maxScroll = Math.max(1, doc.scrollHeight - window.innerHeight);
+    S.winH = w.h;
+    // at the very end the hiker is standing at the end of the trail, wherever that falls in the window
+    S.endHold = S.trailTop + S.trailH - S.maxScroll;
     var stops = [];
     $$('[data-elev]').forEach(function (el) {
       var pin = $('.pin', el);
@@ -191,10 +206,16 @@
     }
     return S.maxScroll;
   }
+  /* where in the window the hiker is held: the 42% line for the whole climb, easing to the end of the trail over the last window of scroll */
+  function holdAt(sc) {
+    var W = Math.max(1, S.winH);
+    var u = clamp((sc - (S.maxScroll - W)) / W, 0, 1);
+    return lerp(S.anchorY, S.endHold, smooth(u));
+  }
   function arcFrac(p) {
     if (!S.samples.length) return p;
-    var y = p * S.maxScroll + S.anchorY - S.trailTop;
-    return sampleAtY(clamp(y, 0, S.trailH)).f;
+    var sc = p * S.maxScroll;
+    return sampleAtY(clamp(sc + holdAt(sc) - S.trailTop, 0, S.trailH)).f;
   }
 
   function buildProfile() {
@@ -231,6 +252,10 @@
         var s = seg(poseE, 1900, 2571);
         y = lerp(l.t0, 0, s);
         l.el.style.opacity = s > 0 ? 1 : 0;
+      } else if (l.name === 'fog-sea') {
+        // Karl the Fog: a dense sea that rises into the valleys over the last stretch, so the summit stands above it
+        y = lerp(l.t0, 0, seg(poseE, 1750, 2571));
+        l.el.style.opacity = seg(poseE, 1550, 2250).toFixed(3);
       } else {
         y = l.t * f;
         if (l.fog) {
@@ -267,10 +292,9 @@
       var hs = poseE < 650 ? 'on' : 'off';
       if (hs !== hawkState) { hawkState = hs; hawk.classList.toggle('is-on', hs === 'on'); hawk.classList.toggle('is-paused', hs !== 'on'); }
     }
-    // lookout beacon: lights up as the fire lookout rises into view, and rides the rising outcrop
+    // lookout beacon: lights up on East Peak's own lookout, riding the ridge as it settles
     if (beacon && S.beacon) {
-      var bs = seg(poseE, 1900, 2571);
-      var by = S.beacon.y + lerp(480, 0, bs) * S.beacon.k;
+      var by = S.beacon.y + S.beacon.t * f * S.beacon.k;
       beacon.style.transform = 'translate(' + S.beacon.x.toFixed(1) + 'px,' + by.toFixed(1) + 'px)';
       var bo = seg(poseE, 2350, 2571);
       beacon.style.opacity = bo.toFixed(2);
@@ -323,19 +347,22 @@
     tl.progress(Math.min(1, keep + 0.0001)).progress(keep);
   }
 
+  function onProg() {
+    var p = proxy.p;
+    var E = elevAt(p * S.maxScroll);
+    render(E, p);
+    routeDone.style.strokeDashoffset = (S.routeLen * (1 - arcFrac(p))).toFixed(1);
+    faceTrail(p);
+    // arrival beat, once: the flag goes up over the summit marker (CSS transition on html.arrived)
+    if (!arrived && p > 0.985) { arrived = true; doc.classList.add('arrived'); }
+  }
+
   function startFull() {
     doc.classList.remove('rm');
     layout();
     routeDone.style.strokeDasharray = S.routeLen;
     routeDone.style.strokeDashoffset = S.routeLen;
 
-    function onProg() {
-      var p = proxy.p;
-      var E = elevAt(p * S.maxScroll);
-      render(E, p);
-      routeDone.style.strokeDashoffset = (S.routeLen * (1 - arcFrac(p))).toFixed(1);
-      faceTrail(p);
-    }
     initLegs();
 
     proxy.p = clamp(window.pageYOffset / S.maxScroll, 0, 1);
@@ -350,10 +377,13 @@
     ScrollTrigger.create({ animation: tl, start: 0, end: 'max', scrub: 0.7, invalidateOnRefresh: true });
     prime();
 
-    // fog drifts slowly sideways, 60 to 90 second loops (skipped on touch)
+    // fog drifts slowly sideways, 60 to 90 second loops (skipped on touch); the summit sea moves less, transform only
     if (!isTouch && !fogTweens.length) {
       $$('.fog .drift').forEach(function (d, i) {
         fogTweens.push(gsap.to(d, { x: (i % 2 ? -1 : 1) * (110 + i * 40), duration: 60 + i * 12, ease: 'sine.inOut', yoyo: true, repeat: -1 }));
+      });
+      $$('.sea .drift').forEach(function (d, i) {
+        fogTweens.push(gsap.to(d, { x: (+d.getAttribute('data-drift') || 1) * (60 + i * 18), duration: 55 + i * 9, ease: 'sine.inOut', yoyo: true, repeat: -1 }));
       });
     }
 
@@ -412,10 +442,10 @@
     });
   }
 
-  /* hiker: legs swing while the page is moving, with playback rate following scroll velocity; idle when it stops (not on touch) */
+  /* hiker: legs swing while the page is moving, with playback rate following scroll velocity (touch and desktop alike); idle when it stops */
   var legAnims = [], hikerFlip = $('.hiker-flip'), flipDir = 1, lastY = window.pageYOffset, lastT = 0, idleTimer = 0;
   function initLegs() {
-    if (isTouch || legAnims.length) return;
+    if (legAnims.length) return;
     var lf = $('.leg-f'), lb = $('.leg-b');
     if (!lf || !lf.animate) return;
     var o = { duration: 460, direction: 'alternate', iterations: Infinity, easing: 'ease-in-out' };
@@ -453,7 +483,7 @@
     if (tl) { if (tl.scrollTrigger) tl.scrollTrigger.kill(); tl.kill(); tl = null; }
     if (lenis) { gsap.ticker.remove(ticking); lenis.destroy(); lenis = null; }
     fogTweens.forEach(function (t) { t.kill(); }); fogTweens = [];
-    gsap.set($$('.fog .drift'), { clearProps: 'all' });
+    gsap.set($$('.fog .drift, .sea .drift'), { clearProps: 'all' });
   }
 
   function rebuildFull() {
@@ -466,11 +496,7 @@
     routeDone.style.strokeDasharray = S.routeLen;
     proxy.p = clamp(window.pageYOffset / S.maxScroll, 0, 1) || keep;
     tl = gsap.timeline({ defaults: { ease: 'none', duration: 1 } });
-    tl.to(proxy, { p: 1, onUpdate: function () {
-      var E = elevAt(proxy.p * S.maxScroll);
-      render(E, proxy.p);
-      routeDone.style.strokeDashoffset = (S.routeLen * (1 - arcFrac(proxy.p))).toFixed(1);
-    } }, 0);
+    tl.to(proxy, { p: 1, onUpdate: onProg }, 0);
     if (typeof MotionPathPlugin !== 'undefined' && marker) {
       tl.to(marker, { motionPath: { path: routePath, align: routePath, alignOrigin: [0.5, 1] }, ease: function (p) { return arcFrac(p); } }, 0);
     }
@@ -495,7 +521,7 @@
     staticActive = best;
     var E = best.elev, p = clamp(best.scroll / S.maxScroll, 0, 1);
     render(E, p, { poseE: POSE[zoneOf(E).key] });
-    var smp = sampleAtY(best.docY - S.trailTop);
+    var smp = best.el.id === 'register' ? S.samples[S.samples.length - 1] : sampleAtY(best.docY - S.trailTop);
     marker.style.left = smp.x.toFixed(1) + 'px';
     marker.style.top = smp.y.toFixed(1) + 'px';
   }
@@ -523,12 +549,14 @@
     if (!beacon) return;
     var ctm = scene.getScreenCTM(), r = stage.getBoundingClientRect();
     if (!ctm || !r.width) return;
-    // the lookout cabin on the summit outcrop sits at scene point 1120, 676 when fully risen
-    S.beacon = { x: 1120 * ctm.a + ctm.e - r.left, y: 676 * ctm.d + ctm.f - r.top, k: ctm.d };
+    // the cabin of East Peak's lookout (data-bx, data-by on the tam layer) at the trailhead pose; the layer then sinks by data-t
+    var tam = $('#scene .lyr[data-lyr="tam"]');
+    if (!tam) return;
+    S.beacon = { x: (+tam.getAttribute('data-bx')) * ctm.a + ctm.e - r.left, y: (+tam.getAttribute('data-by')) * ctm.d + ctm.f - r.top, k: ctm.d, t: +tam.getAttribute('data-t') || 0 };
   }
   function fitScene() {
     var r = stage.getBoundingClientRect();
-    scene.setAttribute('viewBox', r.width / r.height < 0.9 ? '780 0 700 1000' : '0 0 1600 1000');
+    scene.setAttribute('viewBox', r.width / r.height < 0.9 ? '900 0 700 1000' : '0 0 1600 1000');
     placeBeacon();
     if (lastE >= 0) render(lastE, lastP, { force: true, poseE: lastPose });
   }

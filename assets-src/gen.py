@@ -139,23 +139,34 @@ def build_scene():
     r = random.Random(SEED)
     layers = []
 
-    # Tam far silhouette: West Peak, Middle Peak, East Peak (E=0 pose)
-    DX = 380
+    # Tam far silhouette: West Peak, Middle Peak, East Peak (E=0 pose).
+    # The three summits are packed to the right of the title plate (x 1110 to 1505) so West Peak and its label clear the card at 1440 wide.
+    def X(x):
+        return 1110 + (x - 480) * 0.82
     base_keys = [(-60, 570), (60, 530), (180, 480), (290, 425), (380, 350), (440, 300), (480, 282), (520, 292), (565, 330), (615, 352),
                  (655, 326), (700, 304), (745, 322), (795, 362), (850, 332), (915, 282), (962, 256), (1005, 274), (1065, 336),
                  (1145, 404), (1255, 452), (1385, 474)]
-    tam_keys = [(-100, 640), (60, 622), (200, 600)] + [(x + DX, y) for x, y in base_keys] + [(1860, 520), (1960, 560)]
+    tam_keys = [(-100, 640), (150, 628), (420, 604)] + [(X(x), y) for x, y in base_keys] + [(2000, 520), (2100, 560)]
     tam = ridge(tam_keys, Noise(11, 4, 0.02), 4.0, 12)
     tam_d = ridge_fill(tam)
     tam_shade = shade_strips(tam, 80, 0.16)
-    lk = lookout(962 + DX, 256, 0.95)
-    dome = '<path d="M1071 304 a9 9 0 0 1 18 0 Z" class="paperfill" fill="none" stroke="var(--ink)" stroke-width="1.2"/><path d="M1080 295 V284" fill="none" stroke="var(--ink)" stroke-width="1.2"/>'
-    labels = ('<g class="peak-labels" font-family="Martian Mono, monospace" font-size="13" fill="var(--ink)" text-anchor="middle" letter-spacing="1">'
-              '<text x="860" y="262">WEST PEAK</text><text x="1080" y="268">MIDDLE PEAK</text>'
-              '<text x="1342" y="212">EAST PEAK</text></g>')
-    layers.append('<g class="lyr" data-lyr="tam" data-t="330"><path class="ridge-far" d="%s"/><path class="shade" d="%s"/>'
-                  '<path class="ridge-line" d="%s"/>%s%s%s</g>' % (tam_d, tam_shade, pts_to_d(tam), lk, dome, labels))
 
+    def crest(x):
+        return min(tam, key=lambda p: abs(p[0] - x))[1]
+
+    ex, mx, wx = X(962), X(700), X(480)
+    ey, my, wy = crest(ex), crest(mx), crest(wx)
+    # one fire lookout, East Peak's own (the lookout cabin is the beacon's anchor in script.js)
+    lk = lookout(ex, ey + 1, 1.05)
+    dome = ('<path d="M%s %s a9 9 0 0 1 18 0 Z" class="paperfill" fill="none" stroke="var(--ink)" stroke-width="1.2"/><path d="M%s %s V%s" fill="none" stroke="var(--ink)" stroke-width="1.2"/>'
+            % (f(mx - 9), f(my + 1), f(mx), f(my - 8), f(my - 19)))
+    labels = ('<g class="peak-labels" font-family="Big Shoulders Display, Arial Narrow, sans-serif" font-weight="800" font-size="19" fill="var(--ink)" letter-spacing="1.5">'
+              '<text x="%s" y="%s" text-anchor="middle">WEST PEAK</text><text x="%s" y="%s" text-anchor="middle">MIDDLE PEAK</text>'
+              '<text x="%s" y="%s" text-anchor="end">EAST PEAK</text></g>'
+              % (f(wx), f(wy - 22), f(mx), f(my - 30), f(ex - 34), f(ey - 14)))
+    # data-bx and data-by: the cabin of East Peak's lookout in scene units at the E=0 pose (script.js anchors the beacon there)
+    layers.append('<g class="lyr" data-lyr="tam" data-t="330" data-bx="%s" data-by="%s"><path class="ridge-far" d="%s"/><path class="shade" d="%s"/>'
+                  '<path class="ridge-line" d="%s"/>%s%s%s</g>' % (f(ex), f(ey + 1 - 32 * 1.05), tam_d, tam_shade, pts_to_d(tam), lk, dome, labels))
     def fog(name, top, t, amp, seed, op):
         n = Noise(seed, 3, 0.01)
         pts = []
@@ -244,18 +255,37 @@ def build_scene():
     layers.append('<g class="fg" data-lyr="fg-chap" data-t="70"><path class="fg-front" d="%s"/><rect class="fg-front" x="-100" y="860" width="1900" height="500"/>'
                   '<path class="rock" d="%s"/><path class="grass" d="%s"/>%s</g>' % (" ".join(scrub), " ".join(rocks), " ".join(grass), quail))
 
-    # summit outcrop with the fire lookout, rises into view
-    rock_keys = [(640, 1120), (720, 900), (820, 830), (930, 790), (1030, 772), (1120, 770), (1210, 786), (1300, 830), (1420, 890), (1540, 960), (1700, 1120)]
-    rock = ridge(rock_keys, Noise(51, 4, 0.03), 5.0, 10)
+    # summit outcrop: the visitor's own ground, rises into view low in the frame (no second lookout; East Peak's is the one)
+    rock_keys = [(560, 1160), (680, 1010), (820, 950), (960, 915), (1080, 902), (1200, 912), (1320, 940), (1440, 985), (1560, 1030), (1700, 1160)]
+    rock = ridge(rock_keys, Noise(51, 4, 0.03), 4.0, 10)
     rock_d = ridge_fill(rock, 1400)
-    tower = lookout(1120, 772, 3.0, "var(--ink)")
-    flag = '<path d="M1120 663 V640 L1146 648 L1120 656" fill="none" stroke="var(--ink)" stroke-width="1.4" stroke-linejoin="round"/>'
-    strata = "".join('<path class="ridge-line" d="%s"/>' % pts_to_d([(x + (off * 0.6 if x < 1120 else -off * 0.6), y + off) for x, y in rock if (x > 640 + off and x < 1700 - off)]) for off in (34, 70, 112, 160))
-    layers.append('<g class="fg" data-lyr="fg-summit" data-t="0" data-t0="480"><path class="fg-rock" d="%s"/><path class="ridge-line" d="%s"/>%s%s%s</g>' % (rock_d, pts_to_d(rock), strata, tower, flag))
+    strata = "".join('<path class="ridge-line" d="%s"/>' % pts_to_d([(x + (off * 0.6 if x < 1080 else -off * 0.6), y + off) for x, y in rock if (x > 560 + off and x < 1700 - off)]) for off in (26, 54, 86))
+    layers.append('<g class="fg" data-lyr="fg-summit" data-t="0" data-t0="360"><path class="fg-rock" d="%s"/><path class="ridge-line" d="%s"/>%s</g>' % (rock_d, pts_to_d(rock), strata))
+
+    # Karl the Fog: a dense sea of soft white bands that fills the valleys in the final stretch. Gradient fills with soft top edges, no blur filter.
+    def sea_band(name, top, amp, seed, grad, drift):
+        pts = []
+        x = -300
+        while x <= 1900:
+            y = top + amp * math.sin(x / 150.0 + seed) + amp * 0.55 * math.sin(x / 61.0 + seed * 2.3) + amp * 0.8 * math.sin(x / 290.0 + seed * 1.7)
+            pts.append((x, y))
+            x += 20
+        d = pts_to_d(pts) + " L1900 1500 L-300 1500 Z"
+        return '<g class="drift" data-drift="%s"><path d="%s" fill="url(#%s)"/></g>' % (drift, d, grad)
+    bands = [sea_band("a", 650, 12, 1.0, "seaA", 1), sea_band("b", 700, 14, 2.2, "seaB", -1), sea_band("c", 765, 16, 3.1, "seaA", 1),
+             sea_band("d", 835, 18, 4.4, "seaB", -1), sea_band("e", 915, 20, 5.3, "seaC", 1)]
+    karl = ('<text x="1235" y="846" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-style="italic" font-size="17" fill="var(--ink-2)" letter-spacing="0.5">Karl the Fog</text>')
+    sea = '<g class="lyr sea" data-lyr="fog-sea" data-t="0" data-t0="340">%s%s</g>' % ("".join(bands), karl)
+    # the sea sits behind the foreground ground (redwoods, oaks, scrub, summit rock) and in front of every ridge
+    layers.insert([i for i, l in enumerate(layers) if 'data-lyr="fog-near"' in l][0] + 1, sea)
 
     defs = ('<defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">'
             '<path d="M0 0 V7" stroke="var(--sienna-line)" stroke-width="1"/></pattern>'
-            '<filter id="fogblur" x="-5%" y="-30%" width="110%" height="160%"><feGaussianBlur stdDeviation="5"/></filter></defs>')
+            '<filter id="fogblur" x="-5%" y="-30%" width="110%" height="160%"><feGaussianBlur stdDeviation="5"/></filter>'
+            '<linearGradient id="seaA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E9F0F2" stop-opacity="0"/><stop offset="0.14" stop-color="#E9F0F2" stop-opacity="0.7"/><stop offset="1" stop-color="#E3EBEE" stop-opacity="0.82"/></linearGradient>'
+            '<linearGradient id="seaB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6F9F9" stop-opacity="0"/><stop offset="0.12" stop-color="#F6F9F9" stop-opacity="0.78"/><stop offset="1" stop-color="#F0F4F4" stop-opacity="0.88"/></linearGradient>'
+            '<linearGradient id="seaC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDFEFD" stop-opacity="0"/><stop offset="0.1" stop-color="#FDFEFD" stop-opacity="0.9"/><stop offset="1" stop-color="#FBFCFA" stop-opacity="0.96"/></linearGradient>'
+            '</defs>')
     sun = ('<g id="sun" transform="translate(300 560)"><circle class="sun-glow" r="130"/><circle class="sun-disc" r="46"/><circle class="sun-ring" r="62"/><circle class="sun-ring" r="82"/></g>')
     svg = ('<svg id="scene" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMax slice" role="presentation" focusable="false" aria-hidden="true">'
            + defs + sun + "".join(layers) + "</svg>")
