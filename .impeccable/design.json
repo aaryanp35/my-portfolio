@@ -1,0 +1,511 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-17T23:55:51.082025+00:00",
+  "title": "Design System: Aaryan Patel",
+  "extensions": {
+    "colorMeta": {
+      "map-paper": {
+        "role": "neutral",
+        "displayName": "Map Paper",
+        "canonical": "#F3F5F1",
+        "cssVar": "--paper",
+        "tonalRamp": [
+          "#262D20",
+          "#424D37",
+          "#5E6E4F",
+          "#7A8F66",
+          "#99AA88",
+          "#B8C4AC",
+          "#D6DDCF",
+          "#F2F4F0"
+        ]
+      },
+      "black-ink": {
+        "role": "neutral",
+        "displayName": "Black Ink",
+        "canonical": "#13171A",
+        "cssVar": "--ink",
+        "tonalRamp": [
+          "#20272C",
+          "#38444D",
+          "#50606D",
+          "#677D8D",
+          "#899BA9",
+          "#ACB9C3",
+          "#D0D7DD",
+          "#F0F3F4"
+        ]
+      },
+      "slate-ink": {
+        "role": "neutral",
+        "displayName": "Slate Ink",
+        "canonical": "#3A4146",
+        "cssVar": "--ink-2",
+        "tonalRamp": [
+          "#23272A",
+          "#3C4349",
+          "#566067",
+          "#6F7C86",
+          "#8F9BA3",
+          "#B1B9BE",
+          "#D2D7DA",
+          "#F1F2F3"
+        ]
+      },
+      "contour-sienna": {
+        "role": "secondary",
+        "displayName": "Contour Sienna",
+        "canonical": "#8A4B2B",
+        "cssVar": "--sienna",
+        "tonalRamp": [
+          "#3A2012",
+          "#653720",
+          "#904E2D",
+          "#BB653A",
+          "#CF8863",
+          "#DDAB92",
+          "#ECCFC1",
+          "#F9F0EC"
+        ]
+      },
+      "contour-line": {
+        "role": "secondary",
+        "displayName": "Contour Line",
+        "canonical": "#B27650",
+        "cssVar": "--sienna-line",
+        "tonalRamp": [
+          "#352317",
+          "#5C3D29",
+          "#83563A",
+          "#AA704B",
+          "#C19071",
+          "#D3B19C",
+          "#E6D3C6",
+          "#F7F1ED"
+        ]
+      },
+      "road-red": {
+        "role": "primary",
+        "displayName": "Road Red",
+        "canonical": "#B7281E",
+        "cssVar": "--road",
+        "tonalRamp": [
+          "#420E0B",
+          "#721913",
+          "#A2231B",
+          "#D22E22",
+          "#E25950",
+          "#EB8B84",
+          "#EFC1BE",
+          "#FAECEB"
+        ]
+      },
+      "vegetation-green": {
+        "role": "tertiary",
+        "displayName": "Vegetation Green",
+        "canonical": "#5F8350",
+        "cssVar": "--veg",
+        "tonalRamp": [
+          "#222F1D",
+          "#3C5232",
+          "#557548",
+          "#6E985D",
+          "#8FB280",
+          "#B0C9A6",
+          "#D2E0CC",
+          "#F1F5EF"
+        ]
+      },
+      "vegetation-tint": {
+        "role": "tertiary",
+        "displayName": "Vegetation Tint",
+        "canonical": "#D9E6D0",
+        "cssVar": "--veg-tint",
+        "tonalRamp": [
+          "#24321B",
+          "#3F572E",
+          "#597B42",
+          "#74A055",
+          "#93B87A",
+          "#B4CDA2",
+          "#D4E3CA",
+          "#F2F6EE"
+        ]
+      },
+      "fog-white": {
+        "role": "neutral",
+        "displayName": "Fog White",
+        "canonical": "#FBFCFA",
+        "cssVar": "--fog",
+        "tonalRamp": [
+          "#26301D",
+          "#425332",
+          "#5E7647",
+          "#7A995C",
+          "#99B37F",
+          "#B8C9A6",
+          "#D6E0CC",
+          "#F2F5EF"
+        ]
+      },
+      "zone-redwood": {
+        "role": "tertiary",
+        "displayName": "Redwood Zone",
+        "canonical": "#B7D1AE",
+        "cssVar": "--z1",
+        "tonalRamp": [
+          "#21311C",
+          "#395530",
+          "#527844",
+          "#6A9C59",
+          "#8BB57D",
+          "#AECBA4",
+          "#D1E1CB",
+          "#F1F6EF"
+        ]
+      },
+      "zone-woodland": {
+        "role": "tertiary",
+        "displayName": "Woodland Zone",
+        "canonical": "#C9D6A6",
+        "cssVar": "--z2",
+        "tonalRamp": [
+          "#2D3418",
+          "#4E5B2A",
+          "#6E813C",
+          "#8FA84D",
+          "#AABF73",
+          "#C4D29D",
+          "#DDE5C7",
+          "#F4F7EE"
+        ]
+      },
+      "zone-chaparral": {
+        "role": "tertiary",
+        "displayName": "Chaparral Zone",
+        "canonical": "#DDCD97",
+        "cssVar": "--z3",
+        "tonalRamp": [
+          "#3A3113",
+          "#645521",
+          "#8E782E",
+          "#B89C3C",
+          "#CDB565",
+          "#DCCB93",
+          "#EBE1C2",
+          "#F9F6EC"
+        ]
+      },
+      "zone-summit": {
+        "role": "tertiary",
+        "displayName": "Summit Zone",
+        "canonical": "#D4DFE0",
+        "cssVar": "--z4",
+        "tonalRamp": [
+          "#202B2C",
+          "#384B4D",
+          "#4F6B6E",
+          "#678B8E",
+          "#88A7AA",
+          "#ACC1C3",
+          "#D0DCDD",
+          "#F0F4F4"
+        ]
+      }
+    },
+    "sceneZones": {
+      "purpose": "Per-elevation scene palette interpolated by script.js as the visitor climbs; scene only, never UI.",
+      "stops": [
+        {
+          "elevationFt": 350,
+          "wash": "#DCE8D8",
+          "far": "#B9CEC8",
+          "mid": "#9DBB95",
+          "near": "#7FA386",
+          "fg": "#6C9772",
+          "sun": "#E3B891"
+        },
+        {
+          "elevationFt": 1000,
+          "wash": "#E4EAD2",
+          "far": "#BFCFC6",
+          "mid": "#A9BE8A",
+          "near": "#8AA46A",
+          "fg": "#7FA874",
+          "sun": "#EACB9E"
+        },
+        {
+          "elevationFt": 1800,
+          "wash": "#EDE5C9",
+          "far": "#C3CCC6",
+          "mid": "#D3C28E",
+          "near": "#BC9F68",
+          "fg": "#B0A068",
+          "sun": "#F4E2BE"
+        },
+        {
+          "elevationFt": 2500,
+          "wash": "#D3E2EA",
+          "far": "#A9C1CC",
+          "mid": "#BECBC0",
+          "near": "#A7B49A",
+          "fg": "#A39F88",
+          "sun": "#FBF4E4"
+        }
+      ]
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The name on the title plate and zone headings. Uppercase."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Stop names, role lines, primary legend-row labels, altimeter numerals (in mono). Uppercase."
+      },
+      "title": {
+        "displayName": "Title (display label)",
+        "purpose": "Buttons, list headings, feature classes, zone links at body size. Uppercase."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Everything read in sentences; 36 to 38rem measure."
+      },
+      "label": {
+        "displayName": "Measurement Mono",
+        "purpose": "Elevations, coordinates and dates only. Uppercase, tabular."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Italic plain-language line under a primary legend row."
+      }
+    },
+    "shadows": [
+      {
+        "name": "double-neatline",
+        "value": "box-shadow: 0 0 0 4px var(--paper); outline: 1px solid var(--ink); outline-offset: 4px",
+        "purpose": "Zero-offset paper gap and second rule around title plate, zone headings, summit register, photo inset."
+      },
+      {
+        "name": "double-neatline-rest",
+        "value": "box-shadow: 0 0 0 3px var(--paper); outline: 1px solid var(--sienna-line); outline-offset: 3px",
+        "purpose": "Rest-stop sign boards."
+      },
+      {
+        "name": "paper-halo",
+        "value": "drop-shadow(0 0 1px var(--paper)) drop-shadow(0 0 2px var(--paper))",
+        "purpose": "Legibility halo for the hiker over linework; contour labels use a 4px paper paint-order stroke."
+      }
+    ],
+    "focus": {
+      "value": "outline: 3px solid var(--road); outline-offset: 3px; border-radius: 2px",
+      "onRed": "outline-color: var(--ink)"
+    },
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "UI fades and the summit flag raise (0.6s)."
+      },
+      {
+        "name": "climb-scrub",
+        "value": "GSAP ScrollTrigger scrub 0.7, ease none",
+        "purpose": "Scroll drives elevation, hiker, scene tint and parallax."
+      },
+      {
+        "name": "reveal",
+        "value": "opacity 0 to 1, y 4px to 0, 0.5s expo.out, 0.06s stagger",
+        "purpose": "Legend boxes entering."
+      },
+      {
+        "name": "pin-pop",
+        "value": "scale, 0.45s back.out(2.4), 0.12s delay",
+        "purpose": "Trail pins arriving with their stop."
+      },
+      {
+        "name": "contour-draw",
+        "value": "stroke-dashoffset, 1.1s power2.out, 0.03s stagger",
+        "purpose": "Contours drawing in."
+      },
+      {
+        "name": "smooth-scroll",
+        "value": "Lenis lerp 0.12 on fine pointers only",
+        "purpose": "Desktop scroll smoothing."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "all reveals static, contours drawn, no orbit or drift",
+        "purpose": "prefers-reduced-motion and no-JS parity."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "xs",
+        "value": "370px"
+      },
+      {
+        "name": "sm",
+        "value": "400px"
+      },
+      {
+        "name": "phone-max",
+        "value": "699px"
+      },
+      {
+        "name": "tablet-max",
+        "value": "959px"
+      },
+      {
+        "name": "desktop",
+        "value": "960px"
+      },
+      {
+        "name": "neatline-labels",
+        "value": "1100px"
+      },
+      {
+        "name": "peak-labels",
+        "value": "1400px"
+      },
+      {
+        "name": "short-landscape",
+        "value": "max-height 520px, landscape"
+      }
+    ],
+    "chrome": {
+      "inset": "12px (6px phones)",
+      "barTop": "56px (52px phones, 48px short landscape)",
+      "barBottom": "84px (56px phones, 48px short landscape)",
+      "trailColumn": "144px / 96px below 960px / 40px below 700px",
+      "measure": "36rem"
+    }
+  },
+  "components": [
+    {
+      "name": "Resume Button",
+      "kind": "button",
+      "refersTo": "button-resume",
+      "description": "The one filled action: top-bar Resume (PDF), road red, square, 44px.",
+      "html": "<a class=\"ds-btn-resume\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" aria-hidden=\"true\"><path d=\"M6 3h8l4 4v14H6z\"/><path d=\"M14 3v4h4\"/><path d=\"M12 10v6m-3-3 3 3 3-3\"/></svg>Resume (PDF)</a>",
+      "css": ":host{--paper:#F3F5F1;--ink:#13171A;--ink-2:#3A4146;--sienna:#8A4B2B;--sienna-line:#B27650;--road:#B7281E;--veg-tint:#D9E6D0;--f-display:'Big Shoulders Display','Arial Narrow',sans-serif;--f-serif:'Source Serif 4',Georgia,serif;--f-mono:'Martian Mono',ui-monospace,Menlo,monospace;}.ds-btn-resume{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;background:var(--road);color:var(--paper);border:1px solid var(--road);text-decoration:none;font-family:var(--f-display);font-weight:800;font-size:1.0625rem;line-height:1.15;letter-spacing:.05em;text-transform:uppercase;}.ds-btn-resume:hover{background:color-mix(in srgb,var(--road) 82%,var(--ink));}.ds-btn-resume:focus-visible{outline:3px solid var(--ink);outline-offset:3px;}"
+    },
+    {
+      "name": "Skip to Summit",
+      "kind": "button",
+      "refersTo": "button-skip-summit",
+      "description": "Secondary paper button that jumps to the summit register.",
+      "html": "<a class=\"ds-btn-skip\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M3 21 12 4l9 17z\"/><path d=\"M12 4v6h5\"/></svg>Skip to summit</a>",
+      "css": ":host{--paper:#F3F5F1;--ink:#13171A;--ink-2:#3A4146;--sienna:#8A4B2B;--sienna-line:#B27650;--road:#B7281E;--veg-tint:#D9E6D0;--f-display:'Big Shoulders Display','Arial Narrow',sans-serif;--f-serif:'Source Serif 4',Georgia,serif;--f-mono:'Martian Mono',ui-monospace,Menlo,monospace;}.ds-btn-skip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;background:var(--paper);color:var(--ink);border:1px solid var(--ink);text-decoration:none;font-family:var(--f-display);font-weight:800;font-size:1.0625rem;line-height:1.15;letter-spacing:.05em;text-transform:uppercase;}.ds-btn-skip:hover{background:var(--veg-tint);}.ds-btn-skip:focus-visible{outline:3px solid var(--road);outline-offset:3px;border-radius:2px;}"
+    },
+    {
+      "name": "Legend Row (primary)",
+      "kind": "custom",
+      "refersTo": "mark-primary",
+      "description": "Map-legend action row: red line symbol, display label with red underline, italic caption.",
+      "html": "<div class=\"ds-mark-wrap\"><a class=\"ds-mark\" href=\"#\"><span class=\"ds-mark-sym\"><svg viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><rect x=\"3\" y=\"6\" width=\"18\" height=\"12\"/><path d=\"m3 6 9 7 9-7\"/></svg></span><span class=\"ds-mark-label\">Email</span></a><p class=\"ds-mark-cap\">name@example.com</p></div>",
+      "css": ":host{--paper:#F3F5F1;--ink:#13171A;--ink-2:#3A4146;--sienna:#8A4B2B;--sienna-line:#B27650;--road:#B7281E;--veg-tint:#D9E6D0;--f-display:'Big Shoulders Display','Arial Narrow',sans-serif;--f-serif:'Source Serif 4',Georgia,serif;--f-mono:'Martian Mono',ui-monospace,Menlo,monospace;}.ds-mark-wrap{max-width:18rem;}.ds-mark{display:grid;grid-template-columns:28px minmax(0,1fr);align-items:center;column-gap:12px;min-height:48px;padding:4px 0;border-bottom:1px solid var(--sienna-line);color:var(--ink);text-decoration:none;}.ds-mark-sym{color:var(--road);display:flex;}.ds-mark-label{justify-self:start;font-family:var(--f-display);font-weight:800;text-transform:uppercase;font-size:2rem;line-height:1;letter-spacing:.02em;text-decoration:underline;text-decoration-color:var(--road);text-decoration-thickness:2px;text-underline-offset:.2em;}.ds-mark:hover{background:var(--veg-tint);}.ds-mark:hover .ds-mark-label{text-decoration-thickness:3px;}.ds-mark:active{background:color-mix(in srgb,var(--veg-tint) 70%,var(--sienna-line));}.ds-mark:focus-visible{outline:3px solid var(--road);outline-offset:3px;border-radius:2px;}.ds-mark-cap{margin:4px 0 0;padding-left:40px;font-family:var(--f-serif);font-style:italic;font-size:.75rem;line-height:1.4;letter-spacing:.02em;color:var(--ink-2);}"
+    },
+    {
+      "name": "Inline Link",
+      "kind": "custom",
+      "refersTo": "link-inline",
+      "description": "Serif 600 link with a 2px road-red underline and optional arrow symbol.",
+      "html": "<a class=\"ds-link\" href=\"#\">Open the live app<svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M7 17 17 7M9 7h8v8\"/></svg></a>",
+      "css": ":host{--paper:#F3F5F1;--ink:#13171A;--ink-2:#3A4146;--sienna:#8A4B2B;--sienna-line:#B27650;--road:#B7281E;--veg-tint:#D9E6D0;--f-display:'Big Shoulders Display','Arial Narrow',sans-serif;--f-serif:'Source Serif 4',Georgia,serif;--f-mono:'Martian Mono',ui-monospace,Menlo,monospace;}.ds-link{display:inline-flex;align-items:center;gap:4px;min-height:44px;font-family:var(--f-serif);font-size:1.0625rem;font-weight:600;color:var(--ink);text-decoration:underline;text-decoration-color:var(--road);text-decoration-thickness:2px;text-underline-offset:.2em;}.ds-link svg{color:var(--road);}.ds-link:hover{background:var(--veg-tint);}.ds-link:focus-visible{outline:3px solid var(--road);outline-offset:3px;border-radius:2px;}"
+    },
+    {
+      "name": "Legend Box (stop)",
+      "kind": "card",
+      "refersTo": "legend-box",
+      "description": "A stop on the route: solid paper, black hairline, display name, mono meta, serif body.",
+      "html": "<article class=\"ds-stop\"><h3 class=\"ds-stop-name\">Proxii</h3><p class=\"ds-stop-meta\"><span class=\"ds-fc\">Spring</span><span>Live on Vercel</span></p><p class=\"ds-stop-what\">A neighborhood scoring app.</p><p><strong class=\"ds-part\">My part.</strong> I built it end to end.</p></article>",
+      "css": ":host{--paper:#F3F5F1;--ink:#13171A;--ink-2:#3A4146;--sienna:#8A4B2B;--sienna-line:#B27650;--road:#B7281E;--veg-tint:#D9E6D0;--f-display:'Big Shoulders Display','Arial Narrow',sans-serif;--f-serif:'Source Serif 4',Georgia,serif;--f-mono:'Martian Mono',ui-monospace,Menlo,monospace;}.ds-stop{max-width:36rem;background:var(--paper);border:1px solid var(--ink);padding:24px;color:var(--ink);font-family:var(--f-serif);font-size:1.0625rem;line-height:1.55;}.ds-stop>*{margin:0;}.ds-stop>*+*{margin-top:8px;}.ds-stop-name{font-family:var(--f-display);font-weight:800;text-transform:uppercase;font-size:2rem;line-height:1.05;letter-spacing:.01em;}.ds-stop-meta{display:flex;gap:0 16px;margin-top:4px!important;font-family:var(--f-mono);font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);}.ds-fc{font-family:var(--f-display);font-weight:800;font-size:1.0625rem;line-height:1.15;letter-spacing:.05em;text-transform:uppercase;color:var(--sienna);}.ds-stop-what{font-style:italic;}.ds-part{font-family:var(--f-display);font-weight:800;font-size:1.0625rem;line-height:1.15;letter-spacing:.05em;text-transform:uppercase;color:var(--sienna);margin-right:4px;}"
+    },
+    {
+      "name": "Title Plate",
+      "kind": "card",
+      "refersTo": "title-plate",
+      "description": "Double-neatline paper plate for the name, zone headings and the summit register.",
+      "html": "<header class=\"ds-plate\"><h1 class=\"ds-plate-h\">Redwood canyon</h1><p class=\"ds-plate-note\">Redwood, fern and creek.</p></header>",
+      "css": ":host{--paper:#F3F5F1;--ink:#13171A;--ink-2:#3A4146;--sienna:#8A4B2B;--sienna-line:#B27650;--road:#B7281E;--veg-tint:#D9E6D0;--f-display:'Big Shoulders Display','Arial Narrow',sans-serif;--f-serif:'Source Serif 4',Georgia,serif;--f-mono:'Martian Mono',ui-monospace,Menlo,monospace;}.ds-plate{display:block;width:fit-content;margin:5px;padding:16px 24px 24px;background:var(--paper);border:1px solid var(--ink);box-shadow:0 0 0 4px var(--paper);outline:1px solid var(--ink);outline-offset:4px;color:var(--ink);}.ds-plate-h{margin:0;font-family:var(--f-display);font-weight:800;text-transform:uppercase;font-size:clamp(3rem,1.6rem + 6vw,6rem);line-height:.92;letter-spacing:-.01em;}.ds-plate-note{margin:16px 0 0;font-family:var(--f-serif);font-style:italic;font-size:1.0625rem;line-height:1.55;}"
+    },
+    {
+      "name": "Zone Links",
+      "kind": "nav",
+      "refersTo": null,
+      "description": "Route-section links under the elevation profile; current zone underlined in road red.",
+      "html": "<nav class=\"ds-zones\"><a href=\"#\">Trailhead</a><a href=\"#\" class=\"is-current\">Canyon</a><a href=\"#\">Woodland</a><a href=\"#\">Chaparral</a><a href=\"#\">Summit</a></nav>",
+      "css": ":host{--paper:#F3F5F1;--ink:#13171A;--ink-2:#3A4146;--sienna:#8A4B2B;--sienna-line:#B27650;--road:#B7281E;--veg-tint:#D9E6D0;--f-display:'Big Shoulders Display','Arial Narrow',sans-serif;--f-serif:'Source Serif 4',Georgia,serif;--f-mono:'Martian Mono',ui-monospace,Menlo,monospace;}.ds-zones{display:flex;justify-content:space-between;gap:8px;background:var(--paper);border-top:1px solid var(--ink);padding:8px 24px;}.ds-zones a{display:inline-flex;align-items:flex-end;justify-content:center;min-width:64px;min-height:44px;padding:0 8px 2px;color:var(--ink-2);text-decoration:none;font-family:var(--f-display);font-weight:600;font-size:1.0625rem;line-height:1;letter-spacing:.05em;text-transform:uppercase;}.ds-zones a:hover{color:var(--road);text-decoration:underline;}.ds-zones a.is-current{color:var(--ink);text-decoration:underline;text-decoration-color:var(--road);text-decoration-thickness:2px;}.ds-zones a:focus-visible{outline:3px solid var(--road);outline-offset:3px;border-radius:2px;}"
+    },
+    {
+      "name": "Trail Pins",
+      "kind": "custom",
+      "refersTo": "trail-pin",
+      "description": "Circular route markers: waypoint, headline stop, rest stop.",
+      "html": "<div class=\"ds-pins\"><span class=\"ds-pin ds-pin-wp\"></span><span class=\"ds-pin ds-pin-head\"></span><span class=\"ds-pin ds-pin-rest\"></span></div>",
+      "css": ":host{--paper:#F3F5F1;--ink:#13171A;--ink-2:#3A4146;--sienna:#8A4B2B;--sienna-line:#B27650;--road:#B7281E;--veg-tint:#D9E6D0;--f-display:'Big Shoulders Display','Arial Narrow',sans-serif;--f-serif:'Source Serif 4',Georgia,serif;--f-mono:'Martian Mono',ui-monospace,Menlo,monospace;}.ds-pins{display:flex;align-items:center;gap:24px;padding:16px;background:var(--paper);}.ds-pin{display:block;border-radius:50%;border:1.5px solid var(--ink);}.ds-pin-wp{width:22px;height:22px;background:var(--ink);}.ds-pin-head{width:26px;height:26px;background:var(--ink);box-shadow:inset 0 0 0 4px var(--paper);}.ds-pin-rest{width:36px;height:36px;background:var(--paper);border-color:var(--sienna);}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Trail Sheet",
+    "overview": "The whole site is one USGS quadrangle sheet of Mount Tamalpais that the visitor climbs. A fixed neatline frames the window: a thin black rule with corner ticks and edge graduations, a paper margin, a top bar carrying the mountain name and coordinates with a live altimeter, and a bottom bar carrying the declination, an elevation profile that acts as the progress instrument, and a scale bar. Inside the frame, a living illustration (layered ridgelines of West, Middle and East Peak, vegetation that shifts from redwood to woodland to chaparral to bare summit, Karl the Fog drifting in the valleys) scrolls behind sienna contour lines. Content arrives as map furniture set on solid paper: a title plate, legend boxes, sign boards and a summit register.\n\nDensity is that of a printed map: compact, hairline-ruled, information in small mono annotations, with one condensed display voice for names and a calm serif for reading. Color comes from the map's own ink set; nothing glows, nothing is glassy, and depth comes from overlapping printed layers, not shadows. The owner rejected the dark, glassy, neon-accent instrument-panel look; this world is its opposite, light only.\n\nMotion is the climb: the scroll drives elevation, the hiker marker walks the dashed route, contours draw in, the scene's palette re-tints by zone, and a flag goes up once at the summit. All motion is transform and opacity, and the page reads complete without JavaScript or under reduced motion.",
+    "keyCharacteristics": [
+      "One sheet, one neatline: fixed paper margin, black hairline frame, top and bottom map bars.",
+      "Every block of text sits on solid map paper with a black hairline border.",
+      "Three voices: condensed caps display, Source Serif 4 body, Martian Mono for measurements.",
+      "Road red is reserved for actions and the position marker.",
+      "Vegetation zones tint the scene by elevation; the route and contours are drawn, not decorated.",
+      "Square corners everywhere except trail pins and the profile dot, which are circles."
+    ],
+    "rules": [
+      {
+        "name": "The Road Red Rule",
+        "body": "Red marks where you can go and where you are: actions, their underlines and symbols, the focus ring and the position marker. It never fills a panel, never colors a heading, never decorates.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Browns Rule",
+        "body": "Sienna at text weight, contour line at stroke weight. Light brown never carries words.",
+        "section": "colors"
+      },
+      {
+        "name": "The Four Sizes Rule",
+        "body": "The type system has four sizes: label, body, headline and display. Weight, case and face change the voice; size does not multiply.",
+        "section": "typography"
+      },
+      {
+        "name": "The Measurement Mono Rule",
+        "body": "Mono is for elevations, coordinates and dates. Labels, buttons and headings speak in the display face.",
+        "section": "typography"
+      },
+      {
+        "name": "The Solid Paper Rule",
+        "body": "Text never sits directly on illustration. Every block of words is set on an opaque map-paper panel with a black hairline.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Zero Offset Rule",
+        "body": "Rings and halos are concentric. Nothing on the sheet casts a directional shadow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do set every block of text on an opaque map-paper panel with a 1px black hairline (The Solid Paper Rule).",
+      "Do reserve road red for actions, link underlines, legend-row symbols, focus and the position marker.",
+      "Do use Martian Mono only for elevations, coordinates and dates, uppercase with 0.06em tracking and tabular numerals.",
+      "Do frame important plates with the double neatline: a 4px paper gap and a second 1px black rule.",
+      "Do keep corners square; reserve circles for trail pins and the profile dot.",
+      "Do give every interactive target at least 44px of height and a vegetation-tint hover.",
+      "Do draw symbols as 1.5px line glyphs in a shared sprite, map-legend style, labeled by text beside them.",
+      "Do keep motion to transform and opacity, tied to the climb, with the page complete without JavaScript and static under reduced motion."
+    ],
+    "donts": [
+      "Don't place text directly over the illustration, the contours or the fog.",
+      "Don't add a fifth type size; change face, weight or case instead.",
+      "Don't use light contour brown for text.",
+      "Don't add directional or blurred drop shadows, glass, glows on UI, or a dark theme.",
+      "Don't round panel or button corners, or turn actions into pills.",
+      "Don't reach for a centered hero with metric chips or a grid of identical project cards; stops are legend entries along a route."
+    ]
+  }
+}
