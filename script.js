@@ -19,6 +19,8 @@
     $$('.contour').forEach(function (c) { c.classList.add('is-drawn'); });
     return;
   }
+  var isTouch = window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(hover: none)').matches;
+  if (isTouch) doc.classList.add('touch');
   gsap.registerPlugin(ScrollTrigger);
   if (typeof MotionPathPlugin !== 'undefined') gsap.registerPlugin(MotionPathPlugin);
 
@@ -39,6 +41,8 @@
   var profileDot = $('#profile-dot'), profileWrap = $('.profile-wrap'), pfDone = $('.pf-done');
   var rose = $('#decl-rose');
   var scalePin = $('#scale-pin');
+  var hawk = $('#hawk'), beacon = $('#beacon'), quail = $('#quail'), sunGlowOn = true;
+  var lastPalE = -1e9, hawkState = '', beaconOn = false;
   var zoneLinks = $$('.zone-links a');
   var routeD0 = routePath ? routePath.getAttribute('d') : '';
 
@@ -74,8 +78,8 @@
   }
 
   /* ------------------------------------------------------------ layout state */
-  var S = { stops: [], maxScroll: 1, anchorY: 0, samples: [], routeLen: 1, trailTop: 0, trailH: 1, trailW: 1 };
-  var lastZone = '', lastContour = -1, lastE = -1;
+  var S = { stops: [], maxScroll: 1, anchorY: 0, samples: [], routeLen: 1, trailTop: 0, trailH: 1, trailW: 1, beacon: null };
+  var lastZone = '', lastContour = -1, lastE = -1, lastP = 0, lastPose = 0, drawZone = null;
 
   function winMetrics() {
     var r = stage.getBoundingClientRect();
@@ -247,12 +251,34 @@
       sun.setAttribute('transform', 'translate(' + lerp(1000, 1290, sf).toFixed(1) + ' ' + lerp(560, 250, sf).toFixed(1) + ')');
       var pl = $('#scene .peak-labels'); if (pl) pl.style.opacity = (0.9 * (1 - seg(poseE, 450, 900))).toFixed(3);
     }
-    if (hatch) hatch.setAttribute('patternTransform', 'rotate(' + lerp(35, 78, smooth(f)).toFixed(1) + ')');
-    var c = mixZone(poseE);
-    var st = stage.style;
-    st.setProperty('--wash', c.wash); st.setProperty('--far', c.far); st.setProperty('--mid', c.mid);
-    st.setProperty('--near', c.near); st.setProperty('--fg', c.fg); st.setProperty('--sun', c.sun);
-    st.setProperty('--hatch-o', lerp(0.55, 0.14, smooth(f)).toFixed(3));
+    // touch: the zone palette and hatch only repaint in coarse steps, so scrolling stays on the compositor
+    if (!isTouch || Math.abs(poseE - lastPalE) > 30 || opts.force) {
+      lastPalE = poseE;
+      if (hatch && !isTouch) hatch.setAttribute('patternTransform', 'rotate(' + lerp(35, 78, smooth(f)).toFixed(1) + ')');
+      var c = mixZone(poseE);
+      var st = stage.style;
+      st.setProperty('--wash', c.wash); st.setProperty('--far', c.far); st.setProperty('--mid', c.mid);
+      st.setProperty('--near', c.near); st.setProperty('--fg', c.fg); st.setProperty('--sun', c.sun);
+      st.setProperty('--hatch-o', lerp(0.55, 0.14, smooth(f)).toFixed(3));
+      st.setProperty('--glow', (0.06 + 0.34 * seg(poseE, 1700, 2571)).toFixed(3));
+    }
+    // red-tailed hawk: circles over the ridge near the trailhead, parked once you are above it
+    if (hawk) {
+      var hs = poseE < 650 ? 'on' : 'off';
+      if (hs !== hawkState) { hawkState = hs; hawk.classList.toggle('is-on', hs === 'on'); hawk.classList.toggle('is-paused', hs !== 'on'); }
+    }
+    // lookout beacon: lights up as the fire lookout rises into view, and rides the rising outcrop
+    if (beacon && S.beacon) {
+      var bs = seg(poseE, 1900, 2571);
+      var by = S.beacon.y + lerp(480, 0, bs) * S.beacon.k;
+      beacon.style.transform = 'translate(' + S.beacon.x.toFixed(1) + 'px,' + by.toFixed(1) + 'px)';
+      var bo = seg(poseE, 2350, 2571);
+      beacon.style.opacity = bo.toFixed(2);
+      var on = bo > 0.02;
+      if (on !== beaconOn) { beaconOn = on; beacon.classList.toggle('is-on', on); }
+    }
+    // contours draw in section by section as each zone is entered
+    if (drawZone) drawZone(E);
     // contours
     var ci = Math.round(clamp(E / E_MAX, 0, 1) * (contours.length - 1));
     if (ci !== lastContour && contours.length) {
@@ -278,7 +304,7 @@
       profileDot.style.left = (clamp(p, 0, 1) * pw).toFixed(1) + 'px';
       profileDot.style.top = (2 + (44 - E / E_MAX * 40) / 48 * ph).toFixed(1) + 'px';
     }
-    lastE = E;
+    lastE = E; lastP = p; lastPose = poseE;
   }
 
   /* ------------------------------------------------------------ full motion mode */
@@ -322,32 +348,49 @@
     ScrollTrigger.create({ animation: tl, start: 0, end: 'max', scrub: 0.7, invalidateOnRefresh: true });
     prime();
 
-    // fog drifts slowly sideways, 60 to 90 second loops
-    if (!fogTweens.length) {
+    // fog drifts slowly sideways, 60 to 90 second loops (skipped on touch)
+    if (!isTouch && !fogTweens.length) {
       $$('.fog .drift').forEach(function (d, i) {
         fogTweens.push(gsap.to(d, { x: (i % 2 ? -1 : 1) * (110 + i * 40), duration: 60 + i * 12, ease: 'sine.inOut', yoyo: true, repeat: -1 }));
       });
     }
 
-    // contours draw once on load
-    if (!document.documentElement.classList.contains('contours-drawn')) {
-      doc.classList.add('contours-drawn');
-      gsap.fromTo(contours, { strokeDashoffset: 1 }, {
-        strokeDashoffset: 0, duration: 1.0, ease: 'power2.out', stagger: { each: 0.02 },
-        onComplete: function () { contours.forEach(function (c) { c.classList.add('is-drawn'); }); }
+    // contours draw in section by section: the lowest levels on load, the rest as each zone is entered
+    var GROUPS = [[0, 12, 0], [12, 20, 650], [20, 27, 1350], [27, contours.length, 2150]];
+    var drawn = [false, false, false, false];
+    function drawGroup(i) {
+      drawn[i] = true;
+      var els = contours.slice(GROUPS[i][0], GROUPS[i][1]);
+      if (isTouch) { els.forEach(function (c) { c.classList.add('is-drawn'); }); return; }
+      gsap.fromTo(els, { strokeDashoffset: 1 }, {
+        strokeDashoffset: 0, duration: 1.1, ease: 'power2.out', stagger: { each: 0.03 },
+        onComplete: function () { els.forEach(function (c) { c.classList.add('is-drawn'); }); }
       });
     }
+    drawZone = function (e) { for (var i = 0; i < GROUPS.length; i++) if (!drawn[i] && e >= GROUPS[i][2]) drawGroup(i); };
+    if (isTouch) { GROUPS.forEach(function (g, i) { drawGroup(i); }); }
+    else if (!doc.classList.contains('contours-drawn')) { doc.classList.add('contours-drawn'); drawZone(0); }
 
     // ink-settle entrances
     var items = $$('.reveal');
+    // each pin drops onto the trail when its point enters view
+    gsap.set($$('.pin'), { opacity: 0, scale: 0.8, y: -6 });
     ScrollTrigger.batch(items, {
       start: 'top 90%', once: true,
-      onEnter: function (batch) { gsap.to(batch, { opacity: 1, y: 0, duration: 0.5, ease: 'expo.out', stagger: 0.06, overwrite: true, clearProps: 'transform' }); }
+      onEnter: function (batch) {
+        gsap.to(batch, { opacity: 1, y: 0, duration: 0.5, ease: 'expo.out', stagger: 0.06, overwrite: true, clearProps: 'transform' });
+        var pins = batch.map(function (el) { return $('.pin', el); }).filter(Boolean);
+        gsap.to(pins, { opacity: 1, scale: 1, y: 0, duration: 0.45, delay: 0.12, ease: 'back.out(2.4)', stagger: 0.06, overwrite: true, clearProps: 'transform' });
+      }
     });
+    // a pair of quail cross the chaparral once, when the athletics rest stop comes into view
+    if (quail && $('#rest-athletics')) {
+      ScrollTrigger.create({ trigger: '#rest-athletics', start: 'top 85%', once: true, onEnter: runQuail });
+    }
     batchTriggers = ScrollTrigger.getAll().filter(function (t) { return t.vars && t.vars.once; });
 
     // smooth scroll on fine pointers only
-    if (!lenis && typeof Lenis !== 'undefined' && window.matchMedia('(pointer: fine)').matches) {
+    if (!lenis && !isTouch && typeof Lenis !== 'undefined' && window.matchMedia('(pointer: fine)').matches) {
       lenis = new Lenis({ lerp: 0.12, wheelMultiplier: 0.95 });
       lenis.on('scroll', ScrollTrigger.update);
       ticking = function (t) { lenis.raf(t * 1000); };
@@ -357,7 +400,21 @@
     if (window.__revealTimer) clearTimeout(window.__revealTimer);
   }
 
+  function runQuail() {
+    var qs = $$('.q', quail);
+    gsap.set(quail, { opacity: 1 });
+    qs.forEach(function (q, i) {
+      var x0 = +gsap.getProperty(q, 'x'), y0 = +gsap.getProperty(q, 'y');
+      var hop = gsap.to(q, { y: y0 - 5, duration: 0.26, ease: 'sine.out', yoyo: true, repeat: -1, delay: i * 0.13 });
+      gsap.to(q, { x: x0 + 1900, duration: 13, ease: 'none', delay: i * 0.5, onComplete: function () { hop.kill(); gsap.set(quail, { opacity: 0 }); } });
+    });
+  }
+
   function stopFull() {
+    drawZone = null;
+    contours.forEach(function (c) { c.classList.add('is-drawn'); });
+    gsap.set($$('.pin'), { clearProps: 'opacity,scale,y,transform' });
+    if (quail) { gsap.killTweensOf($$('.q', quail)); gsap.set(quail, { opacity: 0 }); }
     if (tl) { if (tl.scrollTrigger) tl.scrollTrigger.kill(); tl.kill(); tl = null; }
     if (lenis) { gsap.ticker.remove(ticking); lenis.destroy(); lenis = null; }
     fogTweens.forEach(function (t) { t.kill(); }); fogTweens = [];
@@ -427,9 +484,18 @@
     marker.style.left = ''; marker.style.top = '';
   }
 
+  function placeBeacon() {
+    if (!beacon) return;
+    var ctm = scene.getScreenCTM(), r = stage.getBoundingClientRect();
+    if (!ctm || !r.width) return;
+    // the lookout cabin on the summit outcrop sits at scene point 1120, 676 when fully risen
+    S.beacon = { x: 1120 * ctm.a + ctm.e - r.left, y: 676 * ctm.d + ctm.f - r.top, k: ctm.d };
+  }
   function fitScene() {
     var r = stage.getBoundingClientRect();
     scene.setAttribute('viewBox', r.width / r.height < 0.9 ? '780 0 700 1000' : '0 0 1600 1000');
+    placeBeacon();
+    if (lastE >= 0) render(lastE, lastP, { force: true, poseE: lastPose });
   }
   fitScene();
   window.addEventListener('resize', fitScene);
@@ -437,12 +503,13 @@
   /* ------------------------------------------------------------ boot */
   var mm = gsap.matchMedia();
   var mode = null;
-  mm.add('(prefers-reduced-motion: no-preference)', function () { mode = 'full'; startFull(); return function () { stopFull(); }; });
+  mm.add('(prefers-reduced-motion: no-preference)', function () { mode = 'full'; doc.classList.add('anim'); startFull(); return function () { doc.classList.remove('anim'); stopFull(); }; });
   mm.add('(prefers-reduced-motion: reduce)', function () { mode = 'static'; startStatic(); return function () { stopStatic(); }; });
 
   function rebuild() {
     clearTimeout(rebuildTimer);
     rebuildTimer = setTimeout(function () {
+      placeBeacon();
       if (mode === 'full') { rebuildFull(); ScrollTrigger.refresh(); }
       else { layout(); staticActive = null; staticUpdate(); }
     }, 160);

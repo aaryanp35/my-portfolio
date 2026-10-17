@@ -126,6 +126,14 @@ def lookout(cx, base, s, stroke="var(--ink)"):
     return '<g fill="none" stroke="%s" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round">%s</g>' % (stroke, "".join(g))
 
 
+# California quail facing right, about 26 units long: body, head with the topknot plume, legs
+QUAIL = ('<path d="M-12 -2 C-12 -10 -3 -15 6 -11 C10 -10 11 -6 10 -4 C11 -2 10 1 6 2 C0 5 -9 4 -12 -2 Z" fill="var(--ink)" fill-opacity="0.78"/>'
+         '<circle cx="11" cy="-12" r="3.6" fill="var(--ink)" fill-opacity="0.78"/>'
+         '<path d="M11 -15 C9 -22 14 -23 14.5 -18" fill="none" stroke="var(--ink)" stroke-opacity="0.78" stroke-width="1.4" stroke-linecap="round"/>'
+         '<path d="M14.5 -12 L17.5 -11" fill="none" stroke="var(--sienna)" stroke-width="1.4" stroke-linecap="round"/>'
+         '<path d="M-1 4 L-2 9 M4 4 L5 9" fill="none" stroke="var(--ink)" stroke-opacity="0.78" stroke-width="1.2" stroke-linecap="round"/>')
+
+
 # ---------------------------------------------------------------- scene
 def build_scene():
     r = random.Random(SEED)
@@ -144,7 +152,7 @@ def build_scene():
     dome = '<path d="M1071 304 a9 9 0 0 1 18 0 Z" class="paperfill" fill="none" stroke="var(--ink)" stroke-width="1.2"/><path d="M1080 295 V284" fill="none" stroke="var(--ink)" stroke-width="1.2"/>'
     labels = ('<g class="peak-labels" font-family="Martian Mono, monospace" font-size="13" fill="var(--ink)" text-anchor="middle" letter-spacing="1">'
               '<text x="860" y="262">WEST PEAK</text><text x="1080" y="268">MIDDLE PEAK</text>'
-              '<text x="1342" y="212">EAST PEAK  2,571 FT</text></g>')
+              '<text x="1342" y="212">EAST PEAK</text></g>')
     layers.append('<g class="lyr" data-lyr="tam" data-t="330"><path class="ridge-far" d="%s"/><path class="shade" d="%s"/>'
                   '<path class="ridge-line" d="%s"/>%s%s%s</g>' % (tam_d, tam_shade, pts_to_d(tam), lk, dome, labels))
 
@@ -232,8 +240,9 @@ def build_scene():
         gy = r.uniform(890, 1000)
         gl = r.uniform(8, 20)
         grass.append("M%s %s l%s %s" % (f(gx), f(gy), f(r.uniform(-3, 3)), f(-gl)))
+    quail = ('<g class="quail" id="quail" opacity="0"><g class="q" transform="translate(-80 903)">%s</g><g class="q" transform="translate(-130 910) scale(0.8)">%s</g></g>' % (QUAIL, QUAIL))
     layers.append('<g class="fg" data-lyr="fg-chap" data-t="70"><path class="fg-front" d="%s"/><rect class="fg-front" x="-100" y="860" width="1900" height="500"/>'
-                  '<path class="rock" d="%s"/><path class="grass" d="%s"/></g>' % (" ".join(scrub), " ".join(rocks), " ".join(grass)))
+                  '<path class="rock" d="%s"/><path class="grass" d="%s"/>%s</g>' % (" ".join(scrub), " ".join(rocks), " ".join(grass), quail))
 
     # summit outcrop with the fire lookout, rises into view
     rock_keys = [(640, 1120), (720, 900), (820, 830), (930, 790), (1030, 772), (1120, 770), (1210, 786), (1300, 830), (1420, 890), (1540, 960), (1700, 1120)]
@@ -247,7 +256,7 @@ def build_scene():
     defs = ('<defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">'
             '<path d="M0 0 V7" stroke="var(--sienna-line)" stroke-width="1"/></pattern>'
             '<filter id="fogblur" x="-5%" y="-30%" width="110%" height="160%"><feGaussianBlur stdDeviation="5"/></filter></defs>')
-    sun = ('<g id="sun" transform="translate(300 560)"><circle class="sun-disc" r="46"/><circle class="sun-ring" r="62"/><circle class="sun-ring" r="82"/></g>')
+    sun = ('<g id="sun" transform="translate(300 560)"><circle class="sun-glow" r="130"/><circle class="sun-disc" r="46"/><circle class="sun-ring" r="62"/><circle class="sun-ring" r="82"/></g>')
     svg = ('<svg id="scene" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMax slice" role="presentation" focusable="false" aria-hidden="true">'
            + defs + sun + "".join(layers) + "</svg>")
     return svg
