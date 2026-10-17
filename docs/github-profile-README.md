@@ -36,6 +36,6 @@ Always glad to talk about data, AI products, or rowing.
 ## Elsewhere
 
 - GitHub: [@aaryanp35](https://github.com/aaryanp35)
-- LinkedIn: [aaryan-p-5a4223331](https://www.linkedin.com/in/aaryan-p-5a4223331/)
+- LinkedIn: [aaryanp35](https://www.linkedin.com/in/aaryanp35)
 - Portfolio: [aaryanp35.vercel.app](https://aaryanp35.vercel.app)
 - Email: [aaryanp35@gmail.com](mailto:aaryanp35@gmail.com)
