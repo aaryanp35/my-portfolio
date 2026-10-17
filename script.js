@@ -334,14 +334,16 @@
       var E = elevAt(p * S.maxScroll);
       render(E, p);
       routeDone.style.strokeDashoffset = (S.routeLen * (1 - arcFrac(p))).toFixed(1);
+      faceTrail(p);
     }
+    initLegs();
 
     proxy.p = clamp(window.pageYOffset / S.maxScroll, 0, 1);
     tl = gsap.timeline({ defaults: { ease: 'none', duration: 1 } });
     tl.to(proxy, { p: 1, onUpdate: onProg }, 0);
     if (typeof MotionPathPlugin !== 'undefined' && marker) {
       tl.to(marker, {
-        motionPath: { path: routePath, align: routePath, alignOrigin: [0.5, 0.5] },
+        motionPath: { path: routePath, align: routePath, alignOrigin: [0.5, 1] },
         ease: function (p) { return arcFrac(p); }
       }, 0);
     }
@@ -410,7 +412,40 @@
     });
   }
 
+  /* hiker: legs swing while the page is moving, with playback rate following scroll velocity; idle when it stops (not on touch) */
+  var legAnims = [], hikerFlip = $('.hiker-flip'), flipDir = 1, lastY = window.pageYOffset, lastT = 0, idleTimer = 0;
+  function initLegs() {
+    if (isTouch || legAnims.length) return;
+    var lf = $('.leg-f'), lb = $('.leg-b');
+    if (!lf || !lf.animate) return;
+    var o = { duration: 460, direction: 'alternate', iterations: Infinity, easing: 'ease-in-out' };
+    legAnims = [lf.animate([{ transform: 'rotate(-24deg)' }, { transform: 'rotate(24deg)' }], o), lb.animate([{ transform: 'rotate(24deg)' }, { transform: 'rotate(-24deg)' }], o)];
+    legAnims.forEach(function (a) { a.pause(); });
+  }
+  function killLegs() { legAnims.forEach(function (a) { a.cancel(); }); legAnims = []; }
+  function onWalk() {
+    var now = performance.now(), y = window.pageYOffset;
+    if (legAnims.length && lastT) {
+      var v = Math.abs(y - lastY) / Math.max(8, now - lastT) * 1000;
+      if (v > 25) {
+        var rate = clamp(v / 650, 0.5, 2.6);
+        legAnims.forEach(function (a) { a.playbackRate = rate; if (a.playState !== 'running') a.play(); });
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(function () { legAnims.forEach(function (a) { a.pause(); }); }, 140);
+      }
+    }
+    lastY = y; lastT = now;
+  }
+  function faceTrail(p) {
+    if (!hikerFlip || !S.samples.length) return;
+    var a = sampleAtF(arcFrac(p)), b = sampleAtF(Math.min(1, arcFrac(p) + 0.01));
+    var d = Math.abs(b.x - a.x) > 0.5 ? (b.x > a.x ? 1 : -1) : flipDir;
+    if (d !== flipDir) { flipDir = d; hikerFlip.style.transform = d > 0 ? '' : 'scaleX(-1)'; }
+  }
+  function sampleAtF(f) { return S.samples[Math.round(clamp(f, 0, 1) * (S.samples.length - 1))]; }
+
   function stopFull() {
+    killLegs();
     drawZone = null;
     contours.forEach(function (c) { c.classList.add('is-drawn'); });
     gsap.set($$('.pin'), { clearProps: 'opacity,scale,y,transform' });
@@ -437,7 +472,7 @@
       routeDone.style.strokeDashoffset = (S.routeLen * (1 - arcFrac(proxy.p))).toFixed(1);
     } }, 0);
     if (typeof MotionPathPlugin !== 'undefined' && marker) {
-      tl.to(marker, { motionPath: { path: routePath, align: routePath, alignOrigin: [0.5, 0.5] }, ease: function (p) { return arcFrac(p); } }, 0);
+      tl.to(marker, { motionPath: { path: routePath, align: routePath, alignOrigin: [0.5, 1] }, ease: function (p) { return arcFrac(p); } }, 0);
     }
     ScrollTrigger.create({ animation: tl, start: 0, end: 'max', scrub: 0.7, invalidateOnRefresh: true });
     prime();
@@ -499,6 +534,17 @@
   }
   fitScene();
   window.addEventListener('resize', fitScene);
+
+  /* skip to summit: appears after the first screen, steps aside at the summit */
+  var skipRaf = 0;
+  function skipUpdate() {
+    skipRaf = 0;
+    var y = window.pageYOffset, max = Math.max(1, doc.scrollHeight - window.innerHeight);
+    doc.classList.toggle('skip-on', y > window.innerHeight * 0.6);
+    doc.classList.toggle('skip-off', y > max - 40);
+  }
+  window.addEventListener('scroll', function () { onWalk(); if (!skipRaf) skipRaf = requestAnimationFrame(skipUpdate); }, { passive: true });
+  skipUpdate();
 
   /* ------------------------------------------------------------ boot */
   var mm = gsap.matchMedia();

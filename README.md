@@ -1,36 +1,46 @@
 # Aaryan Patel, portfolio
 
-A single page that is a scroll-driven ascent of Mt Tamalpais, drawn as a USGS-style topographic sheet. Mt Tam is the territory and the metaphor: the trailhead is the introduction, the route climbs through the work, and the summit register holds the resume and email.
+A single page that is a scroll-driven climb up Mt Tamalpais, drawn as a USGS-style topographic sheet. The trailhead is the introduction, the route climbs through the work, and the summit register holds the resume and email.
 
 Live: https://aaryanp35.vercel.app
 
 ## The world
-- Map paper ground, sienna contour lines, vegetation green and water blue fields, black ink type, road red only for actions and the route marker.
-- Condensed caps display face (Big Shoulders Display), Source Serif 4 for reading, Martian Mono for measurements. Four type sizes.
-- Neatline frame with coordinates (Mt Tam East Peak 37.9235 N, 122.5965 W), scale bar, declination diagram, and an elevation profile at the bottom edge that doubles as scroll progress.
+- Map paper ground, sienna contour lines, vegetation green and water blue fields, black ink type, road red only for actions and the hiker's pack.
+- Big Shoulders Display for names and headings, Source Serif 4 for reading, Martian Mono for coordinates and dates.
+- Every block of text sits on a solid paper panel (title plate, legend box or sign board). Contours and ridgelines stay behind.
+- Neatline frame with East Peak coordinates, a scale bar, a declination diagram, and an elevation profile that doubles as scroll progress. The top bar holds the altimeter, Skip to summit, and a persistent Resume (PDF) button.
 
 ## The climb
-Scroll position maps to elevation (0 to 2,571 ft). One system drives everything: the three-peak Tam ridgelines with parallax, fog that fills the valleys, a sun that rises with altitude, vegetation zones that shift from redwood green to golden chaparral, the active contour band, the route that draws itself, and the elevation counter.
+Scroll position maps to elevation. One system drives the three-peak ridgelines, fog, sun, vegetation zones, the contour band, the self-drawing route, a small hiker who walks it, and the altimeter.
 
 | Zone | Content |
 |---|---|
-| Trailhead | Name, roles, portrait, resume and email |
-| Redwood canyon | The four headline features |
-| Oak and bay woodland | Experience as waypoints on the route, a margin note |
+| Trailhead | Name, roles, points ahead, portrait, resume and email |
+| Redwood canyon | The four headline points: DeUNA, Athenaeum, Strand Analytica, Proxii |
+| Oak and bay woodland | Experience, newest first |
 | Chaparral and serpentine | Smaller projects, Karl the Fog, athletics, education and skills |
-| East Peak | Summit register |
+| East Peak | Summit register with resume, email and an at-a-glance list |
+
+Authored motion (transform, opacity and stroke-dashoffset only): a red-tailed hawk circling near the trailhead, contours that draw in zone by zone, pins that drop onto the trail, a lookout beacon near the summit, a warming sun, and a pair of quail crossing the chaparral. Touch devices get native scroll, no smooth-scroll library, no fog drift or blur, and a coarser palette update. Reduced motion renders a still, complete sheet.
 
 ## Stack
-Static HTML, CSS and JavaScript, no build step. GSAP 3.13 (ScrollTrigger, MotionPathPlugin) and Lenis 1.3.1 from pinned CDN URLs, Google Fonts. Reduced motion renders a static expedition; content is visible without JavaScript.
+Static HTML, CSS and JavaScript, no build step for the page itself. GSAP 3.13 (ScrollTrigger, MotionPathPlugin) and Lenis 1.3.1 from pinned CDN URLs, Google Fonts. Content is visible without JavaScript.
 
 ## Run locally
     python3 -m http.server 8000
 
 then open http://localhost:8000.
 
-## Structure
-- `index.html`: the page, with the SVG scene, contours, route, profile and symbol sprite inlined.
-- `styles.css`: tokens, fixed sheet chrome, content.
-- `script.js`: the orchestrated climb.
-- `assets-src/`: procedural Python (fixed seed) that generates the SVG art. `python3 assets-src/gen.py` writes `assets-src/out/*.svg`; `python3 assets-src/inline.py assets-src/index.template.html index.html` inlines them. Edit markup in `assets-src/index.template.html`, then rebuild.
-- `images/`, `resume.pdf`, `site.webmanifest`: assets.
+## Regenerate the art
+`index.html` is generated. Edit `assets-src/index.template.html` and `assets-src/gen.py`, then:
+
+    python3 assets-src/gen.py
+    python3 assets-src/inline.py assets-src/index.template.html index.html
+
+`gen.py` (fixed seed) writes the scene, contours, route, profile, symbol sprite, declination and scale bar SVG to `assets-src/out/`; `inline.py` inlines them at the `<!-- asset: name -->` placeholders.
+
+## Files
+- `index.html`, `styles.css`, `script.js`: the page.
+- `assets-src/`: template, generator and notes (not deployed).
+- `images/`: favicon (`favicon.svg` plus PNG sizes), OG image, portrait.
+- `resume.pdf`, `site.webmanifest`: the resume and the manifest.

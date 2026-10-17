@@ -77,8 +77,9 @@
 </div>
 
 <header class="bar-top">
-  <p class="coords"><span class="c-name">Mt Tamalpais</span><span class="c-peak">, East Peak</span><span class="c-xy">37.9235 N, 122.5965 W</span></p>
+  <p class="coords"><span class="c-name">Mt Tamalpais</span><span class="c-short">Mt Tam</span><span class="c-peak">, East Peak</span><span class="c-xy">37.9235 N, 122.5965 W</span></p>
   <div class="bar-right">
+    <a class="skip-summit skip-top" href="#register"><svg aria-hidden="true"><use href="#sym-summit"/></svg>Skip to summit</a>
     <a class="bar-resume" href="resume.pdf"><svg aria-hidden="true"><use href="#sym-resume"/></svg>Resume (PDF)</a>
     <p class="elev" aria-hidden="true"><span class="elev-num" id="elev-num">0</span><span class="elev-unit">ft</span><span class="elev-zone" id="elev-zone">Trailhead</span></p>
   </div>
@@ -94,8 +95,7 @@
       <div class="title-block">
         <h1 id="name">Aaryan Patel</h1>
         <p class="roles"><span>Associate PM at DeUNA<span class="role-sub">, working on machine learning payment optimization products</span></span><span>AI for defense wargaming at Strand Analytica</span></p>
-        <p class="place">Menlo Park, California. University of Toronto.</p>
-        <p class="series">Product, Data, AI</p>
+        <p class="place">Menlo Park, California. University of Toronto.<br><span class="series">Product, Data, AI</span></p>
       </div>
       <p class="intro">I&rsquo;m a third-year at the University of Toronto studying economics and data, and a student-athlete on the U of T rowing team. Between classes I work on machine learning payment optimization products at DeUNA and build the AI layers under wargaming simulations at Strand Analytica. <span class="intro-last">This page is a climb up Mt Tam. Follow the trail to see my journey.</span></p>
       <ul class="marks" aria-label="Resume, email and links">
@@ -126,7 +126,17 @@
   <div class="route">
     <div class="trail" aria-hidden="true">
 <svg class="trail-svg" id="route-svg" viewBox="0 0 100 1000" preserveAspectRatio="none" role="presentation" focusable="false" aria-hidden="true"><path id="route-path" class="route-line" d="M46 0 C53 4 93 13.1 87.8 24 C82.6 34.9 14.5 51.5 14.8 65.3 C15.1 79.1 90.4 92.8 89.5 106.6 C88.7 120.4 9.5 134.1 9.5 147.9 C9.4 161.7 88.9 175.4 89.2 189.2 C89.5 203 12.7 216.8 11.3 230.5 C9.9 244.3 80 258.1 81 271.8 C82 285.6 17 299.4 17.3 313.1 C17.5 326.9 83.4 340.7 82.3 354.4 C81.3 368.2 10.7 382 11 395.7 C11.3 409.5 83.2 423.3 84.1 437 C84.9 450.8 15.4 464.6 16 478.3 C16.6 492.1 88.6 505.9 87.6 519.7 C86.6 533.4 10.8 547.2 10.1 561 C9.3 574.7 82.9 588.5 82.9 602.3 C83 616 10.6 629.8 10.5 643.6 C10.4 657.3 81.4 671.1 82.2 684.9 C82.9 698.6 15.1 712.4 14.9 726.2 C14.7 739.9 81.8 753.7 81.1 767.5 C80.3 781.2 9.9 795 10.1 808.8 C10.4 822.6 82 836.3 82.4 850.1 C82.8 863.9 12.6 877.6 12.5 891.4 C12.3 905.2 80.8 918.9 81.6 932.7 C82.4 946.5 22.6 962.8 17.3 974 C12.1 985.2 44.6 995.7 50 1000" vector-effect="non-scaling-stroke"/><path id="route-done" class="route-done" d="M46 0 C53 4 93 13.1 87.8 24 C82.6 34.9 14.5 51.5 14.8 65.3 C15.1 79.1 90.4 92.8 89.5 106.6 C88.7 120.4 9.5 134.1 9.5 147.9 C9.4 161.7 88.9 175.4 89.2 189.2 C89.5 203 12.7 216.8 11.3 230.5 C9.9 244.3 80 258.1 81 271.8 C82 285.6 17 299.4 17.3 313.1 C17.5 326.9 83.4 340.7 82.3 354.4 C81.3 368.2 10.7 382 11 395.7 C11.3 409.5 83.2 423.3 84.1 437 C84.9 450.8 15.4 464.6 16 478.3 C16.6 492.1 88.6 505.9 87.6 519.7 C86.6 533.4 10.8 547.2 10.1 561 C9.3 574.7 82.9 588.5 82.9 602.3 C83 616 10.6 629.8 10.5 643.6 C10.4 657.3 81.4 671.1 82.2 684.9 C82.9 698.6 15.1 712.4 14.9 726.2 C14.7 739.9 81.8 753.7 81.1 767.5 C80.3 781.2 9.9 795 10.1 808.8 C10.4 822.6 82 836.3 82.4 850.1 C82.8 863.9 12.6 877.6 12.5 891.4 C12.3 905.2 80.8 918.9 81.6 932.7 C82.4 946.5 22.6 962.8 17.3 974 C12.1 985.2 44.6 995.7 50 1000" vector-effect="non-scaling-stroke"/></svg>
-      <span class="route-marker" id="route-marker"></span>
+      <span class="route-marker" id="route-marker"><svg class="hiker" viewBox="0 0 28 36" focusable="false" aria-hidden="true">
+        <g class="hiker-flip">
+          <g class="leg leg-b"><path d="M14 22 L12.5 34 M12.5 34 H9.8"/></g>
+          <path class="pole" d="M18 15 L21.5 35"/>
+          <rect class="pack" x="5.6" y="10" width="7" height="11" rx="1.8"/>
+          <path class="torso" d="M12 10.4 H16.6 L17.4 22.4 H11.2 Z"/>
+          <path class="arm" d="M16 12.4 L18.4 16.2"/>
+          <circle class="head" cx="14.6" cy="6" r="3"/>
+          <g class="leg leg-f"><path d="M14.2 22 L15.8 34 M15.8 34 H18.6"/></g>
+        </g>
+      </svg></span>
     </div>
 
     <section id="canyon" class="zone" aria-labelledby="canyon-h">
@@ -373,6 +383,27 @@
             <li><a class="mark mark-quiet" href="https://github.com/aaryanp35" target="_blank" rel="noopener"><svg class="mark-sym" aria-hidden="true"><use href="#sym-github"/></svg><span class="mark-label">GitHub</span></a></li>
             <li><a class="mark mark-quiet" href="https://www.linkedin.com/in/aaryan-p-5a4223331/" target="_blank" rel="noopener"><svg class="mark-sym" aria-hidden="true"><use href="#sym-linkedin"/></svg><span class="mark-label">LinkedIn</span></a></li>
           </ul>
+          <div class="glance">
+            <div>
+              <h4 class="glance-h">Roles</h4>
+              <ul class="glance-list">
+                <li>Associate PM, DeUNA <span>Sep 2026 to present</span></li>
+                <li>Implementation Engineering Intern, Strand Analytica <span>Oct 2026 to present</span></li>
+                <li>Data Science Intern, DeUNA <span>Jul 2026 to Sep 2026</span></li>
+                <li>AI Product Intern, LookAcross AI <span>May 2026 to Jul 2026</span></li>
+                <li>Engineering Intern, American Precision Gear <span>Summer 2024</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="glance-h">Projects</h4>
+              <ul class="glance-links">
+                <li><a class="link" href="#deuna">DeUNA: machine learning payment optimization</a></li>
+                <li><a class="link" href="#athenaeum">Athenaeum: AI storytelling for filmmakers</a></li>
+                <li><a class="link" href="#strand">Strand Analytica: AI wargaming simulations</a></li>
+                <li><a class="link" href="#proxii">Proxii: neighborhood scoring app</a></li>
+              </ul>
+            </div>
+          </div>
         </div></div>
       </article>
     </section>
@@ -391,6 +422,7 @@
       <a href="#trailhead">Trailhead</a><a href="#canyon">Canyon</a><a href="#woodland">Woodland</a><a href="#chaparral">Chaparral</a><a href="#summit">Summit</a>
     </nav>
   </div>
+  <a class="skip-summit skip-pill" href="#register"><svg aria-hidden="true"><use href="#sym-summit"/></svg>Skip to summit</a>
   <div class="scale" aria-hidden="true">
 <svg class="scalebar-svg" id="scalebar-svg" viewBox="-2 0 164 20" role="presentation" focusable="false" aria-hidden="true"><g stroke="var(--ink)" stroke-width="1"><rect x="0" y="7" width="40" height="6" fill="var(--ink)"/><rect x="40" y="7" width="40" height="6" fill="var(--paper)"/><rect x="80" y="7" width="40" height="6" fill="var(--ink)"/><rect x="120" y="7" width="40" height="6" fill="var(--paper)"/><rect x="0" y="7" width="160" height="6" fill="none"/><path d="M0 3 V17"/><path d="M40 3 V17"/><path d="M80 3 V17"/><path d="M120 3 V17"/><path d="M160 3 V17"/></g></svg>
     <span class="scale-pin" id="scale-pin"></span>

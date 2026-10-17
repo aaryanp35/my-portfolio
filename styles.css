@@ -202,6 +202,8 @@ a { color: inherit; }
 .elev-zone { color: var(--sienna); margin-left: var(--s1); }
 html:not(.js) .elev { display: none; }
 @media (max-width: 959px) { .coords .c-xy { display: none; } }
+.c-short { display: none; }
+@media (max-width: 699px) { .c-name { display: none; } .c-short { display: inline; } }
 @media (max-width: 699px) {
   .coords .c-peak { display: none; }
   .bar-top, .bar-bottom { padding-inline: var(--s2); gap: var(--s1); }
@@ -209,13 +211,13 @@ html:not(.js) .elev { display: none; }
   .bar-resume { padding: 0 12px; }
   .elev-zone, .elev-unit { display: none; }
   .elev-num { font-size: var(--t-body); min-width: 4ch; }
-  .bar-bottom { grid-template-columns: minmax(0, 1fr); }
+  .bar-bottom { grid-template-columns: minmax(0, 1fr) auto; }
 }
 @media (min-width: 700px) and (max-width: 959px) {
   .elev-zone { display: none; }
-  .bar-bottom { grid-template-columns: 96px minmax(0, 1fr) 0; }
+  .bar-bottom { grid-template-columns: 96px minmax(0, 1fr) auto; }
 }
-@media (max-height: 520px) and (orientation: landscape) { .bar-bottom { grid-template-columns: 96px minmax(0, 1fr) 0; } .zone-links { display: none; } .profile-svg { height: 28px; } }
+@media (max-height: 520px) and (orientation: landscape) { .bar-bottom { grid-template-columns: 96px minmax(0, 1fr) auto; } .zone-links { display: none; } .profile-svg { height: 28px; } }
 
 .decl { display: flex; align-items: center; gap: var(--s1); color: var(--ink); }
 .decl-svg { width: 44px; height: 44px; flex: none; transform-origin: 50% 50%; }
@@ -271,27 +273,27 @@ main {
   grid-template-areas: '. plate inset';
   column-gap: var(--s4);
   align-items: start;
-  padding-top: var(--s4);
-  padding-bottom: var(--s5);
+  padding-top: var(--s2);
+  padding-bottom: var(--s4);
 }
-.cartouche { grid-area: plate; display: flex; flex-direction: column; padding: var(--s3) var(--s4) var(--s3); margin: 5px 5px 0; }
+.cartouche { grid-area: plate; display: flex; flex-direction: column; padding: var(--s2) var(--s4) var(--s2); margin: 5px 5px 0; }
 .title-block { order: 1; }
-.intro { order: 2; margin-top: var(--s3); max-width: 38rem; }
-.hero .marks { order: 3; margin-top: var(--s3); }
-.ahead { order: 4; margin-top: var(--s3); border-top: 1px solid var(--ink); padding-top: var(--s2); }
+.intro { order: 2; margin-top: var(--s2); max-width: 38rem; }
+.hero .marks { order: 3; margin-top: var(--s2); }
+.ahead { order: 4; margin-top: var(--s2); border-top: 1px solid var(--ink); padding-top: var(--s1); }
 .inset { grid-area: inset; justify-self: end; width: min(100%, 22rem); align-self: end; margin-top: var(--s1); }
 
 .title-block h1 { font-size: var(--t-display); line-height: 0.9; letter-spacing: -0.01em; font-weight: 800; }
-.roles { display: grid; gap: 2px; margin-top: var(--s2); font-size: var(--t-head); line-height: 1.12; letter-spacing: 0.02em; font-weight: 800; }
+.roles { display: grid; gap: 2px; margin-top: var(--s2); font-size: var(--t-head); line-height: 1.3; letter-spacing: 0.02em; font-weight: 800; }
 .role-sub { font-weight: 600; color: var(--ink-2); }
 .place { margin-top: var(--s2); color: var(--ink); }
-.series { color: var(--sienna); margin-top: 2px; }
+.series { color: var(--sienna); }
 
 .inset { padding: 6px; background: var(--paper); outline: 1px solid var(--ink); outline-offset: 4px; border: 1px solid var(--ink); margin-right: 5px; }
 .inset img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
 .inset-cap { color: var(--ink-2); padding: var(--s1) 2px 2px; }
 
-.trailhead-sign { position: absolute; left: 0; bottom: calc(var(--hero-tail) - 8px); width: calc(var(--trail-w) - 4px); display: flex; flex-direction: column; gap: 6px; padding: 8px; background: var(--paper); border: 1px solid var(--ink); color: var(--ink); pointer-events: none; }
+.trailhead-sign { position: absolute; left: 0; bottom: calc(var(--hero-tail) + 44px); width: calc(var(--trail-w) - 4px); display: flex; flex-direction: column; gap: 6px; padding: 8px; background: var(--paper); border: 1px solid var(--ink); color: var(--ink); pointer-events: none; }
 .trailhead-sign .legend-sym { width: 32px; height: 32px; }
 .trailhead-sign span { color: var(--ink-2); }
 
@@ -314,15 +316,16 @@ main {
   .cartouche { padding: var(--s2); margin: 4px 4px 0 0; }
   .title-block { order: 1; }
   .hero .marks { order: 2; margin-top: var(--s2); }
-  .intro { order: 3; margin-top: var(--s2); }
-  .intro-last { display: none; }
-  .ahead { order: 4; margin-top: var(--s2); }
+  .ahead { order: 3; margin-top: var(--s2); }
+  .intro { order: 4; margin-top: var(--s2); }
+  .ahead { padding-top: var(--s1); }
   .roles { margin-top: var(--s1); }
   .place { margin-top: var(--s1); }
   .trailhead-sign { width: 36px; padding: 4px; }
   .trailhead-sign .legend-sym { width: 26px; height: 26px; }
   .ahead a { font-size: 1.125rem; }
-  .ahead ul { gap: 0 var(--s2); }
+  .ahead ul { gap: var(--s1) var(--s2); }
+  .inset { width: min(100%, 14rem); margin-top: var(--s3); }
 }
 
 /* marks: legend rows with road-red symbols. Captions are plain text under the link. */
@@ -346,13 +349,23 @@ main {
 .trail-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .route-line { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 3 5; stroke-linecap: round; opacity: 0.8; }
 .route-done { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-.route-marker { position: absolute; left: 46%; top: 0; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: var(--road); border: 2px solid var(--paper); outline: 1px solid var(--road); z-index: 3; }
+.route-marker { position: absolute; left: 46%; top: 0; width: 28px; height: 36px; margin: -36px 0 0 -14px; z-index: 3; will-change: transform; }
 .js .route-marker { left: 0; }
+.hiker { display: block; width: 100%; height: 100%; overflow: visible; fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.hiker .head, .hiker .torso { fill: var(--ink); }
+.hiker .pack { fill: var(--road); stroke: var(--ink); stroke-width: 1.2; }
+.hiker .leg path { stroke-width: 2.4; }
+.hiker .pole { stroke-width: 1.2; }
+.hiker .leg { transform-origin: 14px 22px; }
+.hiker-flip { transform-origin: 14px 18px; }
+.hiker .leg-f { transform: rotate(14deg); }
+.hiker .leg-b { transform: rotate(-14deg); }
+@media (max-width: 699px) { .route-marker { width: 24px; height: 31px; margin: -31px 0 0 -12px; } }
 
 .zone { position: relative; padding-top: var(--s7); scroll-margin-top: var(--anchor); }
 .hero.zone { padding-top: var(--s4); }
 .stop { scroll-margin-top: var(--anchor); }
-#canyon { padding-top: var(--s4); }
+#canyon { padding-top: var(--s3); }
 .zone-head { display: block; width: fit-content; max-width: min(100%, 40rem); margin: 5px 5px var(--s5); padding: var(--s2) var(--s3) var(--s3); }
 #canyon .zone-head { margin-bottom: var(--s4); }
 .zone-head h2 { font-size: var(--t-display); line-height: 0.92; letter-spacing: -0.01em; text-wrap: balance; }
@@ -419,7 +432,7 @@ main {
 .kv dt { color: var(--sienna); margin-bottom: 2px; }
 .kv dd { font-size: var(--t-body); }
 
-.zone-summit { min-height: calc(var(--win-h) * 0.9); padding-bottom: calc(var(--win-h) * 0.3); }
+.zone-summit { min-height: calc(var(--win-h) * 0.9); padding-bottom: var(--s5); }
 .register { --pin-d: 48px; --pin-top: 28px; max-width: 38rem; margin-bottom: 0; }
 .register .stop-body { box-shadow: 0 0 0 4px var(--paper); outline: 1px solid var(--ink); outline-offset: 4px; margin: 5px; }
 .register-lead { font-size: var(--t-body); margin-top: var(--s2); }
@@ -446,16 +459,18 @@ main {
 
 @media (max-width: 699px) { .decl, .scale, .zone-links { display: none; } .profile-svg { height: 32px; } .profile-wrap { padding-bottom: 0; } }
 @media (min-width: 700px) and (max-width: 959px) { .scale { display: none; } }
+@media (max-width: 959px) { .zone-links { display: none; } .profile-wrap { padding-bottom: 0; } }
+@media (max-width: 1099px) { .nl-lbl { display: none; } }
 
 /* ---------------------------------------------------------------- authored motion (transform and opacity only) */
-.hawk { position: absolute; left: 60%; top: 9%; width: 44px; height: 22px; opacity: 0; pointer-events: none; will-change: transform; offset-path: path('M 0 0 a 120 26 0 1 0 240 0 a 120 26 0 1 0 -240 0'); offset-rotate: 0deg; offset-distance: 0%; }
+.stage .hawk { position: absolute; left: 64%; top: 21%; width: 44px; height: 22px; opacity: 0; pointer-events: none; will-change: transform; offset-path: path('M 0 0 a 120 26 0 1 0 240 0 a 120 26 0 1 0 -240 0'); offset-rotate: 0deg; offset-distance: 0%; }
 .hawk-body { fill: var(--ink); fill-opacity: 0.82; }
 .hawk-tail { fill: var(--sienna); }
-.hawk.is-on { opacity: 1; transition: opacity 0.6s var(--ease-out); }
-.anim .hawk { animation: hawk-orbit 26s linear infinite; }
-.anim .hawk.is-paused { animation-play-state: paused; }
+.stage .hawk.is-on { opacity: 1; transition: opacity 0.6s var(--ease-out); }
+.anim .stage .hawk { animation: hawk-orbit 26s linear infinite; }
+.anim .stage .hawk.is-paused { animation-play-state: paused; }
 @keyframes hawk-orbit { to { offset-distance: 100%; } }
-@media (max-width: 699px) { .hawk { left: 52%; top: 24%; width: 36px; height: 18px; offset-path: path('M 0 0 a 70 20 0 1 0 140 0 a 70 20 0 1 0 -140 0'); } }
+@media (max-width: 699px) { .stage .hawk { left: 52%; top: 24%; width: 36px; height: 18px; offset-path: path('M 0 0 a 70 20 0 1 0 140 0 a 70 20 0 1 0 -140 0'); } }
 
 .beacon { position: absolute; left: 0; top: 0; width: 56px; height: 56px; margin: -28px 0 0 -28px; opacity: 0; pointer-events: none; will-change: transform, opacity; }
 .beacon::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, #FFEFB8 0 14%, rgba(255, 233, 168, 0.4) 15% 38%, transparent 70%); }
@@ -476,7 +491,30 @@ main {
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; }
   .js .contour { stroke-dasharray: none; stroke-dashoffset: 0; }
-  .hawk { opacity: 1; animation: none; }
+  .stage .hawk { opacity: 1; animation: none; }
 }
-html:not(.js) .hawk { opacity: 1; }
+html:not(.js) .stage .hawk { opacity: 1; }
 .js.reveal-all .pin { opacity: 1 !important; transform: none !important; }
+
+/* ---------------------------------------------------------------- skip to summit */
+.skip-summit { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; background: var(--paper); color: var(--ink); border: 1px solid var(--ink); text-decoration: none; white-space: nowrap; font-family: var(--f-mono); font-size: var(--t-label); letter-spacing: 0.06em; text-transform: uppercase; }
+.skip-summit svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; flex: none; }
+.skip-summit:hover { background: var(--veg-tint); }
+.skip-pill { display: none; }
+@media (max-width: 959px) {
+  .skip-top { display: none; }
+  .skip-pill { display: inline-flex; justify-self: end; }
+}
+.js .skip-summit { opacity: 0; visibility: hidden; transition: opacity 0.3s var(--ease-out), visibility 0s linear 0.3s; }
+.js.skip-on .skip-summit { opacity: 1; visibility: visible; transition-delay: 0s; }
+.js.skip-off .skip-summit { opacity: 0; visibility: hidden; }
+
+.glance { display: grid; grid-template-columns: 1fr; gap: var(--s3); margin-top: var(--s3); padding-top: var(--s2); border-top: 1px solid var(--ink); }
+.glance-h { font-family: var(--f-mono); font-size: var(--t-label); font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; color: var(--sienna); margin: 0 0 var(--s1); }
+.glance-list li { padding: 6px 0; border-bottom: 1px solid var(--sienna-line); }
+.glance-list li span { display: inline; margin-left: 6px; white-space: nowrap; font-family: var(--f-mono); font-size: var(--t-label); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
+.glance-links { display: grid; gap: var(--s1); }
+.glance-links .link { min-height: 44px; }
+@media (min-width: 700px) { .register { max-width: 47rem; } .glance { grid-template-columns: 1.15fr 1fr; gap: var(--s4); } }
+@media (min-width: 700px) { .register .stop-body { padding: var(--s3) var(--s4) var(--s3); } }
+html:not(.js) .profile-dot { display: none; }
