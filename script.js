@@ -1,318 +1,276 @@
-/* Aaryan Patel: the sheet.
-   The trail, the scale bar and the section readout work without any library.
-   Motion (GSAP, ScrollTrigger, MotionPathPlugin, Lenis) runs only when those loaded,
-   the page still has the "js" class, and the visitor has not asked for reduced motion.
-   One scroll-linked system drives it: the route marker, the deepened contour band,
-   the scale bar, the compass and the fog. */
+/* The drive: one scroll system. A paused master timeline holds every world layer; scroll progress (smoothed) drives it.
+   The mile counter, the route dot (MotionPath) and the HUD read the same progress.
+   Reduced motion, or no GSAP: a complete static drive that swaps scene states per stretch, never moves a layer. */
 (function () {
   'use strict';
 
   var html = document.documentElement;
-  var $ = function (sel, root) { return (root || document).querySelector(sel); };
-  var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
-  var NS = 'http://www.w3.org/2000/svg';
-  var reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
-  var sheet = $('#sheet');
-  var routeSvg = $('.route');
-  var frame = $('.frame');
-  var hasGsap = !!(window.gsap && window.ScrollTrigger);
-  var route = null;
-  var lenis = null;
+  var world = document.getElementById('world');
+  var mileEl = document.getElementById('mile');
+  var placeEl = document.getElementById('place');
+  var dotEl = document.getElementById('route-dot');
+  var pathEl = document.getElementById('route-path');
+  var lineEl = document.getElementById('centerline');
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.hud__nav a'));
+  var stretchEls = Array.prototype.slice.call(document.querySelectorAll('[data-stretch][data-mile-from]'));
+
+  var TOTAL_MILES = 30;
+  var PLACES = {
+    'merge': 'San Francisco',
+    'daly-city': 'Daly City',
+    'crystal-springs': 'Crystal Springs',
+    'serra': 'Junipero Serra',
+    'stanford': 'Stanford hills',
+    'sand-hill': 'Sand Hill Road'
+  };
 
   function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
-  function syncReduce() { html.classList.toggle('reduce-motion', reduceMQ.matches); }
-  syncReduce();
-  if (reduceMQ.addEventListener) reduceMQ.addEventListener('change', syncReduce);
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function maxScroll() { return Math.max(1, document.documentElement.scrollHeight - window.innerHeight); }
+  function layer(name) { return document.querySelector('[data-layer="' + name + '"]'); }
 
-  /* ---------- The trail: a path drawn through every numbered waypoint ---------- */
-
-  function buildRoute() {
-    if (!sheet || !routeSvg) return null;
-    var sr = sheet.getBoundingClientRect();
-    var th = $('.trailhead');
-    var rev = $('.revision');
-    var discs = $$('.wp');
-    if (!th || !rev || !discs.length || sr.width < 10) return null;
-
-    function center(el, top) {
-      var r = el.getBoundingClientRect();
-      return { x: r.left - sr.left + r.width / 2, y: r.top - sr.top + (top ? 0 : r.height / 2) };
+  /* ---- scroll to mile: sections are the anchors, piecewise linear in scroll space ---- */
+  var anchors = []; // {y, mile, id}
+  function measure() {
+    var vh = window.innerHeight;
+    var max = maxScroll();
+    anchors = [{ y: 0, mile: 0, id: 'merge' }];
+    stretchEls.forEach(function (el, i) {
+      if (i === 0) return;
+      var top = el.getBoundingClientRect().top + window.scrollY;
+      var y = clamp(top - vh * 0.5, 0, max);
+      var prev = anchors[anchors.length - 1];
+      anchors.push({ y: Math.max(y, prev.y + 1), mile: +el.getAttribute('data-mile-from'), id: el.getAttribute('data-stretch') });
+    });
+    anchors.push({ y: max, mile: TOTAL_MILES, id: anchors[anchors.length - 1].id });
+  }
+  function mileAt(y) {
+    if (!anchors.length) measure();
+    for (var i = 0; i < anchors.length - 1; i++) {
+      var a = anchors[i], b = anchors[i + 1];
+      if (y <= b.y) return { mile: lerp(a.mile, b.mile, clamp((y - a.y) / Math.max(1, b.y - a.y), 0, 1)), id: a.id };
     }
-    var pts = [];
-    var start = center(th, true);
-    discs.forEach(function (d) { pts.push(center(d)); });
-    var gx = pts[0].x;
-    start.x = gx;
-    pts.unshift(start);
-    var rr = rev.getBoundingClientRect();
-    pts.push({ x: gx, y: rr.top - sr.top + 40 });
+    return { mile: TOTAL_MILES, id: anchors[anchors.length - 1].id };
+  }
 
-    var gutter = parseFloat(getComputedStyle(sheet).getPropertyValue('--gutter')) || 128;
-    var k = gutter / 128;
-    var amps = [34, -22, 40, -28, 26, -34, 30, -20, 38, -26, 24, -32, 36, -24, 30, -28];
-    var d = 'M' + gx.toFixed(1) + ' ' + start.y.toFixed(1);
-    for (var i = 0; i < pts.length - 1; i++) {
-      var a = pts[i], b = pts[i + 1];
-      var dy = b.y - a.y;
-      if (dy < 4) continue;
-      var amp = amps[i % amps.length] * k;
-      var mx = a.x + amp, my = a.y + dy / 2;
-      d += 'C' + a.x.toFixed(1) + ' ' + (a.y + dy * 0.28).toFixed(1) + ' ' + mx.toFixed(1) + ' ' + (my - dy * 0.18).toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1);
-      d += 'C' + mx.toFixed(1) + ' ' + (my + dy * 0.18).toFixed(1) + ' ' + b.x.toFixed(1) + ' ' + (b.y - dy * 0.28).toFixed(1) + ' ' + b.x.toFixed(1) + ' ' + b.y.toFixed(1);
+  var lastText = '', lastId = '';
+  function paintHud(y) {
+    var m = mileAt(y);
+    var txt = m.mile.toFixed(1);
+    if (mileEl && txt !== lastText) { mileEl.textContent = txt; lastText = txt; }
+    if (m.id !== lastId) {
+      lastId = m.id;
+      if (placeEl) placeEl.textContent = PLACES[m.id] || '';
+      navLinks.forEach(function (a) {
+        if (a.getAttribute('href') === '#' + m.id) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
     }
+    return m;
+  }
 
-    routeSvg.setAttribute('viewBox', '0 0 ' + sr.width.toFixed(1) + ' ' + sr.height.toFixed(1));
-    while (routeSvg.firstChild) routeSvg.removeChild(routeSvg.firstChild);
-    function el(name, attrs) {
-      var n = document.createElementNS(NS, name);
-      for (var key in attrs) n.setAttribute(key, attrs[key]);
-      routeSvg.appendChild(n);
-      return n;
-    }
-    el('path', { 'class': 'casing', d: d });
-    var path = el('path', { 'class': 'trail', d: d, id: 'trail-path' });
-    var end = pts[pts.length - 1];
-    el('path', { 'class': 'trail-end', d: 'M' + (end.x - 9) + ' ' + (end.y + 7) + 'L' + end.x + ' ' + (end.y - 9) + 'L' + (end.x + 9) + ' ' + (end.y + 7) + 'Z', fill: 'var(--paper)', stroke: 'var(--ink)', 'stroke-width': '1.5' });
-    var marker = el('g', { 'class': 'marker' });
-    var ring = document.createElementNS(NS, 'circle');
-    ring.setAttribute('class', 'marker-ring'); ring.setAttribute('r', '11');
-    var dot = document.createElementNS(NS, 'circle');
-    dot.setAttribute('class', 'marker-dot'); dot.setAttribute('r', '5');
-    marker.appendChild(ring); marker.appendChild(dot);
-    marker.setAttribute('transform', 'translate(' + gx.toFixed(1) + ' ' + start.y.toFixed(1) + ')');
+  /* ---- static drive: reduced motion, or the libraries never arrived ---- */
+  function staticDrive() {
+    html.classList.add('reveal-all', 'drive-static', 'drive-ready');
+    var ticking = false;
+    var pathLen = pathEl && pathEl.getTotalLength ? pathEl.getTotalLength() : 0;
 
-    /* y along the path, sampled once, so the marker can sit on the reading line */
-    var total = path.getTotalLength();
-    var n = Math.max(40, Math.ceil(total / 5));
-    var ys = new Float32Array(n + 1);
-    for (var s = 0; s <= n; s++) ys[s] = path.getPointAtLength(total * s / n).y;
-
-    html.classList.add('has-route');
-    return {
-      path: path, marker: marker, start: start, end: end, ys: ys, n: n,
-      discs: discs.map(function (dEl, idx) { return { el: dEl, item: dEl.parentNode, y: pts[idx + 1].y }; }),
-      fracAtY: function (y) {
-        var lo = 0, hi = n;
-        while (lo < hi) { var m = (lo + hi) >> 1; if (ys[m] < y) lo = m + 1; else hi = m; }
-        return lo / n;
+    function paint() {
+      ticking = false;
+      var m = paintHud(window.scrollY);
+      if (world && world.getAttribute('data-stretch') !== m.id) world.setAttribute('data-stretch', m.id);
+      if (dotEl && pathLen) {
+        var pt = pathEl.getPointAtLength(pathLen * clamp(m.mile / TOTAL_MILES, 0, 1));
+        dotEl.setAttribute('cx', pt.x.toFixed(2));
+        dotEl.setAttribute('cy', pt.y.toFixed(2));
       }
+    }
+    function onScroll() { if (!ticking) { ticking = true; window.requestAnimationFrame(paint); } }
+    function onResize() { measure(); onScroll(); }
+
+    measure();
+    paint();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    window.addEventListener('load', onResize);
+    return function () {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('load', onResize);
     };
   }
 
-  /* ---------- Scale bar: scroll progress and the current section ---------- */
+  /* ---- the full drive ---- */
+  function fullDrive(gsap, ScrollTrigger) {
+    html.classList.add('drive-ready');
+    html.classList.remove('drive-static');
 
-  var secs = [];
-  function measureSections() {
-    var docTop = window.pageYOffset;
-    secs = $$('.scale a').map(function (a) {
-      var id = a.getAttribute('data-sec');
-      var target = id === 'top' ? $('#top') : $('#' + id);
-      if (!target) return null;
-      var r = target.getBoundingClientRect();
-      return { a: a, bar: $('b', a), top: r.top + docTop, bottom: r.bottom + docTop };
-    }).filter(Boolean);
-    for (var i = 0; i < secs.length; i++) {
-      secs[i].top = i === 0 ? 0 : secs[i].top - 40;
-      secs[i].bottom = i < secs.length - 1 ? secs[i + 1].top + 0 : document.documentElement.scrollHeight;
+    var lenis = null;
+    var fine = window.matchMedia('(pointer: fine)').matches;
+    if (window.Lenis && fine) {
+      lenis = new window.Lenis({ lerp: 0.1, smoothWheel: true, anchors: true });
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add(lenis.raf ? function (t) { lenis.raf(t * 1000); } : function () {});
+      gsap.ticker.lagSmoothing(0);
     }
-    for (var j = 0; j < secs.length - 1; j++) secs[j].bottom = secs[j + 1].top;
-  }
 
-  var ticking = false;
-  function updateReadout() {
-    ticking = false;
-    var vh = window.innerHeight;
-    var max = Math.max(1, document.documentElement.scrollHeight - vh);
-    var y = window.pageYOffset;
-    var line = y + vh * (0.35 + 0.65 * clamp(y / max, 0, 1));
-    var current = secs.length ? secs[0] : null;
-    secs.forEach(function (s) {
-      var p = clamp((line - s.top) / Math.max(1, s.bottom - s.top), 0, 1);
-      s.bar.style.setProperty('--p', p.toFixed(3));
-      s.bar.style.transform = 'scaleX(' + p.toFixed(3) + ')';
-      if (line >= s.top) current = s;
+    /* reveals: ink settle, once */
+    ScrollTrigger.batch('[data-reveal]', {
+      start: 'top 92%',
+      once: true,
+      onEnter: function (els) {
+        gsap.to(els, { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out', stagger: 0.09, overwrite: true });
+      }
     });
-    secs.forEach(function (s) {
-      var on = s === current;
-      s.a.classList.toggle('is-current', on);
-      if (on) s.a.setAttribute('aria-current', 'true'); else s.a.removeAttribute('aria-current');
+
+    /* fog drifts sideways on its own slow loop, independent of scroll */
+    var drifts = [];
+    [['a', 36], ['b', 42], ['c', 45]].forEach(function (f, i) {
+      var el = document.querySelector('[data-fog="' + f[0] + '"] .layer__drift');
+      if (!el) return;
+      drifts.push(gsap.fromTo(el, { xPercent: i % 2 ? 5 : -5 }, { xPercent: i % 2 ? -5 : 5, duration: f[1], ease: 'sine.inOut', yoyo: true, repeat: -1 }));
     });
-    if (route) {
-      var reading = y + vh * 0.55;
-      var active = null;
-      route.discs.forEach(function (dd) { if (dd.y <= reading + 70) active = dd; });
-      route.discs.forEach(function (dd) { dd.item.classList.toggle('is-active', dd === active); });
+
+    var tl = null;
+    var dotTween = null;
+    var target = 0, cur = 0;
+
+    function frac(el, offsetVh) {
+      var top = el.getBoundingClientRect().top + window.scrollY;
+      return clamp((top - window.innerHeight * (offsetVh == null ? 0.5 : offsetVh)) / maxScroll(), 0, 1);
     }
+
+    function build() {
+      measure();
+      var vw = window.innerWidth, vh = window.innerHeight;
+      if (tl) tl.kill();
+      tl = gsap.timeline({ paused: true, defaults: { ease: 'none' } });
+
+      var pDaly = frac(document.getElementById('daly-city'));
+      var pCS = frac(document.getElementById('crystal-springs'));
+      var pSerra = frac(document.getElementById('serra'));
+      var pStan = frac(document.getElementById('stanford'));
+
+      /* hills: parallax by depth, each travels its own overflow */
+      ['mtn', 'gold-far', 'oak', 'gold-near'].forEach(function (n) {
+        var el = layer(n);
+        if (!el) return;
+        gsap.set(el, { x: 0 });
+        tl.fromTo(el, { x: 0 }, { x: -Math.max(0, el.offsetWidth - vw), duration: 1 }, 0);
+      });
+
+      /* the city falls behind early */
+      var sky = layer('skyline');
+      if (sky) { gsap.set(sky, { x: 0, opacity: 1 }); tl.fromTo(sky, { x: 0, opacity: 1 }, { x: -vw * 0.55, opacity: 0, duration: Math.max(0.08, pDaly + 0.06) }, 0); }
+
+      /* horizon light warms as you head south */
+      var warm = layer('warm'), skyWarm = layer('sky-warm'), sun = layer('sun');
+      if (warm) { gsap.set(warm, { opacity: 0 }); tl.fromTo(warm, { opacity: 0 }, { opacity: 1, duration: 1 }, 0); }
+      if (skyWarm) { gsap.set(skyWarm, { opacity: 0 }); tl.fromTo(skyWarm, { opacity: 0 }, { opacity: 1, duration: 0.95 }, 0); }
+      if (sun) {
+        tl.fromTo(sun, { y: vh * 0.06 }, { y: -vh * 0.1, duration: 1 }, 0);
+        var sw = sun.querySelector('#sun-warm'), sc = sun.querySelector('#sun-cool');
+        if (sw) tl.fromTo(sw, { opacity: 0 }, { opacity: 1, duration: 0.9 }, 0);
+        if (sc) tl.fromTo(sc, { opacity: 1 }, { opacity: 0.35, duration: 0.9 }, 0);
+      }
+
+      /* Karl the Fog: thick near the city, thin by Crystal Springs, gone by the end */
+      [['a', 1, 0.95, 0.1], ['b', 0.85, 0.9, 0.07], ['c', 0.7, 0.82, 0.04]].forEach(function (f) {
+        var el = document.querySelector('[data-fog="' + f[0] + '"]');
+        if (!el) return;
+        var d = Math.max(0.1, pCS * f[1]);
+        gsap.set(el, { opacity: f[2] });
+        tl.fromTo(el, { opacity: f[2] }, { opacity: f[3], duration: d, ease: 'power2.out' }, 0);
+        tl.to(el, { opacity: 0, duration: Math.max(0.01, 1 - d) }, d);
+      });
+
+      /* the reservoir slides past through Crystal Springs and the rest area */
+      var res = layer('reservoir');
+      if (res) {
+        var rs = Math.max(0, pCS - 0.05), re = Math.min(1, pStan + 0.02);
+        gsap.set(res, { x: vw * 1.05 });
+        tl.fromTo(res, { x: vw * 1.05 }, { x: -res.offsetWidth - vw * 0.05, duration: Math.max(0.05, re - rs) }, rs);
+      }
+
+      /* the Stanford dish rises into view on the right and stays */
+      var dish = layer('dish');
+      if (dish) {
+        var ds = Math.max(0, pStan - 0.06);
+        gsap.set(dish, { x: vw * 1.1 });
+        tl.fromTo(dish, { x: vw * 1.1 }, { x: vw * 0.7, duration: Math.max(0.05, 0.1), ease: 'power2.out' }, ds);
+        tl.to(dish, { x: vw * 0.62, duration: Math.max(0.01, 1 - ds - 0.1) }, ds + 0.1);
+      }
+
+      /* road centerline: dashes stream past with scroll */
+      if (lineEl) {
+        gsap.set(lineEl, { strokeDashoffset: 0 });
+        tl.fromTo(lineEl, { strokeDashoffset: 0 }, { strokeDashoffset: 9000, duration: 1 }, 0);
+      }
+
+      tl.progress(cur);
+    }
+
+    /* route dot rides the miniature of the drive with MotionPath */
+    if (dotEl && pathEl && window.MotionPathPlugin) {
+      dotTween = gsap.to(dotEl, {
+        motionPath: { path: pathEl, align: pathEl, alignOrigin: [0.5, 0.5] },
+        ease: 'none', duration: 1, paused: true
+      });
+    }
+
+    ScrollTrigger.create({
+      start: 0,
+      end: 'max',
+      onUpdate: function (self) { target = self.progress; }
+    });
+
+    function tick() {
+      var d = target - cur;
+      cur = Math.abs(d) < 0.00004 ? target : cur + d * 0.2;
+      if (tl) tl.progress(cur);
+      var m = paintHud(cur * maxScroll());
+      if (dotTween) dotTween.progress(clamp(m.mile / TOTAL_MILES, 0, 1));
+      else if (dotEl && pathEl && pathEl.getTotalLength) {
+        var pt = pathEl.getPointAtLength(pathEl.getTotalLength() * clamp(m.mile / TOTAL_MILES, 0, 1));
+        dotEl.setAttribute('cx', pt.x); dotEl.setAttribute('cy', pt.y);
+      }
+    }
+    gsap.ticker.add(tick);
+
+    ScrollTrigger.addEventListener('refresh', build);
+    build();
+    target = cur = clamp(window.scrollY / maxScroll(), 0, 1);
+    tl.progress(cur);
+    ScrollTrigger.refresh();
+
+    return function () {
+      ScrollTrigger.removeEventListener('refresh', build);
+      gsap.ticker.remove(tick);
+      drifts.forEach(function (t) { t.kill(); });
+      if (tl) tl.kill();
+      if (dotTween) dotTween.kill();
+      if (lenis) { lenis.destroy(); lenis = null; }
+    };
   }
-  function requestReadout() {
-    if (ticking) return;
-    ticking = true;
-    window.requestAnimationFrame(updateReadout);
-  }
 
-  /* ---------- Motion ---------- */
-
-  var motion = null; /* { rebuild, kill } while the full system is live */
-
-  function initMotion() {
+  /* ---- boot ---- */
+  function boot() {
+    var gsap = window.gsap;
+    var ScrollTrigger = window.ScrollTrigger;
+    if (!gsap || !ScrollTrigger) { staticDrive(); return; }
     gsap.registerPlugin(ScrollTrigger);
-    if (window.MotionPathPlugin) gsap.registerPlugin(MotionPathPlugin);
-    ScrollTrigger.config({ ignoreMobileResize: true });
+    if (window.MotionPathPlugin) gsap.registerPlugin(window.MotionPathPlugin);
+
     var mm = gsap.matchMedia();
-
-    mm.add('(prefers-reduced-motion: no-preference)', function () {
-      html.classList.add('has-motion');
-      html.classList.remove('reduce-motion');
-
-      /* Lenis on fine pointers only */
-      if (window.Lenis && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-        lenis = new Lenis({ duration: 1.05, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); } });
-        lenis.on('scroll', ScrollTrigger.update);
-        gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
-        gsap.ticker.lagSmoothing(0);
-        $$('a[href^="#"]').forEach(function (a) {
-          a.addEventListener('click', function (e) {
-            var id = a.getAttribute('href');
-            var t = id.length > 1 ? $(id) : null;
-            if (!t) return;
-            e.preventDefault();
-            lenis.scrollTo(t, { offset: -(parseFloat(getComputedStyle(html).scrollPaddingTop) || 0) });
-          });
-        });
-      }
-
-      /* Contours draw once on load: staggered dashoffset, under 1.6s in all */
-      var lines = $$('.cf-a .c-lines path');
-      gsap.set(lines, { strokeDashoffset: 1 });
-      gsap.set('.c-labels', { opacity: 0 });
-      gsap.to(lines, {
-        strokeDashoffset: 0, duration: 0.9, ease: 'power2.out', stagger: { amount: 0.65 },
-        onComplete: function () { html.classList.add('contours-done'); }
-      });
-      gsap.to('.c-labels', { opacity: 1, duration: 0.5, delay: 1.1, ease: 'power1.out' });
-
-      /* Calm ink-settle entrances: 0.5s, 4px rise, expo.out */
-      ScrollTrigger.batch('[data-settle]', {
-        start: 'top 94%',
-        once: true,
-        onEnter: function (els) {
-          gsap.to(els, { opacity: 1, y: 0, duration: 0.5, ease: 'expo.out', stagger: 0.07, overwrite: true, onComplete: function () { els.forEach(function (e) { e.classList.add('is-in'); }); } });
-        }
-      });
-
-      /* Karl the Fog: slow sideways drift, never scroll-driven; thinning is in the master timeline */
-      var fogs = $$('.fog i');
-      var drift = [[7, 76], [-6, 88], [8, 64]];
-      fogs.forEach(function (f, i) {
-        gsap.to(f, { xPercent: drift[i % 3][0], duration: drift[i % 3][1], ease: 'sine.inOut', yoyo: true, repeat: -1 });
-      });
-
-      var master = null;
-      function build() {
-        if (master) { if (master.scrollTrigger) master.scrollTrigger.kill(); master.kill(); master = null; }
-        if (!route) return;
-        var vh = window.innerHeight;
-        var smax = Math.max(1, ScrollTrigger.maxScroll(window));
-        var line = vh * 0.55;
-        var ytop = route.start.y, ybot = route.end.y;
-        var sa = clamp(ytop - line, 0, smax), sb = clamp(ybot - line, sa + 1, smax);
-        var a = sa / smax, b = sb / smax;
-        var yA = sa + line, yB = sb + line;
-        var bandH = $('.deep').offsetHeight || 900;
-
-        gsap.set(route.marker, { x: route.start.x, y: route.start.y });
-        master = gsap.timeline({
-          defaults: { ease: 'none' },
-          scrollTrigger: { start: 0, end: function () { return ScrollTrigger.maxScroll(window); }, scrub: 0.6, invalidateOnRefresh: true, onUpdate: requestReadout }
-        });
-
-        /* the marker travels the trail, kept on the reading line */
-        if (window.MotionPathPlugin) {
-          master.to(route.marker, {
-            motionPath: { path: route.path, align: route.path, alignOrigin: [0.5, 0.5], autoRotate: false },
-            ease: function (p) { return route.fracAtY(yA + p * (yB - yA)); },
-            duration: b - a
-          }, a);
-        } else {
-          master.to(route.marker, { y: route.end.y, duration: b - a }, a);
-        }
-
-        /* the contour band nearest the marker deepens */
-        gsap.set('.deep', { y: yA - bandH / 2 });
-        gsap.set('.deep-svg', { y: -(yA - bandH / 2) });
-        master.fromTo('.deep', { y: yA - bandH / 2 }, { y: yB - bandH / 2, duration: b - a }, a);
-        master.fromTo('.deep-svg', { y: -(yA - bandH / 2) }, { y: -(yB - bandH / 2), duration: b - a }, a);
-
-        /* the fog thins as the visitor leaves the first viewport */
-        master.fromTo('.fog', { opacity: 1 }, { opacity: 0.12, duration: Math.min(1, (vh * 0.9) / smax) }, 0);
-
-        /* the declination compass turns slowly */
-        master.fromTo('.compass-rose', { rotation: 0, svgOrigin: '28 28' }, { rotation: 52, svgOrigin: '28 28', duration: 1 }, 0);
-      }
-
-      motion = { rebuild: build };
-      build();
-
-      return function () {
-        html.classList.remove('has-motion');
-        if (master) { if (master.scrollTrigger) master.scrollTrigger.kill(); master.kill(); master = null; }
-        if (lenis) { lenis.destroy(); lenis = null; }
-        motion = null;
-      };
+    mm.add({ calm: '(prefers-reduced-motion: no-preference)', reduce: '(prefers-reduced-motion: reduce)' }, function (ctx) {
+      if (ctx.conditions.reduce) return staticDrive();
+      return fullDrive(gsap, ScrollTrigger);
     });
 
-    mm.add('(prefers-reduced-motion: reduce)', function () {
-      /* Final states, no travelling: contours drawn, fog light and still, marker at the trailhead. */
-      html.classList.add('reduce-motion');
-      html.classList.remove('has-motion');
-      window.addEventListener('scroll', requestReadout, { passive: true });
-      return function () { window.removeEventListener('scroll', requestReadout); };
-    });
+    window.addEventListener('load', function () { ScrollTrigger.refresh(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { ScrollTrigger.refresh(); });
   }
 
-  /* ---------- Start ---------- */
-
-  function layout() {
-    route = buildRoute();
-    measureSections();
-    updateReadout();
-    if (motion && motion.rebuild) {
-      motion.rebuild();
-      if (window.ScrollTrigger) ScrollTrigger.refresh();
-    }
-  }
-
-  var timer = null;
-  function relayout() {
-    clearTimeout(timer);
-    timer = setTimeout(layout, 140);
-  }
-
-  function start() {
-    if (!hasGsap || !html.classList.contains('js')) {
-      html.classList.remove('js');
-      window.addEventListener('scroll', requestReadout, { passive: true });
-      layout();
-    } else {
-      route = buildRoute();
-      measureSections();
-      initMotion();
-      updateReadout();
-      window.addEventListener('scroll', requestReadout, { passive: true });
-    }
-    window.addEventListener('resize', relayout);
-    if (window.ResizeObserver && sheet) {
-      var lastH = 0;
-      new ResizeObserver(function () {
-        var h = sheet.offsetHeight;
-        if (Math.abs(h - lastH) > 2) { lastH = h; relayout(); }
-      }).observe(sheet);
-    }
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayout);
-    window.addEventListener('load', relayout);
-    window.__apReady = true;
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
-  else start();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 })();

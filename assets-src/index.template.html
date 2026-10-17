@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aaryan Patel</title>
+  <meta name="description" content="Aaryan Patel is an Associate Product Manager at DeUNA, builds AI systems for defense wargaming at Strand Analytica, and studies economics and data at the University of Toronto. This page is a drive down Interstate 280 through his work.">
+  <meta name="author" content="Aaryan Patel">
+  <link rel="canonical" href="https://aaryanp35.vercel.app/">
+  <meta name="theme-color" content="#bcd6e4">
+  <meta name="color-scheme" content="light">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Aaryan Patel">
+  <meta property="og:title" content="Aaryan Patel">
+  <meta property="og:description" content="Associate Product Manager at DeUNA. Builds AI systems for defense wargaming at Strand Analytica. A drive down Interstate 280 through his work.">
+  <meta property="og:url" content="https://aaryanp35.vercel.app/">
+  <meta property="og:image" content="https://aaryanp35.vercel.app/images/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Aaryan Patel standing on the San Francisco waterfront at night">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Aaryan Patel">
+  <meta name="twitter:description" content="Associate Product Manager at DeUNA. Builds AI systems for defense wargaming at Strand Analytica.">
+  <meta name="twitter:image" content="https://aaryanp35.vercel.app/images/og-image.jpg">
+
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="images/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <script>
+    /* Runs before first paint. Hidden start states exist only under html.js. The 3s backstop reveals everything if the drive never starts. */
+    (function () {
+      var d = document.documentElement;
+      d.classList.add('js');
+      setTimeout(function () {
+        if (!d.classList.contains('drive-ready')) d.classList.add('reveal-all');
+      }, 3000);
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;500&family=Overpass:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Aaryan Patel",
+    "url": "https://aaryanp35.vercel.app/",
+    "image": "https://aaryanp35.vercel.app/images/og-image.jpg",
+    "jobTitle": "Associate Product Manager",
+    "description": "Associate Product Manager at DeUNA who builds AI systems for defense wargaming at Strand Analytica and studies economics and data at the University of Toronto.",
+    "worksFor": [
+      { "@type": "Organization", "name": "DeUNA" },
+      { "@type": "Organization", "name": "Strand Analytica" }
+    ],
+    "alumniOf": { "@type": "CollegeOrUniversity", "name": "University of Toronto" },
+    "homeLocation": { "@type": "Place", "name": "Menlo Park, California" },
+    "sameAs": [
+      "https://github.com/aaryanp35",
+      "https://www.linkedin.com/in/aaryan-p-5a4223331/"
+    ]
+  }
+  </script>
+
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/MotionPathPlugin.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.3.1/dist/lenis.min.js"></script>
+  <script defer src="script.js"></script>
+</head>
+<body>
+<!-- asset: sprite -->
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="world" id="world" data-stretch="merge" aria-hidden="true">
+  <div class="layer layer--sky-cool"></div>
+  <div class="layer layer--sky-warm" data-layer="sky-warm"></div>
+  <div class="layer layer--sun" data-layer="sun"><!-- asset: sky-sun --></div>
+  <div class="layer layer--mtn" data-layer="mtn"><!-- asset: mountains --></div>
+  <div class="layer layer--fog-c" data-fog="c"><div class="layer__drift"><!-- asset: fog-c --></div></div>
+  <div class="layer layer--skyline" data-layer="skyline"><!-- asset: skyline --></div>
+  <div class="layer layer--gold-far" data-layer="gold-far"><!-- asset: hills-gold-far --></div>
+  <div class="layer layer--dish" data-layer="dish"><!-- asset: dish --></div>
+  <div class="layer layer--oak" data-layer="oak"><!-- asset: hills-oak --></div>
+  <div class="layer layer--fog-b" data-fog="b"><div class="layer__drift"><!-- asset: fog-b --></div></div>
+  <div class="layer layer--reservoir" data-layer="reservoir"><!-- asset: reservoir --></div>
+  <div class="layer layer--gold-near" data-layer="gold-near"><!-- asset: hills-gold-near --></div>
+  <div class="layer layer--fog-a" data-fog="a"><div class="layer__drift"><!-- asset: fog-a --></div></div>
+  <div class="layer layer--warm" data-layer="warm"></div>
+  <div class="layer layer--road" data-layer="road"><!-- asset: road --></div>
+</div>
+
+<header class="hud" id="hud">
+  <a class="hud__brand" href="#merge" aria-label="Aaryan Patel, back to the start">
+    <svg class="hud__shield" aria-hidden="true" focusable="false"><use href="#sym-shield-280"/></svg>
+    <span class="hud__south">South</span>
+  </a>
+  <p class="hud__mile" aria-hidden="true"><span class="hud__mile-label">Mile</span><span class="hud__mile-num" id="mile">0.0</span></p>
+  <p class="hud__place" id="place" aria-hidden="true">San Francisco</p>
+  <div class="hud__route" aria-hidden="true"><!-- asset: route --></div>
+  <nav class="hud__nav" aria-label="Sections">
+    <ul>
+      <li><a href="#daly-city">Experience</a></li>
+      <li><a href="#crystal-springs">Work</a></li>
+      <li><a href="#serra">Rowing</a></li>
+      <li><a href="#stanford">Education</a></li>
+      <li><a href="#sand-hill">Contact</a></li>
+    </ul>
+  </nav>
+  <a class="btn btn--primary hud__resume" href="resume.pdf">Resume (PDF)</a>
+</header>
+
+<main id="main">
+
+  <section class="stretch stretch--merge" id="merge" data-stretch="merge" data-mile-from="0" data-mile-to="2" aria-labelledby="name">
+    <div class="wrap hero">
+      <div class="hero__sign gantry" data-reveal>
+        <div class="sign sign--green sign--hero">
+          <div class="sign__tab">Mile 0</div>
+          <div class="sign__route">
+            <svg class="sign__shield" aria-hidden="true" focusable="false"><use href="#sym-shield-280"/></svg>
+            <span class="sign__dir">South</span>
+          </div>
+          <div class="sign__main">
+            <h1 class="sign__legend sign__legend--display" id="name">Aaryan Patel</h1>
+            <p class="sign__sub">Associate Product Manager at DeUNA</p>
+            <p class="sign__sub">Builds AI systems for defense wargaming at Strand Analytica</p>
+          </div>
+          <p class="sign__body hero__intro">I'm a third-year at the University of Toronto studying economics and data, and I row varsity. I own an ML product at DeUNA, build wargaming AI at Strand Analytica, and make things of my own like Athenaeum and Proxii. I'm from Menlo Park, so this page takes the long way home down Interstate 280.</p>
+        </div>
+      </div>
+
+      <figure class="panel panel--vista photo" data-reveal>
+        <div class="panel__head" aria-hidden="true">
+          <svg class="icon" focusable="false"><use href="#sym-camera"/></svg>
+          <span>Vista Point</span>
+        </div>
+        <picture>
+          <source srcset="images/profile.webp" type="image/webp">
+          <img src="images/profile.jpg" width="1200" height="1500" alt="Aaryan Patel smiling in front of the San Francisco skyline and the Embarcadero waterfront at night" loading="eager" fetchpriority="high" decoding="async">
+        </picture>
+        <figcaption class="photo__cap">San Francisco, the Embarcadero</figcaption>
+      </figure>
+
+      <div class="hero__actions" data-reveal>
+        <a class="btn btn--primary" href="resume.pdf" type="application/pdf"><svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-doc"/></svg><span>Resume (PDF)</span></a>
+        <a class="btn btn--primary" href="mailto:aaryanp35@gmail.com"><svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-mail"/></svg><span>Email</span></a>
+        <a class="btn btn--quiet" href="https://github.com/aaryanp35"><svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-branch"/></svg><span>GitHub</span></a>
+        <a class="btn btn--quiet" href="https://www.linkedin.com/in/aaryan-p-5a4223331/"><svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-linkedin"/></svg><span>LinkedIn</span></a>
+      </div>
+
+      <nav class="ahead sign sign--brown" aria-label="Headline projects ahead" data-reveal>
+        <p class="ahead__lead">Points of interest ahead</p>
+        <ul class="ahead__list">
+          <li><a href="#deuna"><svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-route"/></svg>DeUNA</a></li>
+          <li><a href="#athenaeum"><svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-columns"/></svg>Athenaeum</a></li>
+          <li><a href="#strand"><svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-grid-flag"/></svg>Strand Analytica</a></li>
+          <li><a href="#proxii"><svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-pin"/></svg>Proxii</a></li>
+        </ul>
+      </nav>
+    </div>
+  </section>
+
+  <section class="stretch" id="daly-city" data-stretch="daly-city" data-mile-from="2" data-mile-to="16" aria-labelledby="h-experience">
+    <div class="wrap">
+      <header class="stretch__head" data-reveal>
+        <div class="sign sign--green sign--head">
+          <h2 class="sign__legend" id="h-experience">Experience</h2>
+          <p class="sign__sub">Daly City, five exits</p>
+          <svg class="sign__arrow" aria-hidden="true" focusable="false"><use href="#sym-arrow-down"/></svg>
+        </div>
+        <aside class="advisory" aria-label="Fog advisory">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-fog"/></svg>
+          <p><strong>Karl the Fog</strong> Seasonal. Rolls in over the hills most summer evenings.</p>
+        </aside>
+      </header>
+
+      <ol class="exits">
+        <li class="exit exit--gantry gantry" data-reveal>
+          <article class="sign sign--green">
+            <div class="sign__tab">Exit 3</div>
+            <div class="sign__main">
+              <h3 class="sign__legend">DeUNA</h3>
+              <p class="sign__sub">Associate Product Manager</p>
+              <p class="sign__meta">Sep 2026 to present</p>
+              <p class="sign__body">I own the ML Optimizer for merchant-initiated transactions and the agentic workflows around it. I moved over from the data science internship, so the experiments and the roadmap live in one head. Part-time while school is on.</p>
+            </div>
+            <svg class="sign__arrow" aria-hidden="true" focusable="false"><use href="#sym-arrow-exit"/></svg>
+          </article>
+        </li>
+
+        <li class="exit exit--post" data-reveal>
+          <article class="sign sign--green post-sign">
+            <div class="sign__tab">Exit 6</div>
+            <div class="sign__main">
+              <h3 class="sign__legend">Strand Analytica</h3>
+              <p class="sign__sub">Implementation Engineering Intern</p>
+              <p class="sign__meta">Oct 2026 to present</p>
+              <p class="sign__body">Part-time alongside school. I deliver custom-built harnesses and AI layers as an implementation engineer. Public-level description only.</p>
+            </div>
+            <svg class="sign__arrow" aria-hidden="true" focusable="false"><use href="#sym-arrow-exit"/></svg>
+          </article>
+        </li>
+
+        <li class="exit exit--gantry gantry" data-reveal>
+          <article class="sign sign--green">
+            <div class="sign__tab">Exit 9</div>
+            <div class="sign__main">
+              <h3 class="sign__legend">DeUNA</h3>
+              <p class="sign__sub">Data Science Intern</p>
+              <p class="sign__meta">Jul 2026 to Sep 2026</p>
+              <p class="sign__body">My first stint at DeUNA. I ran a payment request A/B test from setup to read-out, did the SQL analysis behind it, and built two early reconciliation models. Customers adopted them and leadership funded more people.</p>
+            </div>
+            <svg class="sign__arrow" aria-hidden="true" focusable="false"><use href="#sym-arrow-exit"/></svg>
+          </article>
+        </li>
+
+        <li class="exit exit--post" data-reveal>
+          <article class="sign sign--green post-sign">
+            <div class="sign__tab">Exit 12</div>
+            <div class="sign__main">
+              <h3 class="sign__legend">LookAcross AI</h3>
+              <p class="sign__sub">AI Product Intern</p>
+              <p class="sign__meta">May 2026 to Jul 2026</p>
+              <p class="sign__body">An AI-native go-to-market intelligence startup. I wired a founder's tools into one dashboard, among them Gmail, Slack, Linear, Fireflies, Calendar and Drive, and took an event intelligence feature from concept into development.</p>
+            </div>
+            <svg class="sign__arrow" aria-hidden="true" focusable="false"><use href="#sym-arrow-exit"/></svg>
+          </article>
+        </li>
+
+        <li class="exit exit--gantry gantry" data-reveal>
+          <article class="sign sign--green">
+            <div class="sign__tab">Exit 15</div>
+            <div class="sign__main">
+              <h3 class="sign__legend">American Precision Gear</h3>
+              <p class="sign__sub">Engineering Intern</p>
+              <p class="sign__meta">Summer 2024</p>
+              <p class="sign__body">A Department of Defense CNC contract shop. I inspected parts for aircraft and space vehicles, ran mills and routers, and cleaned up inspection records to find where the process was slow.</p>
+            </div>
+            <svg class="sign__arrow" aria-hidden="true" focusable="false"><use href="#sym-arrow-exit"/></svg>
+          </article>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="stretch" id="crystal-springs" data-stretch="crystal-springs" data-mile-from="16" data-mile-to="23" aria-labelledby="h-work">
+    <div class="wrap">
+      <header class="stretch__head" data-reveal>
+        <div class="sign sign--green sign--head">
+          <h2 class="sign__legend" id="h-work">Selected work</h2>
+          <p class="sign__sub">Crystal Springs, points of interest</p>
+          <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-lake"/></svg>
+        </div>
+      </header>
+
+      <div class="sign-grid">
+        <article class="sign sign--green post-sign feature" id="deuna" data-reveal>
+          <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-route"/></svg>
+          <h3 class="sign__legend">DeUNA</h3>
+          <p class="sign__sub">Payments orchestration for large merchants.</p>
+          <p class="sign__body">I own product for the ML Optimizer: the experiments, the models and the workflows around them. I started on the data side, running the first payment request A/B test, and moved into the product seat.</p>
+        </article>
+
+        <article class="sign sign--green post-sign feature" id="athenaeum" data-reveal>
+          <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-columns"/></svg>
+          <h3 class="sign__legend">Athenaeum</h3>
+          <p class="sign__sub">An AI-assisted storytelling platform for indie filmmakers.</p>
+          <p class="sign__body">I set the product strategy, turned design-partner feedback into specs and built the backend. It drafts treatments in Sundance, IDA and ITVS formats in the filmmaker's own voice, and a Dramaturg agent asks questions first. The MVP shipped.</p>
+        </article>
+
+        <article class="sign sign--green post-sign feature" id="strand" data-reveal>
+          <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-grid-flag"/></svg>
+          <h3 class="sign__legend">Strand Analytica</h3>
+          <p class="sign__sub">AI wargaming simulations for the British Ministry of Defence and the U.S. Department of War.</p>
+          <p class="sign__body">I build the custom harnesses and AI layers the simulations run on. I can only describe it at the level the resume does.</p>
+        </article>
+
+        <article class="sign sign--green post-sign feature" id="proxii" data-reveal>
+          <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-pin"/></svg>
+          <h3 class="sign__legend">Proxii</h3>
+          <p class="sign__sub">A spatial economics app that scores a neighborhood's gentrification risk.</p>
+          <p class="sign__body">The Proxii Score comes from how dense Google Places listings are and how people write about them, with pricing and spatial econometrics underneath. I built the pipelines and the React front end. It is live.</p>
+          <p class="sign__links">
+            <a href="https://proxii.vercel.app/">Open Proxii<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a>
+            <a href="https://github.com/aaryanp35/Proxii-1">Code on GitHub<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a>
+          </p>
+        </article>
+      </div>
+
+      <h3 class="alsoalong" data-reveal>Also along the way</h3>
+      <ul class="sign-grid sign-grid--small">
+        <li class="sign sign--brown small" data-reveal>
+          <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-scatter"/></svg>
+          <h4 class="sign__name">ECO225 research</h4>
+          <p class="sign__body">Does the neighborhood a stop happens in change who gets searched? I joined San Francisco police stop records to home value data and tested it with regressions and tree models.</p>
+          <p class="sign__links"><a href="https://github.com/ECO225-2026/eco225-project-aaryanp35">Code on GitHub<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a></p>
+        </li>
+        <li class="sign sign--brown small" data-reveal>
+          <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-quote"/></svg>
+          <h4 class="sign__name">Firsthand</h4>
+          <p class="sign__body">Reads a news article and writes a first-person story from the other side of the issue, using Gemini.</p>
+          <p class="sign__links"><a href="https://github.com/aaryanp35/firsthand">Code on GitHub<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a></p>
+        </li>
+        <li class="sign sign--blue small" data-reveal>
+          <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-note"/></svg>
+          <h4 class="sign__name">Auratune</h4>
+          <p class="sign__body">A music mood classifier built on decision trees over Spotify audio features, for CSC111.</p>
+          <p class="sign__links"><a href="https://github.com/aaryanp35/csc111-auratune">Code on GitHub<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a></p>
+        </li>
+        <li class="sign sign--blue small" data-reveal>
+          <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-fork"/></svg>
+          <h4 class="sign__name">Meal Planner</h4>
+          <p class="sign__body">A Java app in Clean Architecture that plans meals with the Spoonacular and Edamam APIs, for CSC207.</p>
+          <p class="sign__links"><a href="https://github.com/aaryanp35/CSC207-Project-Meal-Planner">Code on GitHub<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a></p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="stretch" id="serra" data-stretch="serra" data-mile-from="23" data-mile-to="26" aria-labelledby="h-rest">
+    <div class="wrap">
+      <header class="stretch__head" data-reveal>
+        <div class="sign sign--blue sign--head">
+          <h2 class="sign__legend" id="h-rest">Rest area</h2>
+          <p class="sign__sub">Junipero Serra, pull over for a minute</p>
+          <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-rest"/></svg>
+        </div>
+      </header>
+
+      <div class="rest">
+        <aside class="panel panel--rest note" aria-labelledby="h-note" data-reveal>
+          <h3 class="panel__title" id="h-note">Payments and defense</h3>
+          <p>From a CNC shop floor making aircraft parts to simulations used in defense planning, with a payments company in between. The work looks different each time. The habit is the same: model the decision, test it, ship what holds up.</p>
+        </aside>
+
+        <section class="panel panel--rest strip" aria-labelledby="h-rowing" data-reveal>
+          <h3 class="panel__title" id="h-rowing">Rowing</h3>
+          <ul class="strip__list">
+            <li>Varsity rowing, University of Toronto</li>
+            <li>Team captain of Norcal Crew, a national championship program, 2020 to 2024</li>
+            <li>Selected for the U.S. Rowing Olympic Development Program</li>
+            <li>Leadership Award, 2024</li>
+            <li>Best Teammate, 2023</li>
+            <li>Hardest Team Worker, 2021</li>
+          </ul>
+          <p class="strip__outreach">Outside the boat, I give coding lessons through <a href="https://stemtosternrowing.org/">Stem to Stern Rowing<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a>.</p>
+          <div class="strip__lane" aria-hidden="true"></div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section class="stretch" id="stanford" data-stretch="stanford" data-mile-from="26" data-mile-to="29" aria-labelledby="h-vista">
+    <div class="wrap">
+      <header class="stretch__head" data-reveal>
+        <div class="sign sign--brown sign--head">
+          <h2 class="sign__legend" id="h-vista">Vista point</h2>
+          <p class="sign__sub">Stanford hills, education and skills</p>
+          <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-camera"/></svg>
+        </div>
+      </header>
+
+      <div class="vista">
+        <article class="panel panel--vista" aria-labelledby="h-edu" data-reveal>
+          <h3 class="panel__title" id="h-edu"><svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-school"/></svg>Education</h3>
+          <p><strong>University of Toronto, 2024 to present.</strong> Economics with Data Analytics, with minors in Computer Science and Statistics, and a varsity rowing seat. Coursework includes advanced micro and macro theory, probability and statistics, linear algebra, big-data tools for economists, and software design.</p>
+          <p><strong>Menlo-Atherton High School, 2020 to 2023.</strong> I founded the Menlo-Atherton hackers club in 2023 and took AP Computer Science.</p>
+        </article>
+
+        <article class="panel panel--vista" aria-labelledby="h-skills" data-reveal>
+          <h3 class="panel__title" id="h-skills"><svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-code"/></svg>Skills</h3>
+          <dl class="facts">
+            <dt>Programming</dt>
+            <dd>Python (NumPy, Pandas, scikit-learn, SciPy), SQL, MATLAB, Java and C++, plus basic R and JavaScript.</dd>
+            <dt>AI</dt>
+            <dd>Prompt and system prompt design, LLM APIs (Anthropic Claude, OpenAI, OpenRouter), multi-model orchestration, MCP, RAG, and agentic coding with Claude Code.</dd>
+            <dt>Data and infrastructure</dt>
+            <dd>Snowflake, Postgres, Redis, Supabase, pgvector, FastAPI, React and Vercel, plus A/B testing and econometrics.</dd>
+          </dl>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="stretch stretch--final" id="sand-hill" data-stretch="sand-hill" data-mile-from="29" data-mile-to="30" aria-labelledby="h-contact">
+    <div class="wrap">
+      <div class="gantry final" data-reveal>
+        <div class="sign sign--green sign--final">
+          <div class="sign__tab">Exit 30</div>
+          <div class="sign__main">
+            <h2 class="sign__legend sign__legend--display" id="h-contact">Contact</h2>
+            <p class="sign__sub">Sand Hill Road</p>
+            <p class="sign__sub">Menlo Park</p>
+          </div>
+          <p class="sign__body final__text">That is the drive. I am looking for 2027 roles in product, data science and AI engineering. The resume has the details I keep off this page; email reaches me fastest.</p>
+          <div class="final__actions">
+            <a class="btn btn--primary" href="resume.pdf" type="application/pdf"><svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-doc"/></svg><span>Resume (PDF)</span></a>
+            <a class="btn btn--primary" href="mailto:aaryanp35@gmail.com"><svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-mail"/></svg><span>Email <span class="btn__addr">aaryanp35@gmail.com</span></span></a>
+          </div>
+          <p class="sign__links final__links">
+            <a href="https://github.com/aaryanp35">GitHub<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a>
+            <a href="https://www.linkedin.com/in/aaryan-p-5a4223331/">LinkedIn<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a>
+          </p>
+          <svg class="sign__arrow" aria-hidden="true" focusable="false"><use href="#sym-arrow-exit"/></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <p>Aaryan Patel. Menlo Park, California and Toronto, Ontario. Updated October 2026.</p>
+</footer>
+
+</body>
+</html>
