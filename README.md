@@ -1,187 +1,46 @@
-# Aaryan Patel - Portfolio Website
+# Aaryan Patel, portfolio
 
-A modern, responsive portfolio website showcasing projects, skills, and contact information.
+A single page that is a scroll-driven climb up Mt Tamalpais, drawn as a USGS-style topographic sheet. The trailhead is the introduction, the route climbs through the work, and the summit register holds the resume and email.
 
-## Features
+Live: https://aaryanp35.vercel.app
 
-✨ **Modern Design**
-- Clean and professional UI
-- Smooth animations and transitions
-- Gradient accents and modern color scheme
+## The world
+- Map paper ground, sienna contour lines, vegetation green and water blue fields, black ink type, road red only for actions and the hiker's pack.
+- Big Shoulders Display for names and headings, Source Serif 4 for reading, Martian Mono for coordinates and dates.
+- Every block of text sits on a solid paper panel (title plate, legend box or sign board). Contours and ridgelines stay behind.
+- Neatline frame with East Peak coordinates, a scale bar, a declination diagram, and an elevation profile that doubles as scroll progress. The top bar holds the altimeter, Skip to summit, and a persistent Resume (PDF) button.
 
-📱 **Fully Responsive**
-- Mobile-first design approach
-- Works seamlessly on all devices
-- Hamburger menu for mobile navigation
+## The climb
+Scroll position maps to elevation. One system drives the three-peak ridgelines, fog, sun, vegetation zones, the contour band, the self-drawing route, a small hiker who walks it, and the altimeter.
 
-🎯 **Key Sections**
-- **Hero Section**: Eye-catching introduction with call-to-action buttons
-- **About Section**: Personal information and background
-- **Projects Section**: Showcase of 6 featured projects with hover effects
-- **Skills Section**: Organized skills by category (Frontend, Backend, Tools, Other)
-- **Contact Section**: Working contact form with validation
+| Zone | Content |
+|---|---|
+| Trailhead | Name, roles, points ahead, portrait, resume and email |
+| Redwood canyon | The four headline points: DeUNA, Athenaeum, Strand Analytica, Proxii |
+| Oak and bay woodland | Experience, newest first |
+| Chaparral and serpentine | Smaller projects, Karl the Fog, athletics, education and skills |
+| East Peak | Summit register with resume, email and an at-a-glance list |
 
-🚀 **Interactive Features**
-- Smooth scrolling navigation
-- Active navigation highlighting
-- Form validation with real-time feedback
-- Scroll animations
-- Social media links
-- Mobile menu toggle
+Authored motion (transform, opacity and stroke-dashoffset only): a red-tailed hawk circling near the trailhead, contours that draw in zone by zone, pins that drop onto the trail, a lookout beacon near the summit, a warming sun, and a pair of quail crossing the chaparral. Touch devices get native scroll, no smooth-scroll library, no fog drift or blur, and a coarser palette update. Reduced motion renders a still, complete sheet.
 
-## Technologies Used
+## Stack
+Static HTML, CSS and JavaScript, no build step for the page itself. GSAP 3.13 (ScrollTrigger, MotionPathPlugin) and Lenis 1.3.1 from pinned CDN URLs, Google Fonts. Content is visible without JavaScript.
 
-- **HTML5**: Semantic markup
-- **CSS3**: Modern styling with Flexbox and Grid
-- **JavaScript**: Interactive functionality
-- **Font Awesome**: Icon library
+## Run locally
+    python3 -m http.server 8000
 
-## File Structure
+then open http://localhost:8000.
 
-```
-my-portfolio/
-├── index.html          # Main HTML file
-├── styles.css          # All CSS styles
-├── script.js           # JavaScript functionality
-├── images/             # Project images folder
-│   ├── project1.jpg
-│   ├── project2.jpg
-│   ├── project3.jpg
-│   ├── project4.jpg
-│   ├── project5.jpg
-│   └── project6.jpg
-└── README.md           # This file
-```
+## Regenerate the art
+`index.html` is generated. Edit `assets-src/index.template.html` and `assets-src/gen.py`, then:
 
-## Getting Started
+    python3 assets-src/gen.py
+    python3 assets-src/inline.py assets-src/index.template.html index.html
 
-1. **Clone or download** this repository
-2. **Add your project images** to the `images/` folder
-3. **Customize the content**:
-   - Update personal information in `index.html`
-   - Modify colors in CSS variables in `styles.css`
-   - Add your social media links
-   - Replace project details with your own work
-4. **Open `index.html`** in a web browser
+`gen.py` (fixed seed) writes the scene, contours, route, profile, symbol sprite, declination and scale bar SVG to `assets-src/out/`; `inline.py` inlines them at the `<!-- asset: name -->` placeholders.
 
-## Customization Guide
-
-### Changing Colors
-
-Edit the CSS variables in `styles.css`:
-
-```css
-:root {
-    --primary-color: #6366f1;     /* Main brand color */
-    --secondary-color: #8b5cf6;   /* Secondary accent */
-    --accent-color: #ec4899;      /* Accent highlights */
-    /* ... more variables ... */
-}
-```
-
-### Adding Your Projects
-
-In `index.html`, find the projects section and update each project card:
-
-```html
-<div class="project-card">
-    <div class="project-image">
-        <img src="images/your-project.jpg" alt="Your Project Name">
-        <div class="project-overlay">
-            <a href="https://your-project-live-link.com" class="project-link">
-                <i class="fas fa-external-link-alt"></i>
-            </a>
-            <a href="https://github.com/yourusername/project" class="project-link">
-                <i class="fab fa-github"></i>
-            </a>
-        </div>
-    </div>
-    <div class="project-content">
-        <h3>Your Project Name</h3>
-        <p>Description of your project...</p>
-        <div class="project-tags">
-            <span class="tag">Tech1</span>
-            <span class="tag">Tech2</span>
-        </div>
-    </div>
-</div>
-```
-
-### Updating Contact Information
-
-1. Replace email addresses and phone numbers in `index.html`
-2. Update social media links (GitHub, LinkedIn, Twitter, etc.)
-3. Modify the contact form submission in `script.js` to connect to your backend
-
-### Form Submission
-
-The contact form currently simulates a submission. To make it functional:
-
-1. Create a backend API endpoint
-2. Update the form submission in `script.js`:
-
-```javascript
-// Replace the simulated API call with your actual endpoint
-const response = await fetch('https://your-api.com/contact', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(formData)
-});
-```
-
-## Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-- Mobile browsers
-
-## Performance Features
-
-- Lazy loading for images
-- Optimized animations
-- Minimal JavaScript bundle
-- CSS optimization
-
-## Optional Enhancements
-
-The code includes optional features that are commented out:
-- Typing effect for hero subtitle
-- Scroll to top button
-- Character counter for message field
-
-To enable these, uncomment the relevant code in `script.js`.
-
-## Deployment
-
-This website can be deployed to:
-- **GitHub Pages**: Free hosting for static sites
-- **Netlify**: Easy deployment with continuous integration
-- **Vercel**: Fast deployment with great performance
-- **Traditional hosting**: Upload files via FTP
-
-### Deploying to GitHub Pages
-
-1. Create a GitHub repository
-2. Push your code to the repository
-3. Go to Settings > Pages
-4. Select your branch and save
-5. Your site will be live at `https://yourusername.github.io/repository-name`
-
-## License
-
-This project is open source and available for personal and commercial use.
-
-## Contact
-
-For questions or suggestions, feel free to reach out:
-- Email: contact@aaryanpatel.com
-- GitHub: [Your GitHub]
-- LinkedIn: [Your LinkedIn]
-
----
-
-**Built with ❤️ by Aaryan Patel**
+## Files
+- `index.html`, `styles.css`, `script.js`: the page.
+- `assets-src/`: template, generator and notes (not deployed).
+- `images/`: favicon (`favicon.svg` plus PNG sizes), OG image, portrait.
+- `resume.pdf`, `site.webmanifest`: the resume and the manifest.
