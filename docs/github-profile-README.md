@@ -19,9 +19,9 @@ I build data and AI products, from payments infrastructure to AI storytelling to
 | --- | --- |
 | [Proxii](https://github.com/aaryanp35/Proxii-1) ([live](https://proxii.vercel.app/)) | Spatial economics app that scores gentrification risk. |
 | [Firsthand](https://github.com/aaryanp35/firsthand) | Turns a news article into a first-person counter-perspective story, powered by Gemini. |
-| **Athenaeum** | AI storytelling platform for indie filmmakers, with a FastAPI and Postgres backend, pgvector RAG, and a Dramaturg agent. |
-| **ECO225 research** | 250K SFPD stops analyzed against Zillow home values using OLS and random forest models. |
-| [Auratune](https://github.com/aaryanp35/csc111-auratune) | Music mood classifier, built for CSC111. |
+| [Athenaeum](https://github.com/aaryanp35/athenaeum) | AI storytelling platform for indie filmmakers, with a FastAPI and Postgres backend, pgvector RAG, and a Dramaturg agent (public write-up and sanitized slice). |
+| [ECO225 research](https://github.com/ECO225-2026/eco225-project-aaryanp35) | 250K SFPD stops analyzed against Zillow home values using OLS and random forest models. |
+| [Auratune](https://github.com/aaryanp35/csc111-auratune) | Decision-tree music recommender over Spotify audio features, built for CSC111. |
 | [Meal Planner](https://github.com/aaryanp35/CSC207-Project-Meal-Planner) | Java meal planner built on Clean Architecture, for CSC207. |
 | [Portfolio](https://github.com/aaryanp35/my-portfolio) | Source for aaryanp35.vercel.app, a static site with GSAP motion. |
 
