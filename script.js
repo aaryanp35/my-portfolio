@@ -263,6 +263,7 @@
         var target = parseFloat(el.getAttribute('data-to'));
         if (isNaN(target)) return;
         var proxy = { v: 0 };
+        if (el._apCounted) return;
         el.textContent = countFormat(el, 0);
         ScrollTrigger.create({
           trigger: el,
@@ -274,7 +275,7 @@
               duration: 1.4,
               ease: 'power2.out',
               onUpdate: function () { el.textContent = countFormat(el, proxy.v); },
-              onComplete: function () { el.textContent = countFormat(el, target); }
+              onComplete: function () { el.textContent = countFormat(el, target); el._apCounted = true; }
             });
           }
         });
