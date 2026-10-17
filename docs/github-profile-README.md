@@ -9,9 +9,9 @@ I build data and AI products, from payments infrastructure to AI storytelling to
 
 ## Currently
 
-- **Associate Product Manager, DeUNA** (payments orchestration platform). I own the ML Optimizer for Merchant-Initiated Transactions and its agentic workflows. Previously a Data Science Intern there, where I led A/B testing projected to add $230M in annualized GMV.
+- **Associate Product Manager, DeUNA.** I work on machine learning payment optimization products and their agentic workflows. Before that I was a Data Science Intern there, running A/B tests end to end.
 - **Implementation Engineering Intern, Strand Analytica.** Building custom harnesses and AI layers for AI wargaming simulations for the British Ministry of Defence and the US Department of War.
-- **University of Toronto**, third year. Economics with Data Analytics, with minors in Computer Science and Statistics. Varsity rower.
+- **University of Toronto**, third year. Economics with Data Analytics, with minors in Computer Science and Statistics. Student-athlete on the U of T rowing team.
 
 ## Selected work
 
