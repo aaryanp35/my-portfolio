@@ -1,7 +1,7 @@
 # Aaryan Patel | Portfolio
 
 A single-page portfolio built as a scroll-driven drive down Interstate 280, from San Francisco south to Menlo Park.
-Experience entries are exits, selected work is points of interest, and the last sign is the Sand Hill Road exit.
+Selected work comes first as points of interest, experience entries are exits, and the last sign is the Sand Hill Road exit.
 
 Live: https://aaryanp35.vercel.app (Vercel, deploys from `main`)
 
@@ -45,3 +45,6 @@ images/ resume.pdf    Portrait, icons, resume
 
 - Content is visible without JavaScript. Hidden start states apply only under `html.js`, with a 3 second backstop.
 - With reduced motion, nothing moves: the scene swaps to a fixed state per stretch and the counter simply follows scroll.
+- On phones the Points of Interest Ahead strip sits directly under the action buttons, inside the first screen, and scrolling is native (no smoothing library, no continuous fog drift).
+- Section ids keep their original names but follow document order: `#crystal-springs` (Selected work, the fog stretch) comes before `#daly-city` (Experience, the reservoir stretch).
+- `images/og-image.jpg` and the icons are rendered from the sign vocabulary; their provenance is embedded in the files.

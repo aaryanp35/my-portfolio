@@ -15,14 +15,15 @@ with solid fills, so text never depends on the scenery behind it. Light only. Da
 | id | stretch | content | miles |
 |---|---|---|---|
 | `merge` | Merge, San Francisco | h1, hero sign, vista-point portrait, actions, ahead strip | 0 to 2 |
-| `daly-city` | Daly City, fog | h2 Experience, fog advisory, five exits (gantries) | 2 to 16 |
-| `crystal-springs` | Crystal Springs | h2 Selected work, four headline signs, four small signs | 16 to 23 |
-| `serra` | Junipero Serra rest area | h2 Rest area, payments and defense note, rowing strip | 23 to 26 |
+| `crystal-springs` | Daly City stretch (carries the fog) | h2 Selected work, Karl the Fog advisory, four headline signs each with a "My part." line, four small signs | 2 to 10 |
+| `daly-city` | Crystal Springs stretch (carries the reservoir) | h2 Experience, five exits (DeUNA APM, Strand, DeUNA DS full size; LookAcross, American Precision Gear compact) | 10 to 22 |
+| `serra` | Junipero Serra rest area | h2 Rest area, "How the work connects" note, rowing strip | 22 to 26 |
 | `stanford` | Stanford dish hills | h2 Vista point, education, skills | 26 to 29 |
 | `sand-hill` | Sand Hill Road exit | h2 Contact, final sign with resume and email | 29 to 30 |
 
-Exit numbers equal drive miles: DeUNA APM exit 3, Strand exit 6, DeUNA DS exit 9, LookAcross exit 12,
-American Precision Gear exit 15, Sand Hill Road exit 30. These are the page's own miles, not real postmiles.
+Ids keep their v1 names but sections follow document order (Selected work before Experience), so miles still increase down the page.
+Exit numbers equal drive miles and are aria-hidden wayfinding: DeUNA APM exit 12, Strand exit 14, DeUNA DS exit 16, LookAcross exit 18,
+American Precision Gear exit 20, Sand Hill Road exit 30. These are the page's own miles, not real postmiles.
 
 Scroll-to-mile: sections are the anchors. For scroll y inside section s: local = clamp((y + 0.4*vh - s.top) / s.height);
 mile = lerp(s.from, s.to, local). Counter shows one decimal, tabular mono. mileFraction = mile / 30 drives the route dot.

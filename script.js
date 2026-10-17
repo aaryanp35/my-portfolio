@@ -17,8 +17,8 @@
   var TOTAL_MILES = 30;
   var PLACES = {
     'merge': 'San Francisco',
-    'daly-city': 'Daly City',
-    'crystal-springs': 'Crystal Springs',
+    'crystal-springs': 'Daly City',
+    'daly-city': 'Crystal Springs',
     'serra': 'Junipero Serra',
     'stanford': 'Stanford hills',
     'sand-hill': 'Sand Hill Road'
@@ -104,9 +104,12 @@
   function fullDrive(gsap, ScrollTrigger) {
     html.classList.add('drive-ready');
     html.classList.remove('drive-static');
+    /* Phones: the toolbar growing and shrinking must not re-measure the whole drive. */
+    ScrollTrigger.config({ ignoreMobileResize: true });
 
     var lenis = null;
     var fine = window.matchMedia('(pointer: fine)').matches;
+    var touch = window.matchMedia('(pointer: coarse)').matches;
     if (window.Lenis && fine) {
       lenis = new window.Lenis({ lerp: 0.1, smoothWheel: true, anchors: true });
       lenis.on('scroll', ScrollTrigger.update);
@@ -125,7 +128,7 @@
 
     /* fog drifts sideways on its own slow loop, independent of scroll */
     var drifts = [];
-    [['a', 36], ['b', 42], ['c', 45]].forEach(function (f, i) {
+    (touch ? [] : [['a', 36], ['b', 42], ['c', 45]]).forEach(function (f, i) {
       var el = document.querySelector('[data-fog="' + f[0] + '"] .layer__drift');
       if (!el) return;
       drifts.push(gsap.fromTo(el, { xPercent: i % 2 ? 5 : -5 }, { xPercent: i % 2 ? -5 : 5, duration: f[1], ease: 'sine.inOut', yoyo: true, repeat: -1 }));
@@ -133,7 +136,7 @@
 
     var tl = null;
     var dotTween = null;
-    var target = 0, cur = 0;
+    var target = 0, cur = 0, ticked = false;
 
     function frac(el, offsetVh) {
       var top = el.getBoundingClientRect().top + window.scrollY;
@@ -146,8 +149,10 @@
       if (tl) tl.kill();
       tl = gsap.timeline({ paused: true, defaults: { ease: 'none' } });
 
-      var pDaly = frac(document.getElementById('daly-city'));
-      var pCS = frac(document.getElementById('crystal-springs'));
+      /* Document order is the drive: Selected work (#crystal-springs) is the first stretch and carries the
+         fog; Experience (#daly-city) is the second and carries the reservoir. Anchors follow position, not name. */
+      var pDaly = frac(document.getElementById('crystal-springs'));
+      var pCS = frac(document.getElementById('daly-city'));
       var pSerra = frac(document.getElementById('serra'));
       var pStan = frac(document.getElementById('stanford'));
 
@@ -208,6 +213,7 @@
       }
 
       tl.progress(cur);
+      ticked = false;
     }
 
     /* route dot rides the miniature of the drive with MotionPath */
@@ -221,11 +227,13 @@
     ScrollTrigger.create({
       start: 0,
       end: 'max',
-      onUpdate: function (self) { target = self.progress; }
+      onUpdate: function (self) { target = self.progress; ticked = false; }
     });
 
     function tick() {
       var d = target - cur;
+      if (d === 0 && ticked) return; /* at rest: nothing to repaint */
+      ticked = true;
       cur = Math.abs(d) < 0.00004 ? target : cur + d * 0.2;
       if (tl) tl.progress(cur);
       var m = paintHud(cur * maxScroll());
