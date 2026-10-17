@@ -83,7 +83,6 @@
   <div class="layer layer--sun" data-layer="sun"><!-- asset: sky-sun --></div>
   <div class="layer layer--mtn" data-layer="mtn"><!-- asset: mountains --></div>
   <div class="layer layer--fog-c" data-fog="c"><div class="layer__drift"><!-- asset: fog-c --></div></div>
-  <div class="layer layer--skyline" data-layer="skyline"><!-- asset: skyline --></div>
   <div class="layer layer--gold-far" data-layer="gold-far"><!-- asset: hills-gold-far --></div>
   <div class="layer layer--dish" data-layer="dish"><!-- asset: dish --></div>
   <div class="layer layer--oak" data-layer="oak"><!-- asset: hills-oak --></div>
@@ -91,6 +90,7 @@
   <div class="layer layer--reservoir" data-layer="reservoir"><!-- asset: reservoir --></div>
   <div class="layer layer--gold-near" data-layer="gold-near"><!-- asset: hills-gold-near --></div>
   <div class="layer layer--fog-a" data-fog="a"><div class="layer__drift"><!-- asset: fog-a --></div></div>
+  <div class="layer layer--skyline" data-layer="skyline"><!-- asset: skyline --><div class="city-fog"></div></div>
   <div class="layer layer--warm" data-layer="warm"></div>
   <div class="layer layer--road" data-layer="road"><!-- asset: road --></div>
 </div>
@@ -100,8 +100,8 @@
     <svg class="hud__shield" aria-hidden="true" focusable="false"><use href="#sym-shield-280"/></svg>
     <span class="hud__south">South</span>
   </a>
-  <p class="hud__mile" aria-hidden="true"><span class="hud__mile-label">Mile</span><span class="hud__mile-num" id="mile">0.0</span></p>
-  <p class="hud__place" id="place" aria-hidden="true">San Francisco</p>
+  <p class="hud__mile" aria-hidden="true"><span class="hud__mile-label">Mile</span><span class="hud__mile-num" id="mile">0.0</span><span class="hud__mile-place" data-place>San Francisco</span></p>
+  <p class="hud__place" id="place" data-place aria-hidden="true">San Francisco</p>
   <div class="hud__route" aria-hidden="true"><!-- asset: route --></div>
   <nav class="hud__nav" aria-label="Sections">
     <ul>
@@ -126,6 +126,7 @@
             <svg class="sign__shield" aria-hidden="true" focusable="false"><use href="#sym-shield-280"/></svg>
             <span class="sign__dir">South</span>
           </div>
+          <p class="sign__control"><span class="sign__control-name">Menlo Park</span><span class="sign__control-mi">30 mi</span></p>
           <div class="sign__main">
             <h1 class="sign__legend sign__legend--display" id="name">Aaryan Patel</h1>
             <p class="sign__sub">Associate Product Manager at DeUNA</p>
@@ -222,33 +223,43 @@
         </article>
       </div>
 
-      <h3 class="alsoalong" data-reveal>Also along the way</h3>
-      <ul class="sign-grid sign-grid--small">
-        <li class="sign sign--brown small" data-reveal>
-          <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-scatter"/></svg>
-          <h4 class="sign__name">ECO225 research</h4>
-          <p class="sign__body">Does the neighborhood a stop happens in change who gets searched? I joined San Francisco police stop records to home value data and tested it with regressions and tree models.</p>
-          <p class="sign__links"><a href="https://docs.google.com/document/d/1k-lWnVuose1mcRxSISmZhDaskLHwGHYT1TP0HjQr5mo/edit?usp=sharing">Paper<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a><a href="https://github.com/ECO225-2026/eco225-project-aaryanp35">Code on GitHub<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a></p>
-        </li>
-        <li class="sign sign--brown small" data-reveal>
-          <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-quote"/></svg>
-          <h4 class="sign__name">Firsthand</h4>
-          <p class="sign__body">Reads a news article and writes a first-person story from the other side of the issue, using Gemini.</p>
-          <p class="sign__links"><a href="https://github.com/aaryanp35/firsthand">Code on GitHub<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a></p>
-        </li>
-        <li class="sign sign--blue small" data-reveal>
-          <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-note"/></svg>
-          <h4 class="sign__name">Auratune</h4>
-          <p class="sign__body">A music mood classifier built on decision trees over Spotify audio features, for CSC111.</p>
-          <p class="sign__links"><a href="https://github.com/aaryanp35/csc111-auratune">Code on GitHub<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a></p>
-        </li>
-        <li class="sign sign--blue small" data-reveal>
-          <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-fork"/></svg>
-          <h4 class="sign__name">Meal Planner</h4>
-          <p class="sign__body">A Java app in Clean Architecture that plans meals with the Spoonacular and Edamam APIs, for CSC207.</p>
-          <p class="sign__links"><a href="https://github.com/aaryanp35/CSC207-Project-Meal-Planner">Code on GitHub<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a></p>
-        </li>
-      </ul>
+      <section class="sign sign--brown post-sign destinations" aria-labelledby="h-also" data-reveal>
+        <h3 class="sign__legend destinations__head" id="h-also">Also along the way</h3>
+        <ul class="destinations__list">
+          <li class="dest">
+            <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-scatter"/></svg>
+            <div class="dest__text">
+              <h4 class="sign__name">ECO225 research</h4>
+              <p class="dest__legend">Does a stop's neighborhood change who gets searched? Regressions and tree models.</p>
+            </div>
+            <p class="sign__links dest__links"><a href="https://docs.google.com/document/d/1k-lWnVuose1mcRxSISmZhDaskLHwGHYT1TP0HjQr5mo/edit?usp=sharing">Paper<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a><a href="https://github.com/ECO225-2026/eco225-project-aaryanp35">Code on GitHub<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a></p>
+          </li>
+          <li class="dest">
+            <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-quote"/></svg>
+            <div class="dest__text">
+              <h4 class="sign__name">Firsthand</h4>
+              <p class="dest__legend">Reads a news article and writes a first-person story from the other side, using Gemini.</p>
+            </div>
+            <p class="sign__links dest__links"><a href="https://github.com/aaryanp35/firsthand">Code on GitHub<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a></p>
+          </li>
+          <li class="dest">
+            <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-note"/></svg>
+            <div class="dest__text">
+              <h4 class="sign__name">Auratune</h4>
+              <p class="dest__legend">A music mood classifier built on decision trees over Spotify audio features, for CSC111.</p>
+            </div>
+            <p class="sign__links dest__links"><a href="https://github.com/aaryanp35/csc111-auratune">Code on GitHub<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a></p>
+          </li>
+          <li class="dest">
+            <svg class="sign__symbol" aria-hidden="true" focusable="false"><use href="#sym-fork"/></svg>
+            <div class="dest__text">
+              <h4 class="sign__name">Meal Planner</h4>
+              <p class="dest__legend">A Java meal planner in Clean Architecture on the Spoonacular and Edamam APIs, for CSC207.</p>
+            </div>
+            <p class="sign__links dest__links"><a href="https://github.com/aaryanp35/CSC207-Project-Meal-Planner">Code on GitHub<svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-external"/></svg></a></p>
+          </li>
+        </ul>
+      </section>
     </div>
   </section>
 
@@ -371,13 +382,13 @@
       </header>
 
       <div class="vista">
-        <article class="panel panel--vista" aria-labelledby="h-edu" data-reveal>
+        <article class="panel panel--rest" aria-labelledby="h-edu" data-reveal>
           <h3 class="panel__title" id="h-edu"><svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-school"/></svg>Education</h3>
           <p><strong>University of Toronto, 2024 to present.</strong> Economics with Data Analytics, with minors in Computer Science and Statistics, and a varsity rowing seat. Coursework includes advanced micro and macro theory, probability and statistics, linear algebra, big-data tools for economists, and software design.</p>
           <p><strong>Menlo-Atherton High School, 2020 to 2023.</strong> I founded the Menlo-Atherton hackers club in 2023 and took AP Computer Science.</p>
         </article>
 
-        <article class="panel panel--vista" aria-labelledby="h-skills" data-reveal>
+        <article class="panel panel--rest" aria-labelledby="h-skills" data-reveal>
           <h3 class="panel__title" id="h-skills"><svg class="icon" aria-hidden="true" focusable="false"><use href="#sym-code"/></svg>Skills</h3>
           <dl class="facts">
             <dt>Programming</dt>

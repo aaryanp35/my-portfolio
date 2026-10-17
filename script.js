@@ -7,7 +7,7 @@
   var html = document.documentElement;
   var world = document.getElementById('world');
   var mileEl = document.getElementById('mile');
-  var placeEl = document.getElementById('place');
+  var placeEls = Array.prototype.slice.call(document.querySelectorAll('[data-place]'));
   var dotEl = document.getElementById('route-dot');
   var pathEl = document.getElementById('route-path');
   var lineEl = document.getElementById('centerline');
@@ -60,7 +60,7 @@
     if (mileEl && txt !== lastText) { mileEl.textContent = txt; lastText = txt; }
     if (m.id !== lastId) {
       lastId = m.id;
-      if (placeEl) placeEl.textContent = PLACES[m.id] || '';
+      placeEls.forEach(function (el) { el.textContent = PLACES[m.id] || ''; });
       navLinks.forEach(function (a) {
         if (a.getAttribute('href') === '#' + m.id) a.setAttribute('aria-current', 'true');
         else a.removeAttribute('aria-current');
@@ -164,9 +164,16 @@
         tl.fromTo(el, { x: 0 }, { x: -Math.max(0, el.offsetWidth - vw), duration: 1 }, 0);
       });
 
-      /* the city falls behind early */
+      /* the city, under Karl, holds full strength while the hero is on screen, then falls behind as the drive heads south */
       var sky = layer('skyline');
-      if (sky) { gsap.set(sky, { x: 0, opacity: 1 }); tl.fromTo(sky, { x: 0, opacity: 1 }, { x: -vw * 0.55, opacity: 0, duration: Math.max(0.08, pDaly + 0.06) }, 0); }
+      var mergeEl = document.getElementById('merge');
+      if (sky && mergeEl) {
+        var heroEnd = clamp((mergeEl.getBoundingClientRect().bottom + window.scrollY - vh * 0.35) / maxScroll(), 0.02, 0.5);
+        var fadeLen = Math.max(0.04, Math.min(0.08, pDaly - heroEnd + 0.04));
+        gsap.set(sky, { x: 0, opacity: 1 });
+        tl.fromTo(sky, { x: 0 }, { x: -vw * 0.3, duration: heroEnd + fadeLen }, 0);
+        tl.fromTo(sky, { opacity: 1 }, { opacity: 0, duration: fadeLen }, heroEnd);
+      }
 
       /* horizon light warms as you head south */
       var warm = layer('warm'), skyWarm = layer('sky-warm'), sun = layer('sun');
