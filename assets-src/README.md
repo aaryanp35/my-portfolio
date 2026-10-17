@@ -1,21 +1,13 @@
 # assets-src
 
-Procedural SVG for the Interstate 280 drive. `python3 build_assets.py` (fixed seed 280) writes `svg/*.svg`;
-`python3 inline.py` inlines them into `index.template.html` at `<!-- asset: name -->` and writes `../index.html`.
+`gen.py` (seed 20261017) writes `out/*.svg`; `inline.py template out` inlines them at `<!-- asset: name -->` placeholders.
 
-| name | id | viewBox |
-|---|---|---|
-| sky-sun | svg-sun (`#sun-cool`, `#sun-warm`) | 0 0 1200 800 |
-| mountains | svg-mtn | 0 0 2400 520 |
-| skyline | svg-skyline | 0 0 1200 240 |
-| hills-gold-far | svg-gold-far | 0 0 3200 560 |
-| dish | svg-dish | 0 0 520 360 |
-| hills-oak | svg-oak | 0 0 3600 600 |
-| reservoir | svg-reservoir | 0 0 2000 300 |
-| hills-gold-near | svg-gold-near | 0 0 4400 640 |
-| fog-a, fog-b, fog-c | svg-fog-a, svg-fog-b, svg-fog-c | 0 0 1600 420 |
-| road | svg-road (`#centerline`) | 0 0 1200 120 |
-| route | svg-route (`#route-path`, `#route-dot`) | 0 0 560 36 |
-| sprite | symbols (sym-shield-280 is 0 0 48 54, others 0 0 24 24) | n/a |
-
-Colors come from CSS classes (`c-straw`, `c-oak`, ...) defined in `styles.css`; literal fills are fallbacks.
+| name | root id | viewBox | notes |
+|---|---|---|---|
+| scene | `scene` | 0 0 1600 1000 (slice, bottom anchored) | `#sun`, `.lyr` layers `tam mid near`, fog `fog-far fog-mid fog-near`, `.fg` layers `fg-redwood fg-oak fg-chap fg-summit`, `#hatch` pattern |
+| contours | `contours` | 0 0 1600 1200 | 30 `.contour` paths, every fifth `.index`, six mono labels |
+| route | `route-svg` | 0 0 100 1000 | `#route-path`, `#route-done`, absolute M and C commands, rescaled by script.js |
+| profile | `profile` | 0 0 600 48 | `#profile-line #profile-area #pf-clip-rect`, zone rects `#pf-z0` to `#pf-z3` |
+| sprite | `sprite` | 24 x 24 symbols | `sym-benchmark shelter lookout spring junction viewpoint saddle camp fog rest trailhead summit register resume email github linkedin arrow` |
+| declination | `decl-svg` | 0 0 64 64 | `#decl-rose` |
+| scalebar | `scalebar-svg` | -2 0 164 20 | quarter mile steps |

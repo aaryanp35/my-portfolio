@@ -4,3 +4,4 @@ docs/
 PRODUCT.md
 README.md
 .claude/
+node_modules/

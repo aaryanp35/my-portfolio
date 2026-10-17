@@ -1,100 +1,67 @@
-# TEAM.md: interface contract for the Interstate 280 drive (Team 280)
+# TEAM.md: interface contract, Team South (Mt Tamalpais expedition)
 
-Not served, not referenced by the page. Authoritative for ids, classes, tokens, hooks and copy limits.
-Where the packet's topo-sheet rules conflict with the highway brief, the highway brief wins (see DEPARTURES).
+Not served, not referenced by any page file. `.vercelignore` excludes it, `assets-src/` and `.impeccable/`.
+Ground truth for the whole build. Files: `index.html`, `styles.css`, `script.js`, `assets-src/*` (Python, fixed seed 20261017).
 
-## 1. World
+## 1. Concept
+One map sheet that is a scroll-driven ascent of Mt Tamalpais (Marin). Scroll = elevation. The visitor is never said to hike it; Mt Tam is the territory and the metaphor.
+Fixed layers, back to front: `#stage` (zone wash, sun, ridgelines, fog, foreground vegetation, summit lookout), `#contours` (sienna contour overprint), `main` (content, trail column at left), chrome (neatline, top bar, bottom bar with profile). Content scrolls under the opaque bars.
 
-One scroll-driven drive south on Interstate 280, San Francisco to Menlo Park. Material: the Caltrans sign system
-(guide green, recreation brown, service blue, white Highway Gothic via Overpass, yellow only for actions).
-A fixed `.world` scene (hills, fog, reservoir, road) sits behind all content; content is made of signs and panels
-with solid fills, so text never depends on the scenery behind it. Light only. Daylight ground, golden hills.
-
-## 2. Section order, ids, stretches, mile ranges (data-mile-from / data-mile-to on each section)
-
-| id | stretch | content | miles |
+## 2. Sections, ids, elevation bands
+Elevation E in feet. `main > #trailhead` then `.route > #canyon #woodland #chaparral #summit`.
+| id | band (ft) | zone label (top bar) | content |
 |---|---|---|---|
-| `merge` | Merge, San Francisco | h1, hero sign, vista-point portrait, actions, ahead strip | 0 to 2 |
-| `crystal-springs` | Daly City stretch (carries the fog) | h2 Selected work, Karl the Fog advisory, four headline signs each with a "My part." line, four small signs | 2 to 10 |
-| `daly-city` | Crystal Springs stretch (carries the reservoir) | h2 Experience, five exits (DeUNA APM, Strand, DeUNA DS full size; LookAcross, American Precision Gear compact) | 10 to 22 |
-| `serra` | Junipero Serra rest area | h2 Rest area, "How the work connects" note, rowing strip | 22 to 26 |
-| `stanford` | Stanford dish hills | h2 Vista point, education, skills | 26 to 29 |
-| `sand-hill` | Sand Hill Road exit | h2 Contact, final sign with resume and email | 29 to 30 |
-
-Ids keep their v1 names but sections follow document order (Selected work before Experience), so miles still increase down the page.
-Exit numbers equal drive miles and are aria-hidden wayfinding: DeUNA APM exit 12, Strand exit 14, DeUNA DS exit 16, LookAcross exit 18,
-American Precision Gear exit 20, Sand Hill Road exit 30. These are the page's own miles, not real postmiles.
-
-Scroll-to-mile: sections are the anchors. For scroll y inside section s: local = clamp((y + 0.4*vh - s.top) / s.height);
-mile = lerp(s.from, s.to, local). Counter shows one decimal, tabular mono. mileFraction = mile / 30 drives the route dot.
-Global progress p = scrollY / (docHeight - vh) drives world layers.
+| trailhead | 0 to 100 | TRAILHEAD | title block, intro, actions, portrait inset, trail start |
+| canyon | 100 to 700 | REDWOOD CANYON | headline legend points 1 to 4 (DeUNA, Athenaeum, Strand Analytica, Proxii) |
+| woodland | 700 to 1400 | OAK AND BAY WOODLAND | route waypoints 5 to 9 (experience, in order), rest stop: payments and defense note |
+| chaparral | 1400 to 2300 | CHAPARRAL AND SERPENTINE | legend points 10 to 13 (ECO225, Firsthand, Auratune, Meal Planner), 14 Karl the Fog, rest stop athletics, rest stop education and skills |
+| summit | 2300 to 2571 | EAST PEAK | summit register: Resume (PDF), Email, GitHub, LinkedIn, revised line |
+One numbering run in trail order (1 to 14). Headline legend points sit before the experience waypoints so the four headline features are inside the first scroll.
+Every stop is `<article class="stop ..." data-elev="N" id="...">`; elevation table is the scroll-to-elevation map (section 6).
+Stops (id, data-elev): trailhead 0; canyon-head 100; deuna 160; athenaeum 280; strand 400; proxii 540; woodland-head 700; wp-deuna-pm 800; wp-strand 920; wp-deuna-ds 1040; wp-lookacross 1160; wp-apg 1280; rest-defense 1380; chaparral-head 1480; eco225 1620; firsthand 1720; auratune 1800; mealplanner 1880; karl 1960; rest-athletics 2080; rest-education 2220; summit-head 2400; register 2571.
 
 ## 3. Class names
+Chrome: `.neatline .nl-top .nl-bottom .nl-left .nl-right .nl-corner`, `.bar-top .bar-bottom`, `.coords`, `.elev .elev-num .elev-zone`, `.profile` (svg id `profile`), `.profile-dot`, `.zone-links`, `.decl`, `.scalebar`, `.scale-pin`.
+Scene: `.stage`, `svg#scene`, `.lyr` with `data-lyr` and `data-t`, `.fog`, `.drift`, `#sun`, `.fg`, `svg#contours`, `.contour`, `.contour.index`.
+Content: `.hero .title-block .roles .series .intro .marks .mark .mark-primary .mark-quiet .inset .inset-cap`, `.route .trail .trail-svg .route-line #route-path #route-done .route-marker`, `.zone .zone-head`, `.stop .pin .stop-body .stop-meta .stop-name .stop-what .stop-part .stop-links`, `.stop-headline` (large), `.stop-minor` (compact), `.stop-wp` (experience waypoint), `.stop-rest` (rest stop), `.legend-sym`, `.margin-note`, `.strip` (athletics), `.kv` (education, skills), `.register`, `.reveal` (entrance hook), `.sr-only`, `.skip`.
+State classes on `html`: `js`, `reveal-all` (3s backstop), `rm` (reduced motion static).
 
-Layout: `.skip`, `.hud`, `.hud__shield`, `.hud__mile`, `.hud__mile-num`, `.hud__place`, `.hud__route`, `.hud__nav`, `.hud__resume`,
-`.world`, `.layer` (+ `.layer--sky-cool`, `--sky-warm`, `--sun`, `--sun-warm`, `--mtn`, `--skyline`, `--gold-far`, `--dish`, `--oak`,
-`--reservoir`, `--gold-near`, `--fog-a`, `--fog-b`, `--fog-c`, `--warm`, `--road`), `.stretch`, `.stretch__head`, `.wrap`.
-Signs: `.sign` (+ `--green`, `--brown`, `--blue`, `--white`), `.sign__tab`, `.sign__legend`, `.sign__sub`, `.sign__meta`, `.sign__body`,
-`.sign__arrow`, `.sign__symbol`, `.sign__links`, `.gantry`, `.post-sign`, `.sign-grid`, `.sign-grid--small`, `.advisory`.
-Panels: `.panel` (+ `--rest`, `--vista`), `.panel__title`, `.photo`, `.photo__cap`, `.strip`, `.strip__list`, `.facts`.
-Actions: `.btn`, `.btn--primary` (yellow, Resume and Email only), `.btn--quiet`.
-Motion hooks: `[data-reveal]`, `[data-stretch]`, `[data-mile-from]`, `[data-mile-to]`, `[data-layer]`, `[data-fog]`, `#route-path`, `#route-dot`, `#centerline`.
+## 4. CSS custom properties
+Palette: `--paper #F3F5F1`, `--ink #13171A`, `--ink-2 #3A4146`, `--sienna #8A4B2B` (text), `--sienna-line #B27650` (lines), `--veg #5F8350`, `--veg-tint #D9E6D0`, `--veg-deep #2F5238`, `--water #3E6F8E`, `--water-tint #D6E4EB`, `--road #B7281E` (actions and route marker only), `--fog #FBFCFA`.
+Zone palette (set live by JS on `.stage`): `--wash --far --mid --near --fg --sun --fog-o --hatch-o`. Defaults at E=0 so no-JS renders the trailhead pose.
+Zones: canyon wash #DCE8D8 far #B9CEC8 mid #9DBB95 near #7FA386 fg #6C9772; woodland #E4EAD2 / #BFCFC6 / #A9BE8A / #8AA46A / #7FA874; chaparral #EDE5C9 / #C9D0C4 / #D3C28E / #BC9F68 / #B0A068; summit #EEF2F1 / #C9D6DA / #D8DDD2 / #C5C6AF / #B3B09A.
+Type (four sizes only): `--t-label 0.75rem` (mono), `--t-body 1.0625rem` (serif), `--t-head clamp(1.5rem, 1.1rem + 1.4vw, 2rem)` (condensed caps), `--t-display clamp(3rem, 1.6rem + 6vw, 6rem)` (condensed caps). Families: `--f-display 'Big Shoulders Display'`, `--f-serif 'Source Serif 4'`, `--f-mono 'Martian Mono'`.
+Layout (8px grid): `--s1 8px --s2 16px --s3 24px --s4 32px --s5 48px --s6 64px --s7 96px`, `--inset 12px` (6px phone), `--bar-top 44px`, `--bar-bot 84px` (56px phone), `--trail-w 144px` (40px phone), `--measure 40rem`.
+Motion: `--ease-out cubic-bezier(.16,1,.3,1)`.
 
-## 4. CSS custom properties (:root)
-
-Sign colors: `--sign-green #00674b`, `--sign-green-deep #004d38`, `--sign-brown #5b3a26`, `--sign-blue #0a5aa8`, `--sign-white #ffffff`,
-`--sign-yellow #f7c600` (action only), `--sign-ink #15211a`, `--steel #8e979b`, `--steel-dark #5d6568`.
-Ground and light: `--ground #ddd2b2`, `--sky-top #bcd6e4`, `--sky-haze #f1e6cc`, `--sun-warm #ffc063`, `--fog-white #f5f7f6`, `--asphalt #3a3e41`.
-Hills: `--hill-mtn-1 #8da4b1`, `--hill-mtn-2 #7490a0`, `--hill-straw #dcbb62`, `--hill-gold #c8962f`, `--hill-ochre #a8741f`,
-`--hill-oak #3b4a2c`, `--hill-oak-dark #26331f`. Water: `--water #3f7f9f`, `--water-light #86b9cf`.
-Type: `--f-sign "Overpass"`, `--f-body "Source Serif 4"`, `--f-mono "Azeret Mono"`.
-Four sizes only: `--fs-display clamp(2.75rem, 7vw, 5.25rem)`, `--fs-title clamp(1.5rem, 2.6vw, 2.25rem)`, `--fs-body 1.0625rem`, `--fs-label 0.8125rem`.
-Spacing (8px grid): `--s-1 .5rem` `--s-2 1rem` `--s-3 1.5rem` `--s-4 2rem` `--s-5 3rem` `--s-6 5rem` `--s-7 8rem`.
-Sign geometry: `--rim 3px`, `--rim-gap 7px`, `--radius 14px`.
-Scene state (set by JS or by `.world[data-stretch]` when motion is reduced): `--fog-o`, `--warm-o`, `--lx-mtn`, `--lx-gold-far`, `--lx-oak`, `--lx-gold-near`.
-
-## 5. SVG assets (source: assets-src/build_assets.py, seed 280; inlined into index.html by assets-src/inline.py)
-
-Placeholders `<!-- asset: name -->` in assets-src/index.template.html. Landscape layers are inlined inline, one per placeholder:
-
-| name | svg id | viewBox | notes |
+## 5. SVG assets (`assets-src/gen.py` writes `assets-src/out/<name>.svg`; `inline.py` inlines into `<!-- asset: name -->`)
+| name | id | viewBox | notes |
 |---|---|---|---|
-| sky-sun | `svg-sun` | 0 0 1200 800 | horizon light, two radial glows: `#sun-cool`, `#sun-warm` |
-| mountains | `svg-mtn` | 0 0 2400 520 | Santa Cruz Mountains, two blue-gray ridges |
-| skyline | `svg-skyline` | 0 0 1200 240 | San Francisco skyline silhouette with Sutro Tower |
-| hills-gold-far | `svg-gold-far` | 0 0 3200 560 | straw rolling hills with ochre folds |
-| dish | `svg-dish` | 0 0 520 360 | Stanford dish on its hill |
-| hills-oak | `svg-oak` | 0 0 3600 600 | gold hills, oak-dark folds and canopies |
-| reservoir | `svg-reservoir` | 0 0 2000 300 | Crystal Springs water band with shimmer |
-| hills-gold-near | `svg-gold-near` | 0 0 4400 640 | golden near hills, grass strokes, lone oaks |
-| fog-a, fog-b, fog-c | `svg-fog-a`, `svg-fog-b`, `svg-fog-c` | 0 0 1600 420 | radial-gradient puffs (no filters) |
-| road | `svg-road` | 0 0 1200 120 | guardrail, asphalt, edge line, `<line id="centerline">` non-scaling dashes |
-| route | `svg-route` | 0 0 560 36 | HUD route path `#route-path`, exit ticks, `#route-dot` |
+| scene | `scene` | 0 0 1600 1000, `xMidYMax slice` | layers in order: `#sun`, `lyr tam` (West, Middle, East Peak, lookout, labels), `fog-far`, `lyr mid` (Marin ridge), `fog-mid`, `lyr near` (oak domes), `fog-near`, `fg-redwood`, `fg-oak`, `fg-chap`, `fg-summit` (lookout tower, rises in). Hatch shade shapes per ridge use `<pattern id="hatch">`. |
+| contours | `contours` | 0 0 1600 1200, `xMidYMid slice` | 30 paths `.contour` (every fifth `.index`) with `data-lvl`, mono index labels |
+| route | `route-svg` | 0 0 100 1000, `none` (JS rebuilds at pixel size) | `#route-path` base, `#route-done` overlay, C-only absolute commands |
+| profile | `profile` | 0 0 600 48, `none` | `#profile-line #profile-area #profile-done` + `#pf-clip-rect`, zone bands |
+| sprite | `sprite` | symbols 24x24, stroke 1.5 | `sym-benchmark sym-shelter sym-lookout sym-spring sym-junction sym-viewpoint sym-camp sym-fog sym-rest sym-trailhead sym-summit sym-register sym-resume sym-email sym-github sym-linkedin sym-arrow` |
+| declination | `decl-svg` | 0 0 64 64 | `#decl-rose` rotates with scroll, true north star and magnetic arrow |
+| scalebar | `scalebar-svg` | 0 0 160 20 | alternating segments |
+All inline (page self-contained). Sprite symbols used by `<use href="#sym-...">`.
 
-Sprite (one inline `<svg>` of `<symbol>`s, 24x24 viewBox unless noted, one 2px stroke, round caps): `sym-shield-280` (viewBox 0 0 48 54),
-`sym-arrow-exit`, `sym-arrow-down`, `sym-camera`, `sym-rest`, `sym-fog`, `sym-lake`, `sym-route` (DeUNA), `sym-columns` (Athenaeum),
-`sym-grid-flag` (Strand), `sym-pin` (Proxii), `sym-scatter` (ECO225), `sym-quote` (Firsthand), `sym-note` (Auratune), `sym-fork` (Meal Planner),
-`sym-school`, `sym-code`, `sym-doc`, `sym-mail`, `sym-branch`, `sym-linkedin`, `sym-external`.
+## 6. JS hooks and scroll-to-elevation
+`script.js` (all defer; GSAP 3.13.0 ScrollTrigger and MotionPathPlugin, Lenis 1.3.1 on fine pointers).
+- `buildRoute()`: rescales `#route-path` control points to the `.trail` pixel size, sets viewBox, places each `.pin` at the path point nearest its stop (`--pin-x`).
+- `buildMap()`: stops `[ {scroll, elev} ]` where `scroll` is the scroll position at which the stop's pin sits on the 42% line of the window; E = piecewise linear over the stops, clamped 0 to 2571.
+- Master timeline: one `gsap.timeline` with ScrollTrigger scrub (0.6). Tween A drives a proxy `e` with ease = scroll fraction to E fraction; Tween B moves `.route-marker` along `#route-path` with MotionPathPlugin, ease = scroll fraction to arc fraction. `render(E)` sets: counter and zone label, layer transforms (`data-t` is translateY at the summit), fog opacity and tops, sun arc, hatch angle and opacity, zone palette interpolated across zone centers (350, 1000, 1800, 2500), foreground crossfades, declination rotation, scale pin, profile clip and dot, active contour band, `#route-done` dashoffset.
+- Entrances: `.reveal` rises 4px, 0.5s expo.out, once. Contours draw once on load (`pathLength=1`, staggered, under 1.6s).
+- Fog drift: `.drift` translateX loop 60 to 90s.
+- `gsap.matchMedia`: `(prefers-reduced-motion: no-preference)` full system; `reduce` adds `html.rm`: no scrub, no Lenis, no drift, no draw; route fully drawn; pose snaps per stop via IntersectionObserver; counter, zone, profile dot and route marker update discretely.
+- No JS: all content visible, route and profile static, scene at trailhead pose. Hidden initial states only under `html.js`, backstop `reveal-all` at 3s.
 
-## 6. JS hooks (script.js)
+## 7. Copy inventory and word limits
+Hero: h1 AARYAN PATEL; roles two lines (6 words each max); mono lines; series PRODUCT, DATA, AI; intro 3 sentences, 70 words max; marks Resume (PDF), Email, GitHub, LinkedIn.
+Zone heads: h2 plus one line, 20 words max.
+Headline points: what 18 words max, part 40 words max. Waypoints: role, company, mono dates, 35 words max. Minor points: what 20 words, part 12 words. Karl: one line from the packet. Rest stops: note 60 words; athletics list; education and skills 90 words.
+Rules: no digits with M K or %, no dollar signs, no em dashes, no phone, no "passionate", no invented facts, never claim he hikes Mt Tam.
 
-Head inline script adds `js` to html and a 3s backstop `reveal-all` unless `drive-ready` is set. script.js sets `drive-ready`.
-`gsap.matchMedia`: no-preference builds the drive; reduce adds `reveal-all` and `drive-static`, swaps `.world[data-stretch]` per stretch
-through IntersectionObserver, updates the mile counter without smoothing, rests the route dot, never moves layers.
-Drive: one paused master timeline (duration 1 = page progress) holds mountains, skyline, gold-far, dish, oak, reservoir, gold-near,
-fog opacity, warm tint, sun, centerline dash offset; ticker lerps scroll progress into it. MotionPathPlugin moves `#route-dot` along
-`#route-path` by mile fraction. Fog puffs drift by independent 70 to 90s yoyo tweens. Lenis on fine pointers only.
-Reveals: `[data-reveal]` expo.out 0.6s, 18px rise, once. Hidden initial state exists only under `.js:not(.reveal-all)`.
-
-## 7. Copy inventory (limits in words)
-
-hero intro 3 sentences, 60 words; role lines 2, 8 each; exit blurbs 45 each; feature "what" 20, "my part" 32; small signs 28 each;
-rest note 55; rowing strip 6 facts of 8 words plus one 20-word outreach line; education 55; skills 3 groups of 30; contact 30.
-No digits followed by M, K or %; no dollar signs; no phone; no em dashes; Karl the Fog advisory: "Seasonal. Rolls in over the hills most summer evenings."
-
-## DEPARTURES from the packet (highway brief wins)
-
-Ground: daylight sky and golden hills, not map paper. Contours, neatline, title block, declination diagram, scale bar, fold creases and legend rows
-are replaced by the drive: HUD mile marker, exits, points-of-interest signs. Action color is sign yellow (not road red). Fonts: Overpass for signs,
-Source Serif 4 body, Azeret Mono for mile markers and dates (Big Shoulders and Martian Mono dropped). Sky and fog use soft gradients.
-Trail route and MotionPath marker become the HUD route dot on a miniature of the drive. Numbered waypoints become exit numbers equal to drive miles.
+## 8. Build notes (lead)
+The Agent tool was not available in this session, so the lead built every file named in sections 1 to 7 directly (structure and copy, CSS, SVG generator, motion, QA) instead of four parallel specialists. Source of the page markup is `assets-src/index.template.html`; `index.html` is its inlined output.
+Departures from the packet's first viewport: the portrait inset sits low in the right column over the scene (not mid-sheet on a contour field); the route begins in the left trail column inside the first viewport; the right half is the Mt Tam ridgeline scene instead of a green tint region; a role line pair (Associate PM at DeUNA, AI for defense wargaming at Strand Analytica) is added under the name. Headline features precede the experience route so they fall inside the first scroll; numbering is one run in trail order. The scale bar is paired with the elevation profile as the progress indicator.
