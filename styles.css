@@ -110,10 +110,10 @@ a { color: inherit; }
 .stage svg, .contours-wrap svg { display: block; width: 100%; height: 100%; }
 /* every scene layer and the contour sheet is its own svg, moved with translate3d so scrolling never repaints the others;
    phones also pin each one to a GPU layer, which measured smoother there and slower on large desktop windows */
-.stage [data-lyr] { position: absolute; inset: 0; }
+.stage [data-lyr] { position: absolute; inset: 0; overflow: visible; } /* a layer that slides down still shows what sat above its box */
 #contours { overflow: visible; }
 .touch .stage [data-lyr], .touch #contours { will-change: transform; }
-.stage .fog, .stage .sea { overflow: visible; }
+
 .contours-wrap { z-index: 1; }
 .ridge-far { fill: var(--far); }
 .ridge-mid { fill: var(--mid); }

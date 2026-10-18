@@ -89,7 +89,7 @@ def ridge(keys, noise, amp, step_per=9):
     return [(x, y + noise(x) * amp) for x, y in pts]
 
 
-def ridge_fill(pts, bottom=2300):
+def ridge_fill(pts, bottom=1100):
     return pts_to_d(pts) + " L%s %s L%s %s Z" % (f(pts[-1][0] + 100), bottom, f(pts[0][0] - 100), bottom)
 
 
@@ -257,7 +257,7 @@ def build_scene():
         xi += r.uniform(40, 80)
     for cx, cy, rad in [(60, 760, 120), (170, 800, 90), (1450, 740, 130), (1560, 790, 100)]:
         oak.append(dome_path(cx, cy + 40, rad, 1100))
-    layers.append('<g class="fg" data-lyr="fg-oak" data-t="120"><path class="fg-front" d="%s"/><rect class="fg-front" x="-100" y="860" width="1900" height="500"/></g>' % " ".join(oak))
+    layers.append('<g class="fg" data-lyr="fg-oak" data-t="120"><path class="fg-front" d="%s"/><rect class="fg-front" x="-100" y="860" width="1900" height="240"/></g>' % " ".join(oak))
 
     # foreground chaparral and serpentine grassland
     scrub = []
@@ -276,7 +276,7 @@ def build_scene():
         gy = r.uniform(890, 1000)
         gl = r.uniform(8, 20)
         grass.append("M%s %s l%s %s" % (f(gx), f(gy), f(r.uniform(-3, 3)), f(-gl)))
-    layers.append('<g class="fg" data-lyr="fg-chap" data-t="70"><path class="fg-front" d="%s"/><rect class="fg-front" x="-100" y="860" width="1900" height="500"/>'
+    layers.append('<g class="fg" data-lyr="fg-chap" data-t="70"><path class="fg-front" d="%s"/><rect class="fg-front" x="-100" y="860" width="1900" height="240"/>'
                   '<path class="rock" d="%s"/><path class="grass" d="%s"/></g>' % (" ".join(scrub), " ".join(rocks), " ".join(grass)))
     # a pair of quail cross the chaparral once (CSS animation on the walk group, hop on the bird)
     layers.append('<g class="fg quail" data-lyr="quail" data-t="70"><g class="q-walk"><g transform="translate(-80 903)"><g class="q">%s</g></g></g>'
@@ -285,7 +285,7 @@ def build_scene():
     # summit outcrop: the visitor's own ground, rises into view low in the frame (no second lookout; East Peak's is the one)
     rock_keys = [(560, 1160), (680, 1010), (820, 950), (960, 915), (1080, 902), (1200, 912), (1320, 940), (1440, 985), (1560, 1030), (1700, 1160)]
     rock = ridge(rock_keys, Noise(51, 4, 0.03), 4.0, 10)
-    rock_d = ridge_fill(rock, 1400)
+    rock_d = ridge_fill(rock)
     strata = "".join('<path class="ridge-line" d="%s"/>' % pts_to_d([(x + (off * 0.6 if x < 1080 else -off * 0.6), y + off) for x, y in rock if (x > 560 + off and x < 1700 - off)]) for off in (26, 54, 86))
     layers.append('<g class="fg" data-lyr="fg-summit" data-t="0" data-t0="360"><path class="fg-rock" d="%s"/><path class="ridge-line" d="%s"/>%s</g>' % (rock_d, pts_to_d(rock), strata))
 

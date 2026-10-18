@@ -48,13 +48,16 @@
     var i = 0;
     while (i < 3 && e > ZONES[i + 1].e) i++;
     var a = ZONES[i], b = ZONES[Math.min(3, i + 1)], t = a === b || e <= a.e ? 0 : smooth((e - a.e) / (b.e - a.e));
-    var st = stage.style;
-    KEYS.forEach(function (k, j) {
-      st.setProperty('--' + k, 'rgb(' + a.rgb[j].map(function (v, n) { return Math.round(lerp(v, b.rgb[j][n], t)); }) + ')');
-    });
-    st.setProperty('--hatch-o', lerp(0.55, 0.14, smooth(f)).toFixed(3));
-    st.setProperty('--glow', (0.06 + 0.34 * seg(e, 1700, 2571)).toFixed(3));
+    pal.vals = { '--hatch-o': lerp(0.55, 0.14, smooth(f)).toFixed(3), '--glow': (0.06 + 0.34 * seg(e, 1700, 2571)).toFixed(3) };
+    KEYS.forEach(function (k, j) { pal.vals['--' + k] = 'rgb(' + a.rgb[j].map(function (v, n) { return Math.round(lerp(v, b.rgb[j][n], t)); }) + ')'; });
+    stage.style.setProperty('--wash', pal.vals['--wash']);
     if (hatch && !isTouch) hatch.setAttribute('patternTransform', 'rotate(' + lerp(35, 78, smooth(f)).toFixed(1) + ')');
+    pal.queue = layers.slice();
+  }
+  // a palette step repaints every layer it touches, so it is handed out a few layers per frame instead of all at once
+  var pal = { vals: null, queue: [] };
+  function flushPalette(n) {
+    while (pal.queue.length && n--) { var st = pal.queue.shift().el.style; for (var k in pal.vals) st.setProperty(k, pal.vals[k]); }
   }
   function zoneOf(e) {
     if (e < 60) return { key: 'trailhead', label: 'Trailhead' };
@@ -232,6 +235,7 @@
     });
     // the palette repaints the scene, so it moves in 40 ft steps; the change per step is too small to see
     if (Math.abs(poseE - last.palE) >= 40 || poseE === 0 || poseE === E_MAX) { last.palE = poseE; paint(poseE, f); }
+    flushPalette(mode === 'full' ? 3 : 99);
     // red-tailed hawk circles over the ridge near the trailhead, parked once you are above it
     var hs = poseE < 650 ? 'on' : 'off';
     if (hawk && hs !== last.hawk) { last.hawk = hs; hawk.classList.toggle('is-on', hs === 'on'); hawk.classList.toggle('is-paused', hs !== 'on'); }
@@ -320,7 +324,7 @@
     var target = clamp(y / S.maxScroll, 0, 1), diff = target - p;
     p = Math.abs(diff) * S.maxScroll < 0.5 ? target : p + diff * (1 - Math.exp(-dt / LAG));
     draw();
-    if (p !== target || rate) raf = requestAnimationFrame(frame); else lastT = 0;
+    if (p !== target || rate || pal.queue.length) raf = requestAnimationFrame(frame); else lastT = 0;
   }
   function kick() { if (mode === 'full' && !raf) raf = requestAnimationFrame(frame); }
 
@@ -352,6 +356,7 @@
     staticAt = null;
     routeDone.style.strokeDashoffset = mode === 'full' ? S.routeLen : 0;
     if (mode === 'full') draw(); else staticUpdate();
+    flushPalette(99);
   }
 
   /* ------------------------------------------------------------ entrances, quail, skip to summit */
