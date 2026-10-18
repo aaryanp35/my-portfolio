@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Existing codebase: static HTML, CSS and JavaScript with no build step. Libraries only via pinned CDN URLs (GSAP 3.13 with ScrollTrigger, SplitText and MotionPathPlugin; Lenis 1.3). Deployed by Vercel from `main` to https://aaryanp35.vercel.app. Confirmed by the owner.
+Existing codebase: static HTML, CSS and JavaScript with no build step. No JavaScript libraries; motion is one requestAnimationFrame loop plus CSS. Deployed by Vercel from `main` to https://aaryanp35.vercel.app. Confirmed by the owner.
 
 ## Users
 
@@ -41,7 +41,7 @@ Visited from a resume PDF, LinkedIn, GitHub profile, or a cold email. Read on la
 
 - Name: Aaryan Patel. Voice: plainspoken, concrete, warm, slightly wry, first person where it is natural. No "passionate", no "leveraging", no em dashes anywhere in copy.
 - Binding visual constraint volunteered by the owner: an indie California, Marin headlands, redwood hiker feel fused with product and tech craft, with the trail or field-notes metaphor allowed to show. The owner rejected the previous dark, glassy, neon-accent "instrument panel" look as generic AI output and wants bold, distinct work.
-- Assets: portrait photo at night on the San Francisco Embarcadero (`images/profile.jpg`, `images/profile.webp`, `images/profile-square.jpg`), sunset-over-wave favicon set (`images/favicon.svg` and PNG sizes), OG image (`images/og-image.jpg`, may be regenerated to match the new world).
+- Assets: portrait photo at night on the San Francisco Embarcadero (`images/profile.jpg`, `images/profile.webp`, `images/profile-square.jpg`), Golden Gate Bridge favicon set (`images/favicon.svg` and PNG sizes), OG image (`images/og-image.jpg`, may be regenerated to match the new world).
 
 ## Evidence on Hand
 
