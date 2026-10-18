@@ -26,6 +26,15 @@ Authored motion (transform, opacity and stroke-dashoffset only): a red-tailed ha
 ## Stack
 Static HTML, CSS and JavaScript with no libraries and no build step for the page itself: one requestAnimationFrame loop drives the climb, and each scene layer is its own SVG so the browser moves it on the GPU instead of repainting. Fonts from Google Fonts. Content is visible without JavaScript.
 
+## Performance
+I rebuilt the motion to load and scroll faster without changing the look. The full write-up, with the method and numbers, is in [docs/performance.md](docs/performance.md).
+
+- No JavaScript libraries: one small animation loop plus CSS replaced GSAP, ScrollTrigger, MotionPathPlugin and Lenis (JavaScript shipped went from 69 KB to 8 KB gzipped).
+- Each scene layer is its own SVG, so scrolling moves finished pictures instead of repainting the scene; colour shifts happen in small steps, a few layers per frame.
+- No layout reads inside the animation loop; sizes are measured on load and resize.
+- Lighter drawings: relative, simplified path data took the page from 85 KB to 44 KB gzipped.
+- Measured in a headless browser: phone main content appears 28% sooner, desktop 42% sooner, and slow scroll frames fell from 67% to 24% on desktop and from 32% to 12% on phones.
+
 ## Run locally
     python3 -m http.server 8000
 
