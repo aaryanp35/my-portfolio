@@ -1,11 +1,8 @@
 # Hi, I'm Aaryan Patel
 
-![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
-![Snowflake](https://img.shields.io/badge/Snowflake-29B5E8?logo=snowflake&logoColor=white)
-
 I build data and AI products, from payments infrastructure to AI storytelling tools. Based in Menlo Park, CA.
+
+My work at DeUNA and Strand Analytica is confidential, so it is not in public repos. The projects below are my own and course work.
 
 ## Currently
 
@@ -17,9 +14,9 @@ I build data and AI products, from payments infrastructure to AI storytelling to
 
 | Project | What it is |
 | --- | --- |
-| [Proxii](https://github.com/aaryanp35/Proxii-1) ([live](https://proxii.vercel.app/)) | Spatial economics app that scores gentrification risk. |
+| [Proxii](https://github.com/aaryanp35/Proxii-1) ([live](https://proxii.vercel.app/)) | Scores a neighborhood for gentrification and growth risk from nearby businesses in Google Places, with distance weighting and a Ridge regression blend. |
 | [Firsthand](https://github.com/aaryanp35/firsthand) | Turns a news article into a first-person counter-perspective story, powered by Gemini. |
-| [Athenaeum](https://github.com/aaryanp35/athenaeum) | AI storytelling platform for indie filmmakers, with a FastAPI and Postgres backend, pgvector RAG, and a Dramaturg agent (public write-up and sanitized slice). |
+| Athenaeum | AI storytelling platform for indie filmmakers that I co-built, with a FastAPI and Postgres backend, pgvector RAG, and a Dramaturg agent. The code is private. |
 | [ECO225 research](https://github.com/ECO225-2026/eco225-project-aaryanp35) | 250K SFPD stops analyzed against Zillow home values using OLS and random forest models. |
 | [Auratune](https://github.com/aaryanp35/csc111-auratune) | Decision-tree music recommender over Spotify audio features, built for CSC111. |
 | [Meal Planner](https://github.com/aaryanp35/CSC207-Project-Meal-Planner) | Java meal planner built on Clean Architecture, for CSC207. |
