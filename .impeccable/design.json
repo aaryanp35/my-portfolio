@@ -309,7 +309,7 @@
       },
       {
         "name": "climb-scrub",
-        "value": "GSAP ScrollTrigger scrub 0.7, ease none",
+        "value": "rAF loop easing toward scroll, 0.18 s time constant",
         "purpose": "Scroll drives elevation, hiker, scene tint and parallax."
       },
       {
@@ -329,7 +329,7 @@
       },
       {
         "name": "smooth-scroll",
-        "value": "Lenis lerp 0.12 on fine pointers only",
+        "value": "native browser scrolling (no scroll hijack)",
         "purpose": "Desktop scroll smoothing."
       },
       {

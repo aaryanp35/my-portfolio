@@ -185,7 +185,7 @@ The illustrated scene carries its own per-zone sub-palette (wash, far, mid, near
 ### Hierarchy
 - **Display** (800, clamp(3rem, 1.6rem + 6vw, 6rem), 0.9, uppercase): The name on the title plate and each zone heading. On phones it clamps to 2.25rem to 3rem.
 - **Headline** (800, clamp(1.5rem, 1.1rem + 1.4vw, 2rem), 1.05, uppercase): Stop names, role lines (line-height 1.3), primary mark labels, the canyon zone heading. The altimeter number uses this size in mono 500.
-- **Title** (800, 1.0625rem, 1.15, 0.05em, uppercase): Display-face labels at body size: buttons, list headings, feature classes, zone links, "My part." leads, the trailhead sign.
+- **Title** (800, 1.0625rem, 1.15, 0.05em, uppercase): Display-face labels at body size: buttons, list headings, zone links, "My part." leads, the trailhead sign.
 - **Body** (400, 1.0625rem, 1.55): Intros, project descriptions, strips, key-value text. Stops hold to a 36rem measure, the intro to 38rem. Italic marks the "what it is" line and zone notes.
 - **Label** (400, 0.75rem, 0.06em, uppercase, tabular numerals): Coordinates, place and series lines, dates, inset captions, declination and scale labels.
 - **Caption** (italic 400, 0.75rem, 1.4): The plain-language line under a primary mark ("Dates, detail and numbers").
@@ -244,7 +244,7 @@ Body serif at 600, 2px road-red underline, 0.2em offset, 44px minimum height, an
 - **Lists inside boxes:** Rows ruled with 1px contour line; sienna mono dates or sienna Title-voice keys to the left.
 
 ### Navigation
-- **Points ahead:** Under a hairline rule inside the title plate, a sienna Title-voice lead, then four display-face links at 1.25rem (1.125rem and 1.0625rem on phones), each with a 22px ink line symbol and a 2px road-red underline; vegetation-tint hover.
+- **Highlights:** Under a hairline rule inside the title plate, a sienna Title-voice lead, then four display-face links at 1.25rem (1.125rem and 1.0625rem on phones), each with a 22px ink line symbol and a 2px road-red underline; vegetation-tint hover.
 - **Zone links:** Five Title-voice links under the elevation profile in slate ink; hover turns road red and underlined; the current zone is ink with a 2px road-red underline. Hidden below 960px.
 - **Altimeter:** Mono numerals at Headline size, a slate "ft" label, and the zone name in sienna Title voice.
 

@@ -16,9 +16,33 @@ def f(n):
     return s[:-2] if s.endswith(".0") else s
 
 
-def pts_to_d(pts, close=False):
-    d = "M" + " L".join("%s %s" % (f(x), f(y)) for x, y in pts)
-    return d + (" Z" if close else "")
+def simplify(pts, eps):
+    """Douglas-Peucker: drop points that sit within eps of the line through their neighbours."""
+    keep, stack = {0, len(pts) - 1}, [(0, len(pts) - 1)]
+    while stack:
+        a, b = stack.pop()
+        (ax, ay), (bx, by) = pts[a], pts[b]
+        L = math.hypot(bx - ax, by - ay) or 1e-9
+        best, bi = 0, None
+        for i in range(a + 1, b):
+            dd = abs((bx - ax) * (ay - pts[i][1]) - (ax - pts[i][0]) * (by - ay)) / L
+            if dd > best:
+                best, bi = dd, i
+        if bi is not None and best > eps:
+            keep.add(bi)
+            stack += [(a, bi), (bi, b)]
+    return [pts[i] for i in sorted(keep)]
+
+
+def pts_to_d(pts, close=False, eps=0.3):
+    """Polyline as one absolute move and relative line steps, one decimal (sub-pixel at any size the page uses)."""
+    if eps and len(pts) > 2:
+        pts = simplify(pts, eps)
+    r = [(round(x, 1), round(y, 1)) for x, y in pts]
+    d = "M%s %s" % (f(r[0][0]), f(r[0][1]))
+    if len(r) > 1:
+        d += "l" + " ".join("%s %s" % (f(b[0] - a[0]), f(b[1] - a[1])) for a, b in zip(r, r[1:]))
+    return d + ("Z" if close else "")
 
 
 class Noise:
@@ -160,13 +184,14 @@ def build_scene():
     lk = lookout(ex, ey + 1, 1.05)
     dome = ('<path d="M%s %s a9 9 0 0 1 18 0 Z" class="paperfill" fill="none" stroke="var(--ink)" stroke-width="1.2"/><path d="M%s %s V%s" fill="none" stroke="var(--ink)" stroke-width="1.2"/>'
             % (f(mx - 9), f(my + 1), f(mx), f(my - 8), f(my - 19)))
-    labels = ('<g class="peak-labels" font-family="Big Shoulders Display, Arial Narrow, sans-serif" font-weight="800" font-size="19" fill="var(--ink)" letter-spacing="1.5">'
+    labels = ('<g class="lyr peak-labels" data-lyr="labels" data-t="330" font-family="Big Shoulders Display, Arial Narrow, sans-serif" font-weight="800" font-size="19" fill="var(--ink)" letter-spacing="1.5">'
               '<text x="%s" y="%s" text-anchor="middle">WEST PEAK</text><text x="%s" y="%s" text-anchor="middle">MIDDLE PEAK</text>'
               '<text x="%s" y="%s" text-anchor="end">EAST PEAK</text></g>'
               % (f(wx), f(wy - 22), f(mx), f(my - 30), f(ex - 34), f(ey - 14)))
     # data-bx and data-by: the cabin of East Peak's lookout in scene units at the E=0 pose (script.js anchors the beacon there)
     layers.append('<g class="lyr" data-lyr="tam" data-t="330" data-bx="%s" data-by="%s"><path class="ridge-far" d="%s"/><path class="shade" d="%s"/>'
-                  '<path class="ridge-line" d="%s"/>%s%s%s</g>' % (f(ex), f(ey + 1 - 32 * 1.05), tam_d, tam_shade, pts_to_d(tam), lk, dome, labels))
+                  '<path class="ridge-line" d="%s"/>%s%s</g>' % (f(ex), f(ey + 1 - 32 * 1.05), tam_d, tam_shade, pts_to_d(tam), lk, dome))
+    layers.append(labels)
     def fog(name, top, t, amp, seed, op):
         n = Noise(seed, 3, 0.01)
         pts = []
@@ -175,7 +200,7 @@ def build_scene():
             y = top + amp * math.sin(x / 130.0 + seed) + amp * 0.5 * math.sin(x / 47.0 + seed * 2) + 10 * math.sin(x / 331.0 + seed * 3) + 2 * n(x)
             pts.append((x, y))
             x += 14
-        d = pts_to_d(pts) + " L2100 %s L-500 %s Z" % (f(top + 1700), f(top + 1700))
+        d = pts_to_d(pts) + " L2100 1100 L-500 1100 Z"
         return ('<g class="lyr fog" data-lyr="%s" data-t="%s" data-o="%s"><g class="drift"><path d="%s"/></g></g>' % (name, t, op, d))
 
     # mid ridge (Marin ridges beyond)
@@ -251,9 +276,11 @@ def build_scene():
         gy = r.uniform(890, 1000)
         gl = r.uniform(8, 20)
         grass.append("M%s %s l%s %s" % (f(gx), f(gy), f(r.uniform(-3, 3)), f(-gl)))
-    quail = ('<g class="quail" id="quail" opacity="0"><g class="q" transform="translate(-80 903)">%s</g><g class="q" transform="translate(-130 910) scale(0.8)">%s</g></g>' % (QUAIL, QUAIL))
     layers.append('<g class="fg" data-lyr="fg-chap" data-t="70"><path class="fg-front" d="%s"/><rect class="fg-front" x="-100" y="860" width="1900" height="500"/>'
-                  '<path class="rock" d="%s"/><path class="grass" d="%s"/>%s</g>' % (" ".join(scrub), " ".join(rocks), " ".join(grass), quail))
+                  '<path class="rock" d="%s"/><path class="grass" d="%s"/></g>' % (" ".join(scrub), " ".join(rocks), " ".join(grass)))
+    # a pair of quail cross the chaparral once (CSS animation on the walk group, hop on the bird)
+    layers.append('<g class="fg quail" data-lyr="quail" data-t="70"><g class="q-walk"><g transform="translate(-80 903)"><g class="q">%s</g></g></g>'
+                  '<g class="q-walk q2"><g transform="translate(-130 910) scale(0.8)"><g class="q">%s</g></g></g></g>' % (QUAIL, QUAIL))
 
     # summit outcrop: the visitor's own ground, rises into view low in the frame (no second lookout; East Peak's is the one)
     rock_keys = [(560, 1160), (680, 1010), (820, 950), (960, 915), (1080, 902), (1200, 912), (1320, 940), (1440, 985), (1560, 1030), (1700, 1160)]
@@ -270,7 +297,7 @@ def build_scene():
             y = top + amp * math.sin(x / 150.0 + seed) + amp * 0.55 * math.sin(x / 61.0 + seed * 2.3) + amp * 0.8 * math.sin(x / 290.0 + seed * 1.7)
             pts.append((x, y))
             x += 20
-        d = pts_to_d(pts) + " L1900 1500 L-300 1500 Z"
+        d = pts_to_d(pts) + " L1900 1100 L-300 1100 Z"
         return '<g class="drift" data-drift="%s"><path d="%s" fill="url(#%s)"/></g>' % (drift, d, grad)
     bands = [sea_band("a", 650, 12, 1.0, "seaA", 1), sea_band("b", 700, 14, 2.2, "seaB", -1), sea_band("c", 765, 16, 3.1, "seaA", 1),
              sea_band("d", 835, 18, 4.4, "seaB", -1), sea_band("e", 915, 20, 5.3, "seaC", 1)]
@@ -286,10 +313,11 @@ def build_scene():
             '<linearGradient id="seaB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6F9F9" stop-opacity="0"/><stop offset="0.12" stop-color="#F6F9F9" stop-opacity="0.78"/><stop offset="1" stop-color="#F0F4F4" stop-opacity="0.88"/></linearGradient>'
             '<linearGradient id="seaC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDFEFD" stop-opacity="0"/><stop offset="0.1" stop-color="#FDFEFD" stop-opacity="0.9"/><stop offset="1" stop-color="#FBFCFA" stop-opacity="0.96"/></linearGradient>'
             '</defs>')
-    sun = ('<g id="sun" transform="translate(300 560)"><circle class="sun-glow" r="130"/><circle class="sun-disc" r="46"/><circle class="sun-ring" r="62"/><circle class="sun-ring" r="82"/></g>')
-    svg = ('<svg id="scene" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMax slice" role="presentation" focusable="false" aria-hidden="true">'
-           + defs + sun + "".join(layers) + "</svg>")
-    return svg
+    # the sun rides from (1000, 560) up and right; script.js moves its layer
+    sun = '<g class="lyr" data-lyr="sun">%s<g transform="translate(1000 560)"><circle class="sun-glow" r="130"/><circle class="sun-disc" r="46"/><circle class="sun-ring" r="62"/><circle class="sun-ring" r="82"/></g></g>' % defs
+    # one root svg per layer, so the browser moves each one on the GPU instead of repainting the whole scene
+    head = '<svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMax slice" focusable="false" '
+    return "".join(head + l[3:-4] + "</svg>" for l in [sun] + layers)
 
 
 # ---------------------------------------------------------------- contours
@@ -385,7 +413,7 @@ def build_contours():
                 longest = sm
         is_index = li % 5 == 4
         elev = int(round(lv / vmax * 2600 / 100.0) * 100)
-        paths.append('<path class="contour%s" data-lvl="%d" pathLength="1" d="%s"/>' % (" index" if is_index else "", li, " ".join(d)))
+        paths.append('<path class="contour%s" pathLength="1" d="%s"/>' % (" index" if is_index else "", " ".join(d)))
         if is_index and longest and len(longest) > 20:
             m = len(longest) // 2
             a, b = longest[m - 2], longest[m + 2]
@@ -396,7 +424,7 @@ def build_contours():
                 ang += 180
             labels.append('<text x="%s" y="%s" transform="rotate(%s %s %s)" class="contour-label" text-anchor="middle">%s</text>' % (f(longest[m][0]), f(longest[m][1]), f(ang), f(longest[m][0]), f(longest[m][1]), "{:,}".format(elev)))
     svg = ('<svg id="contours" viewBox="0 0 1600 1200" preserveAspectRatio="xMidYMid slice" role="presentation" focusable="false" aria-hidden="true">'
-           '<g class="contour-lines">%s</g><g class="contour-labels">%s</g></svg>' % ("".join(paths), "".join(labels)))
+           '%s%s</svg>' % ("".join(paths), "".join(labels)))
     return svg, len(paths)
 
 
