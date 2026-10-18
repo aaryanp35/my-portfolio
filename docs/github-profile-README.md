@@ -6,7 +6,7 @@ My work at DeUNA and Strand Analytica is confidential, so it is not in public re
 
 ## Currently
 
-- **Associate Product Manager, DeUNA.** DeUNA is a payments orchestration platform for Fortune 100 companies, tech firms, airlines and quick-service restaurants across North America, Latin America and Europe. I own the machine learning optimizer for merchant-initiated transactions and its agentic workflows. Before that, as a Data Science Intern, I led A/B testing for payment request optimization, ran SQL analysis across Snowflake, Postgres and Redis, and built MVP reconciliation models (a gradient boosting ranker for transaction matching and a neural network schema detector).
+- **Associate Product Manager, DeUNA.** DeUNA is a global payments platform for Fortune 100 companies, tech firms, airlines and quick-service restaurants across North America, Latin America and Europe. I own the machine learning optimizer for merchant-initiated transactions and its agentic workflows. Before that, as a Data Science Intern, I led A/B testing for payment request optimization, ran SQL analysis across Snowflake, Postgres and Redis, and built MVP reconciliation models (a gradient boosting ranker for transaction matching and a neural network schema detector).
 - **Implementation Engineering Intern, Strand Analytica.** Building custom harnesses and AI layers for AI wargaming simulations for the British Ministry of Defence and the US Department of War.
 - **University of Toronto**, third year. Economics with Data Analytics, with minors in Computer Science and Statistics. Student-athlete on the U of T rowing team.
 
